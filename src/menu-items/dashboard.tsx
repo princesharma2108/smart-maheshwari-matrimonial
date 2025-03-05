@@ -19,31 +19,32 @@ const icons = {
 
 const loadingMenu: NavItemType = {
   id: 'group-dashboard-loading',
-  title: <FormattedMessage id="dashboard" />,
+  title: <FormattedMessage id=" " />,
   type: 'group',
   icon: icons.loading,
   children: [
     {
       id: 'dashboard1',
-      title: <FormattedMessage id="dashboard" />,
-      type: 'collapse',
+      title: <FormattedMessage id=" " />,
+      type: 'item',
       icon: icons.loading,
-      children: [
-        {
-          id: 'default1',
-          title: 'loading',
-          type: 'item',
-          url: '/dashboard/default',
-          breadcrumbs: false
-        },
-        {
-          id: 'analytics1',
-          title: 'loading',
-          type: 'item',
-          url: '/dashboard/analytics',
-          breadcrumbs: false
-        }
-      ]
+      url: '/dashboard/default'
+      // children: [
+      //   {
+      //     id: 'default1',
+      //     title: 'loading',
+      //     type: 'item',
+      //     url: '/dashboard/default',
+      //     breadcrumbs: false
+      //   },
+      //   {
+      //     id: 'analytics1',
+      //     title: 'loading',
+      //     type: 'item',
+      //     url: '/dashboard/analytics',
+      //     breadcrumbs: false
+      //   }
+      // ]
     }
   ]
 };

@@ -23,35 +23,40 @@ export default function AccountProfile() {
   let breadcrumbTitle = '';
   let breadcrumbHeading = '';
   switch (pathname) {
-    case '/apps/profiles/account/personal':
-      breadcrumbTitle = 'Personal';
-      breadcrumbHeading = 'Personal';
+    case '/apps/profiles/account/step2':
+      breadcrumbTitle = "Let's know you better";
+      breadcrumbHeading = "Let's know you better";
       selectedTab = 1;
       break;
-    case '/apps/profiles/account/my-account':
-      breadcrumbTitle = 'My Account';
-      breadcrumbHeading = 'My Account';
+    case '/apps/profiles/account/step3':
+      breadcrumbTitle = 'Lifestyle';
+      breadcrumbHeading = 'Lifestyle';
       selectedTab = 2;
       break;
-    case '/apps/profiles/account/password':
-      breadcrumbTitle = 'Change Password';
-      breadcrumbHeading = 'Change Password';
+    case '/apps/profiles/account/step4':
+      breadcrumbTitle = 'Family Background';
+      breadcrumbHeading = 'Family Background';
       selectedTab = 3;
       break;
-    case '/apps/profiles/account/role':
-      breadcrumbTitle = 'Role';
-      breadcrumbHeading = 'Accountant';
+    case '/apps/profiles/account/step5':
+      breadcrumbTitle = 'Education and Occupation';
+      breadcrumbHeading = 'Education and Occupation';
       selectedTab = 4;
       break;
-    case '/apps/profiles/account/settings':
-      breadcrumbTitle = 'Settings';
-      breadcrumbHeading = 'Account Settings';
+    case '/apps/profiles/account/step6':
+      breadcrumbTitle = 'Spiritual Attributes';
+      breadcrumbHeading = 'Spiritual Attributes';
       selectedTab = 5;
       break;
-    case '/apps/profiles/account/basic':
+    case '/apps/profiles/account/step7':
+      breadcrumbTitle = 'Contact Information';
+      breadcrumbHeading = 'Contact Information';
+      selectedTab = 5;
+      break;
+    case '/apps/profiles/account/step1':
     default:
-      breadcrumbTitle = 'Basic';
-      breadcrumbHeading = 'Basic Account';
+      breadcrumbTitle = "Let's know you better";
+      breadcrumbHeading = "Let's know you better";
       selectedTab = 0;
   }
 
@@ -63,15 +68,19 @@ export default function AccountProfile() {
 
   let breadcrumbLinks = [
     { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Account Profile', to: '/apps/profiles/account/basic' },
+    { title: 'Profile Details', to: '/apps/profiles/account/step1' },
     { title: breadcrumbTitle }
   ];
   if (selectedTab === 0) {
-    breadcrumbLinks = [{ title: 'Home', to: APP_DEFAULT_PATH }, { title: 'Account Profile' }];
+    breadcrumbLinks = [
+      { title: 'Home', to: APP_DEFAULT_PATH },
+      { title: 'Profile Details', to: '/apps/profiles/account/step1' },
+      { title: "Let's know you better" }
+    ];
   }
 
   useEffect(() => {
-    if (pathname === '/apps/profiles/account/basic') {
+    if (pathname === '/apps/profiles/account/step1') {
       setValue(0);
     }
   }, [pathname]);
@@ -82,12 +91,13 @@ export default function AccountProfile() {
       <MainCard border={false}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
           <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
-            <Tab label="Profile" component={Link} to="/apps/profiles/account/basic" icon={<Profile />} iconPosition="start" />
-            <Tab label="Personal" component={Link} to="/apps/profiles/account/personal" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="My Account" component={Link} to="/apps/profiles/account/my-account" icon={<TableDocument />} iconPosition="start" />
-            <Tab label="Change Password" component={Link} to="/apps/profiles/account/password" icon={<Lock />} iconPosition="start" />
-            <Tab label="Role" component={Link} to="/apps/profiles/account/role" icon={<Profile2User />} iconPosition="start" />
-            <Tab label="Settings" component={Link} to="/apps/profiles/account/settings" icon={<Setting3 />} iconPosition="start" />
+            <Tab label="Step 1" component={Link} to="/apps/profiles/account/step1" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 2" component={Link} to="/apps/profiles/account/step2" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 3" component={Link} to="/apps/profiles/account/step3" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 4" component={Link} to="/apps/profiles/account/step4" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 5" component={Link} to="/apps/profiles/account/step5" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 6" component={Link} to="/apps/profiles/account/step6" icon={<DocumentText />} iconPosition="start" />
+            <Tab label="Step 7" component={Link} to="/apps/profiles/account/step7" icon={<DocumentText />} iconPosition="start" />
           </Tabs>
         </Box>
         <Box sx={{ mt: 2.5 }}>

@@ -9,9 +9,8 @@ import Loadable from 'components/Loadable';
 import Login from 'pages/auth/auth1/login';
 import Register from 'pages/auth/auth1/register';
 import ForgotPassword from 'pages/auth/auth1/forgot-password';
-
-// render - landing page
-const PagesLanding = Loadable(lazy(() => import('pages/landing')));
+import UploadBiodata from 'pages/apps/uploadBiodata/uploadBiodata';
+import PersonalDetails from 'pages/apps/personalDetails/personalDetails';
 
 // ==============================|| ROUTES RENDER ||============================== //
 
@@ -28,7 +27,7 @@ const router = createBrowserRouter(
     //   ]
     // },
     {
-      path: '/login',
+      path: '/',
       element: <Login />,
       children: [
         {
@@ -54,6 +53,26 @@ const router = createBrowserRouter(
         {
           index: true,
           element: <ForgotPassword />
+        }
+      ]
+    },
+    {
+      path: '/upload-biodata',
+      element: <UploadBiodata />,
+      children: [
+        {
+          index: true,
+          element: <UploadBiodata />
+        }
+      ]
+    },
+    {
+      path: '/personal-details',
+      element: <PersonalDetails />,
+      children: [
+        {
+          index: true,
+          element: <PersonalDetails />
         }
       ]
     },

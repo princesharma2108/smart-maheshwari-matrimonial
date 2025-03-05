@@ -80,7 +80,7 @@ export default function Navigation() {
     }));
   }
 
-  const navGroups = menuItems.items.slice(0, lastItemIndex + 1).map((item) => {
+  const navGroups = menuItems.items.slice(1, lastItemIndex + 1).map((item) => {
     console.log('ItemList', item);
     switch (item.type) {
       case 'group':

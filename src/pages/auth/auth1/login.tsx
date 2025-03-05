@@ -17,6 +17,7 @@ import AuthLogin from 'sections/auth/auth-forms/AuthLogin';
 import imgFacebook from 'assets/images/auth/facebook.svg';
 import imgTwitter from 'assets/images/auth/twitter.svg';
 import imgGoogle from 'assets/images/auth/google.svg';
+import { Box } from '@mui/material';
 
 // ================================|| LOGIN ||================================ //
 
@@ -31,6 +32,11 @@ export default function Login() {
         </Grid>
         <Grid item xs={12}>
           <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <AuthSocButton>
+                <img src={imgFacebook} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Facebook
+              </AuthSocButton>
+            </Grid>
             <Grid item xs={12}>
               <AuthSocButton>
                 <img src={imgGoogle} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Google
@@ -50,8 +56,7 @@ export default function Login() {
               component={Link}
               to={isLoggedIn ? '/auth/register' : '/register'}
               variant="body1"
-              sx={{ textDecoration: 'none' }}
-              color="primary"
+              sx={{ textDecoration: 'none', color: '#F00757' }}
             >
               Don&apos;t have an account?
             </Typography>

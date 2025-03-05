@@ -14,7 +14,7 @@ export default function AuthSocButton({ children, ...other }: ButtonProps) {
         bgcolor: 'secondary.100',
         borderColor: theme.palette.secondary[200],
         color: 'secondary.main',
-        '&:hover,&:focus': { bgcolor: 'secondary.100', borderColor: theme.palette.primary.main }
+        '&:hover,&:focus': { bgcolor: 'secondary.100', borderColor: '#F00757', color: '#F00757' }
       }}
       {...other}
     >

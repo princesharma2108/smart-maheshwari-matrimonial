@@ -65,8 +65,9 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
               setStatus({ success: true });
               setSubmitting(false);
               //preload('api/menu/dashboard', fetcher); // load menu on login success
-              preload('/dashboard/dashboard', fetcher);
-              navigate('/dashboard/default');
+              // preload('/dashboard/dashboard', fetcher);
+              // navigate('/dashboard/default');
+              navigate('/upload-biodata');
             }
           } catch (err: any) {
             console.error(err);
@@ -94,6 +95,18 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     placeholder="Enter email address"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
+                    sx={{
+                      // '& .MuiOutlinedInput-notchedOutline': {
+                      //   borderColor: 'gray', // Default border color
+                      // },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#F00757' // Border color on hover
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#F00757', // Border color on focus
+                        borderWidth: '1px' // Optional: make it bolder
+                      }
+                    }}
                   />
                 </Stack>
                 {touched.email && errors.email && (
@@ -128,6 +141,18 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                       </InputAdornment>
                     }
                     placeholder="Enter password"
+                    sx={{
+                      // '& .MuiOutlinedInput-notchedOutline': {
+                      //   borderColor: 'gray', // Default border color
+                      // },
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#F00757' // Border color on hover
+                      },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#F00757', // Border color on focus
+                        borderWidth: '1px' // Optional: make it bolder
+                      }
+                    }}
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -164,7 +189,18 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
               )}
               <Grid item xs={12}>
                 <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  <Button
+                    disableElevation
+                    disabled={isSubmitting}
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      backgroundColor: '#F00757', // Your custom color
+                      '&:hover': { backgroundColor: '#F00757' } // Darker shade on hover
+                    }}
+                  >
                     Login
                   </Button>
                 </AnimateButton>
