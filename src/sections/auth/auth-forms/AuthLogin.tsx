@@ -25,7 +25,7 @@ import useScriptRef from 'hooks/useScriptRef';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import { fetcher } from 'utils/axios';
-
+import 'assets/styles/styles.scss';
 // assets
 import { Eye, EyeSlash } from 'iconsax-react';
 
@@ -65,7 +65,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
               setStatus({ success: true });
               setSubmitting(false);
               //preload('api/menu/dashboard', fetcher); // load menu on login success
-              // preload('/dashboard/dashboard', fetcher);
+              //preload('/dashboard/dashboard', fetcher);
               // navigate('/dashboard/default');
               navigate('/upload-biodata');
             }
@@ -95,18 +95,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     placeholder="Enter email address"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
-                    sx={{
-                      // '& .MuiOutlinedInput-notchedOutline': {
-                      //   borderColor: 'gray', // Default border color
-                      // },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#F00757' // Border color on hover
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#F00757', // Border color on focus
-                        borderWidth: '1px' // Optional: make it bolder
-                      }
-                    }}
+                    className="inputFieldLogin"
                   />
                 </Stack>
                 {touched.email && errors.email && (
@@ -141,18 +130,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                       </InputAdornment>
                     }
                     placeholder="Enter password"
-                    sx={{
-                      // '& .MuiOutlinedInput-notchedOutline': {
-                      //   borderColor: 'gray', // Default border color
-                      // },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#F00757' // Border color on hover
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#F00757', // Border color on focus
-                        borderWidth: '1px' // Optional: make it bolder
-                      }
-                    }}
+                    className="inputFieldLogin"
                   />
                 </Stack>
                 {touched.password && errors.password && (
@@ -196,10 +174,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     size="large"
                     type="submit"
                     variant="contained"
-                    sx={{
-                      backgroundColor: '#F00757', // Your custom color
-                      '&:hover': { backgroundColor: '#F00757' } // Darker shade on hover
-                    }}
+                    className="buttonStyle"
                   >
                     Login
                   </Button>

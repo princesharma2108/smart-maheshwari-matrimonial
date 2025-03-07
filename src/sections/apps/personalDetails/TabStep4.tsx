@@ -9,7 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-
+import 'assets/styles/styles.scss';
 // project-imports
 import MainCard from 'components/MainCard';
 
@@ -48,6 +48,7 @@ export default function TabStep4() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       autoFocus
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -60,6 +61,7 @@ export default function TabStep4() {
                       placeholder="Enter Mother's Name"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -72,6 +74,7 @@ export default function TabStep4() {
                       placeholder="Enter Hometown"
                       value={hometown}
                       onChange={(e) => setHometown(e.target.value)}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -82,7 +85,7 @@ export default function TabStep4() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="siblings">Siblings</InputLabel>
-                    <Select fullWidth value={siblings} onChange={handleSiblingsChange} displayEmpty>
+                    <Select fullWidth value={siblings} onChange={handleSiblingsChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Number of Siblings
                       </MenuItem>
@@ -96,7 +99,7 @@ export default function TabStep4() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="family-income">Family Income</InputLabel>
-                    <Select fullWidth value={familyIncome} onChange={handleFamilyIncomeChange} displayEmpty>
+                    <Select fullWidth value={familyIncome} onChange={handleFamilyIncomeChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Family Income Range
                       </MenuItem>
@@ -110,7 +113,7 @@ export default function TabStep4() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="family-type">Family Type</InputLabel>
-                    <Select fullWidth value={familyType} onChange={handleFamilyTypeChange} displayEmpty>
+                    <Select fullWidth value={familyType} onChange={handleFamilyTypeChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Family Type
                       </MenuItem>
@@ -130,7 +133,9 @@ export default function TabStep4() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

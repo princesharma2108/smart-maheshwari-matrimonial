@@ -15,8 +15,6 @@ const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics
 
 // render - widget
 const WidgetStatistics = Loadable(lazy(() => import('pages/widget/statistics')));
-const WidgetData = Loadable(lazy(() => import('pages/widget/data')));
-const WidgetChart = Loadable(lazy(() => import('pages/widget/chart')));
 
 // render - applications
 
@@ -28,6 +26,8 @@ const UserTabPersonal = Loadable(lazy(() => import('sections/apps/profiles/user/
 const UserTabPayment = Loadable(lazy(() => import('sections/apps/profiles/user/TabPayment')));
 const UserTabPassword = Loadable(lazy(() => import('sections/apps/profiles/user/TabPassword')));
 const UserTabSettings = Loadable(lazy(() => import('sections/apps/profiles/user/TabSettings')));
+
+const AppLatestMatches = Loadable(lazy(() => import('pages/apps/latestMatches/latestMatches')));
 
 const AccountProfile = Loadable(lazy(() => import('pages/apps/profiles/account')));
 const AccountTabProfile = Loadable(lazy(() => import('sections/apps/profiles/account/TabProfile')));
@@ -83,10 +83,6 @@ const MainRoutes = {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        {
-          path: '/dashboard/default',
-          element: <DashboardDefault />
-        },
         // {
         //   path: 'dashboard',
         //   children: [
@@ -106,14 +102,6 @@ const MainRoutes = {
             {
               path: 'statistics',
               element: <WidgetStatistics />
-            },
-            {
-              path: 'data',
-              element: <WidgetData />
-            },
-            {
-              path: 'chart',
-              element: <WidgetChart />
             }
           ]
         },
@@ -133,6 +121,16 @@ const MainRoutes = {
                 }
               ]
             },
+            {
+              path: 'latestMatches',
+              children: [
+                {
+                  path: 'latestMatches',
+                  element: <AppLatestMatches />
+                }
+              ]
+            },
+            {},
             {
               path: 'profiles',
               children: [

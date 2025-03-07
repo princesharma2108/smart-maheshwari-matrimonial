@@ -9,10 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-
 // Project Imports
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
+import 'assets/styles/styles.scss';
 
 export default function TabStep7() {
   const theme = useTheme();
@@ -53,6 +53,7 @@ export default function TabStep7() {
                       value={residentialAddress}
                       onChange={handleResidentialAddressChange}
                       autoFocus
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -65,6 +66,7 @@ export default function TabStep7() {
                       placeholder="Enter Phone Number"
                       value={phoneNumber}
                       onChange={handlePhoneNumberChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -77,6 +79,7 @@ export default function TabStep7() {
                       placeholder="Enter Email Address"
                       value={emailAddress}
                       onChange={handleEmailAddressChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -89,6 +92,7 @@ export default function TabStep7() {
                       placeholder="Enter Alternate Contact Number"
                       value={alternateContact}
                       onChange={handleAlternateContactChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -101,7 +105,7 @@ export default function TabStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="country">Country</InputLabel>
-                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty>
+                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Country
                       </MenuItem>
@@ -116,7 +120,7 @@ export default function TabStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="state">State</InputLabel>
-                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty>
+                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select State
                       </MenuItem>
@@ -131,7 +135,7 @@ export default function TabStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="city">City</InputLabel>
-                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty>
+                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select City
                       </MenuItem>
@@ -157,8 +161,10 @@ export default function TabStep7() {
           <Button
             variant="contained"
             onClick={() => {
-              navigate('/dashboard/default');
+              // navigate('/dashboard/default');
+              navigate('/preferences');
             }}
+            className="buttonStyle"
           >
             Continue
           </Button>

@@ -8,9 +8,11 @@ import TabStep5 from 'sections/apps/personalDetails/TabStep5';
 import TabStep6 from 'sections/apps/personalDetails/TabStep6';
 import TabStep7 from 'sections/apps/personalDetails/TabStep7';
 import loginBG from 'assets/images/login/loginBG.jpeg';
+import LifestylePreferences from 'sections/apps/preferences/lifestylePreferences';
+import PersonalPreferences from 'sections/apps/preferences/personalPreferences';
+import AdditionalPreferences from 'sections/apps/preferences/additionalPreferences';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 import 'assets/styles/styles.scss';
-
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -25,7 +27,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   );
 };
 
-const PersonalDetails: React.FC = () => {
+const Preferences: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
@@ -47,39 +49,27 @@ const PersonalDetails: React.FC = () => {
         }}
       >
         <Typography variant="h5" gutterBottom>
-          Personal Details
+          Preferences
         </Typography>
 
         <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-          {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
+          {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
             <Tab key={index} label={label} className="tabStyle" />
           ))}
         </Tabs>
 
         <TabPanel value={tabIndex} index={0}>
-          <TabStep1 />
+          <LifestylePreferences />
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
-          <TabStep2 />
+          <PersonalPreferences />
         </TabPanel>
         <TabPanel value={tabIndex} index={2}>
-          <TabStep3 />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={3}>
-          <TabStep4 />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={4}>
-          <TabStep5 />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={5}>
-          <TabStep6 />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={6}>
-          <TabStep7 />
+          <AdditionalPreferences />
         </TabPanel>
       </Paper>
     </BackgroundWrapper>
   );
 };
 
-export default PersonalDetails;
+export default Preferences;

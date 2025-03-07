@@ -134,7 +134,7 @@ const MatchProfile = ({ profile }: { profile: (typeof profiles)[0] }) => (
   </Grid>
 );
 
-export default function WidgetStatistics() {
+export default function LatestMatches() {
   const theme = useTheme();
   return (
     <>

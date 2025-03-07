@@ -79,7 +79,7 @@ export default function MainLayout() {
           >
             <Breadcrumbs />
             <Outlet />
-            <Footer />
+            {/* <Footer /> */}
           </Container>
         </Box>
         <AddCustomer />

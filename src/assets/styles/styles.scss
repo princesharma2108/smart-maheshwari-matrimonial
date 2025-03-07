@@ -1,0 +1,60 @@
+.buttonStyle {
+  background-color: #f00757; // Your custom color
+  &:hover {
+    background-color: #f00757;
+  }
+}
+
+.inputFieldLogin {
+  // & .MuiOutlinedInput-notchedOutline {
+  //   border-color: gray; // Default border color
+  // }
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #f00757; // Border color on hover
+  }
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #f00757; // Border color on focus
+    border-width: 1px; // Optional: make it bolder
+  }
+}
+.inputField {
+  & .MuiOutlinedInput-root {
+    // & fieldset {
+    //   border-color: gray; // Default border color
+    // }
+    &:hover fieldset {
+      border-color: #f00757; // Border color on hover
+    }
+    &.Mui-focused fieldset {
+      border-color: #f00757; // Border color on focus
+    }
+  }
+}
+.inputFieldCheckbox {
+  color: gray; // Default checkbox color
+  &.Mui-checked {
+    color: #f00757; // Checked color
+  }
+  &:hover {
+    background-color: rgba(255, 64, 129, 0.1); // Light hover effect
+  }
+  &.Mui-focusVisible {
+    outline: 2px solid #f00757; // Focus outline
+  }
+}
+.activeTabStyle {
+  & .MuiTabs-indicator {
+    background-color: #f00757; // Change indicator color
+  }
+}
+.tabStyle {
+  color: #333; // Default tab text color
+  &.Mui-selected {
+    color: #f00757; // Active tab text color
+    background-color: #ffe1e7; // Active tab background color
+  }
+  &:hover {
+    background-color: #ffe1e7;
+    color: #f00757; // Hover effect on active tab
+  }
+}

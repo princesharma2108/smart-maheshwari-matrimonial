@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthDivider from 'sections/auth/AuthDivider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import 'assets/styles/styles.scss';
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -57,7 +58,13 @@ export default function UploadBiodata() {
 
         {/* Upload Button */}
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} sx={{ backgroundColor: '#1976d2', color: '#fff' }}>
+          <Button
+            variant="contained"
+            component="label"
+            startIcon={<CloudUploadIcon />}
+            //sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+            className="buttonStyle"
+          >
             Choose File
             <input type="file" accept="application/pdf" {...register('biodata', { required: true })} onChange={handleFileChange} hidden />
           </Button>
@@ -84,7 +91,15 @@ export default function UploadBiodata() {
 
         {/* Upload Button */}
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary" fullWidth onClick={handleSubmit(onSubmit)} disabled={!fileName}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleSubmit(onSubmit)}
+            disabled={!fileName}
+            className="buttonStyle"
+          >
             Upload
           </Button>
         </Grid>

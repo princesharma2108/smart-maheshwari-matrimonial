@@ -1,0 +1,12 @@
+.topButtons {
+  width: 100%;
+  // background-color: rgba(219, 224, 229, 0.65);
+  // background-color: var(--mui-bg-paper);
+  color: #f00757;
+  background-color: transparent;
+  border: 2px solid #f00757;
+  border-radius: 1000px;
+  &:hover {
+    background-color: transparent;
+  }
+}

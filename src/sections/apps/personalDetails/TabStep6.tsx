@@ -11,7 +11,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
-
+import 'assets/styles/styles.scss';
 // Project Imports
 import MainCard from 'components/MainCard';
 
@@ -47,7 +47,7 @@ export default function TabStep6() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="gotra">Gotra</InputLabel>
-                    <Select fullWidth id="gotra" value={gotra} onChange={handleGotraChange} displayEmpty>
+                    <Select fullWidth id="gotra" value={gotra} onChange={handleGotraChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Gotra
                       </MenuItem>
@@ -61,7 +61,9 @@ export default function TabStep6() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <FormControlLabel
-                      control={<Checkbox checked={gunnMatchingImportant} onChange={handleGunnMatchingChange} />}
+                      control={
+                        <Checkbox checked={gunnMatchingImportant} onChange={handleGunnMatchingChange} className="inputFieldCheckbox" />
+                      }
                       label="Is Gunn Matching Important for You"
                     />
                   </Stack>
@@ -75,7 +77,7 @@ export default function TabStep6() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="manglik">Manglik</InputLabel>
-                    <Select fullWidth id="manglik" value={manglik} onChange={handleManglikChange} displayEmpty>
+                    <Select fullWidth id="manglik" value={manglik} onChange={handleManglikChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Manglik Status
                       </MenuItem>
@@ -88,7 +90,13 @@ export default function TabStep6() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <FormControlLabel
-                      control={<Checkbox checked={includeUnknownManglik} onChange={handleIncludeUnknownManglikChange} />}
+                      control={
+                        <Checkbox
+                          checked={includeUnknownManglik}
+                          onChange={handleIncludeUnknownManglikChange}
+                          className="inputFieldCheckbox"
+                        />
+                      }
                       label="Include Profiles who don't know if they are Manglik or not"
                     />
                   </Stack>
@@ -104,7 +112,9 @@ export default function TabStep6() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

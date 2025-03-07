@@ -13,7 +13,7 @@ import { APP_DEFAULT_PATH } from 'config';
 
 // assets
 import { DocumentText, Lock, Profile, Profile2User, Setting3, TableDocument } from 'iconsax-react';
-
+import 'assets/styles/styles.scss';
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
 export default function AccountProfile() {
@@ -90,14 +90,33 @@ export default function AccountProfile() {
       <Breadcrumbs custom heading={breadcrumbHeading} links={breadcrumbLinks} />
       <MainCard border={false}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
-          <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons="auto" aria-label="account profile tab">
-            <Tab label="Step 1" component={Link} to="/apps/profiles/account/step1" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 2" component={Link} to="/apps/profiles/account/step2" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 3" component={Link} to="/apps/profiles/account/step3" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 4" component={Link} to="/apps/profiles/account/step4" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 5" component={Link} to="/apps/profiles/account/step5" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 6" component={Link} to="/apps/profiles/account/step6" icon={<DocumentText />} iconPosition="start" />
-            <Tab label="Step 7" component={Link} to="/apps/profiles/account/step7" icon={<DocumentText />} iconPosition="start" />
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            aria-label="account profile tab"
+            className="activeTabStyle"
+          >
+            {[
+              { label: 'Step 1', path: '/apps/profiles/account/step1' },
+              { label: 'Step 2', path: '/apps/profiles/account/step2' },
+              { label: 'Step 3', path: '/apps/profiles/account/step3' },
+              { label: 'Step 4', path: '/apps/profiles/account/step4' },
+              { label: 'Step 5', path: '/apps/profiles/account/step5' },
+              { label: 'Step 6', path: '/apps/profiles/account/step6' },
+              { label: 'Step 7', path: '/apps/profiles/account/step7' }
+            ].map((tab, index) => (
+              <Tab
+                key={index}
+                label={tab.label}
+                component={Link}
+                to={tab.path}
+                icon={<DocumentText />}
+                iconPosition="start"
+                className="tabStyle"
+              />
+            ))}
           </Tabs>
         </Box>
         <Box sx={{ mt: 2.5 }}>

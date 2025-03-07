@@ -42,23 +42,25 @@ export default function NavItem({ item, level, isParents = false }: Props) {
   if (item.target) {
     itemTarget = '_blank';
   }
+  const { pathname } = useLocation();
+  const isSelected = !!matchPath({ path: item?.link ? item.link : item.url!, end: false }, pathname);
 
+  const textColor = mode === ThemeMode.DARK ? 'secondary.400' : 'secondary.main';
+  //const iconSelectedColor = 'primary.main';
+  const iconSelectedColor = '#f00757'; // New selected color
   const Icon = item.icon!;
   const itemIcon = item.icon ? (
     <Icon
       variant="Bulk"
       size={drawerOpen ? 20 : 22}
-      style={{ ...(menuOrientation === MenuOrientation.HORIZONTAL && isParents && { fontSize: 20, stroke: '1.5' }) }}
+      style={{
+        color: isSelected ? iconSelectedColor : 'inherit',
+        ...(menuOrientation === MenuOrientation.HORIZONTAL && isParents && { fontSize: 20, stroke: '1.5' })
+      }}
     />
   ) : (
     false
   );
-
-  const { pathname } = useLocation();
-  const isSelected = !!matchPath({ path: item?.link ? item.link : item.url!, end: false }, pathname);
-
-  const textColor = mode === ThemeMode.DARK ? 'secondary.400' : 'secondary.main';
-  const iconSelectedColor = 'primary.main';
 
   return (
     <>
@@ -77,7 +79,7 @@ export default function NavItem({ item, level, isParents = false }: Props) {
                   py: !drawerOpen && level === 1 ? 1.25 : 1,
                   ...(drawerOpen && {
                     '&:hover': { bgcolor: 'transparent' },
-                    '&.Mui-selected': { '&:hover': { bgcolor: 'transparent' }, bgcolor: 'transparent' }
+                    '&.Mui-selected': { bgcolor: '#FFE1E7', '&:hover': { bgcolor: '#FFE1E7' } }
                   }),
                   ...(drawerOpen &&
                     level === 1 && {
@@ -85,13 +87,17 @@ export default function NavItem({ item, level, isParents = false }: Props) {
                       my: 0.5,
                       borderRadius: 1,
                       '&:hover': { bgcolor: mode === ThemeMode.DARK ? 'divider' : 'secondary.200' },
-                      '&.Mui-selected': { color: iconSelectedColor, '&:hover': { color: iconSelectedColor } }
+                      '&.Mui-selected': {
+                        color: iconSelectedColor,
+                        bgcolor: '#FFE1E7',
+                        '&:hover': { color: iconSelectedColor, bgcolor: '#FFE1E7' }
+                      }
                     }),
                   ...(!drawerOpen && {
                     px: 2.75,
                     justifyContent: 'center',
                     '&:hover': { bgcolor: 'transparent' },
-                    '&.Mui-selected': { '&:hover': { bgcolor: 'transparent' }, bgcolor: 'transparent' }
+                    '&.Mui-selected': { '&:hover': { bgcolor: '#FFE1E7' }, bgcolor: '#FFE1E7' }
                   })
                 }}
                 {...(downLG && { onClick: () => handlerDrawerOpen(false) })}
@@ -112,9 +118,9 @@ export default function NavItem({ item, level, isParents = false }: Props) {
                         }),
                       ...(!drawerOpen &&
                         isSelected && {
-                          bgcolor: mode === ThemeMode.DARK ? 'secondary.100' : 'primary.lighter',
+                          bgcolor: mode === ThemeMode.DARK ? 'secondary.100' : '#FFE1E7',
                           '&:hover': {
-                            bgcolor: mode === ThemeMode.DARK ? 'secondary.200' : 'primary.lighter'
+                            bgcolor: mode === ThemeMode.DARK ? 'secondary.200' : '#FFE1E7'
                           }
                         })
                     }}
@@ -185,13 +191,13 @@ export default function NavItem({ item, level, isParents = false }: Props) {
                         height: 20,
                         p: 0.25,
                         color: 'secondary.dark',
-                        borderColor: isSelected ? 'primary.light' : 'secondary.light',
-                        '&:hover': { borderColor: isSelected ? 'primary.main' : 'secondary.main' }
+                        borderColor: isSelected ? '#FFE1E7' : 'secondary.light',
+                        '&:hover': { borderColor: isSelected ? '#FFE1E7' : 'secondary.main' }
                       }}
                     >
                       <ActionIcon
                         size={12}
-                        color={mode === ThemeMode.DARK ? theme.palette.secondary[400] : theme.palette.secondary.main}
+                        color={mode === ThemeMode.DARK ? theme.palette.secondary[400] : '#FFE1E7'}
                         style={{ marginLeft: 1 }}
                       />
                     </IconButton>

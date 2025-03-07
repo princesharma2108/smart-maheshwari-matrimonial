@@ -25,7 +25,7 @@ const widget: NavItemType = {
   children: [
     {
       id: 'statistics',
-      title: <FormattedMessage id="dashboard" />,
+      title: <FormattedMessage id="Latest Matches" />,
       type: 'item',
       url: '/widget/statistics',
       icon: icons.statistics

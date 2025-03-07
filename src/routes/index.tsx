@@ -11,6 +11,9 @@ import Register from 'pages/auth/auth1/register';
 import ForgotPassword from 'pages/auth/auth1/forgot-password';
 import UploadBiodata from 'pages/apps/uploadBiodata/uploadBiodata';
 import PersonalDetails from 'pages/apps/personalDetails/personalDetails';
+import Preferences from 'pages/apps/preferences/preferences';
+import AdditionalInformation from 'pages/apps/additionalInformation/additionalInformation';
+import UploadPhotos from 'pages/apps/uploadPhotos/uploadPhotos';
 
 // ==============================|| ROUTES RENDER ||============================== //
 
@@ -73,6 +76,36 @@ const router = createBrowserRouter(
         {
           index: true,
           element: <PersonalDetails />
+        }
+      ]
+    },
+    {
+      path: '/preferences',
+      element: <Preferences />,
+      children: [
+        {
+          index: true,
+          element: <Preferences />
+        }
+      ]
+    },
+    {
+      path: '/additional-information',
+      element: <AdditionalInformation />,
+      children: [
+        {
+          index: true,
+          element: <AdditionalInformation />
+        }
+      ]
+    },
+    {
+      path: '/upload-photos',
+      element: <UploadPhotos />,
+      children: [
+        {
+          index: true,
+          element: <UploadPhotos />
         }
       ]
     },
