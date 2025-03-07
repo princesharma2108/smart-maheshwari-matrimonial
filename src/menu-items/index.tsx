@@ -9,7 +9,7 @@ import { NavItemType } from 'types/menu';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [widget, applications]
+  items: [applications]
 };
 
 export default menuItems;
