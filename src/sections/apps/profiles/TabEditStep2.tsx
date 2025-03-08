@@ -49,7 +49,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="height">Height</InputLabel>
-                <Select fullWidth value={height} onChange={handleHeightChange} displayEmpty>
+                <Select fullWidth value={height} onChange={handleHeightChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Height
                   </MenuItem>
@@ -64,7 +64,14 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="weight">Weight (kg)</InputLabel>
-                <TextField fullWidth id="weight" value={weight} onChange={handleWeightChange} placeholder="Enter weight" />
+                <TextField
+                  fullWidth
+                  id="weight"
+                  value={weight}
+                  onChange={handleWeightChange}
+                  placeholder="Enter weight"
+                  className="inputField"
+                />
               </Stack>
             </Grid>
 
@@ -72,7 +79,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="gender">Gender</InputLabel>
-                <Select fullWidth value={gender} onChange={handleGenderChange} displayEmpty>
+                <Select fullWidth value={gender} onChange={handleGenderChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Gender
                   </MenuItem>
@@ -87,7 +94,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
-                <Select fullWidth value={hobbies} onChange={handleHobbiesChange} displayEmpty>
+                <Select fullWidth value={hobbies} onChange={handleHobbiesChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Hobby
                   </MenuItem>
@@ -110,7 +117,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="disability">Disability</InputLabel>
-                <Select fullWidth value={disability} onChange={handleDisabilityChange} displayEmpty>
+                <Select fullWidth value={disability} onChange={handleDisabilityChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Disability
                   </MenuItem>
@@ -126,7 +133,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="blood-group">Blood Group</InputLabel>
-                <Select fullWidth value={bloodGroup} onChange={handleBloodGroupChange} displayEmpty>
+                <Select fullWidth value={bloodGroup} onChange={handleBloodGroupChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Blood Group
                   </MenuItem>
@@ -146,7 +153,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="complexion">Complexion</InputLabel>
-                <Select fullWidth value={complexion} onChange={handleComplexionChange} displayEmpty>
+                <Select fullWidth value={complexion} onChange={handleComplexionChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Complexion
                   </MenuItem>
@@ -161,7 +168,7 @@ export default function TabEditStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="marital-status">Marital Status</InputLabel>
-                <Select fullWidth value={maritalStatus} onChange={handleMaritalStatusChange} displayEmpty>
+                <Select fullWidth value={maritalStatus} onChange={handleMaritalStatusChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Marital Status
                   </MenuItem>
@@ -182,7 +189,9 @@ export default function TabEditStep2() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

@@ -29,7 +29,7 @@ import defaultImages from 'assets/images/users/default.png';
 // assets
 import { Apple, Camera, Facebook, Google } from 'iconsax-react';
 import Autocomplete from '@mui/material/Autocomplete';
-
+import 'assets/styles/styles.scss';
 // styles & constant
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -46,8 +46,7 @@ const MenuProps = {
 export default function TabEditStep1() {
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
-  const [firstName, setFirstName] = useState('Anshan');
-  const [lastName, setLastName] = useState('Handgun');
+  const [fullName, setFullName] = useState('Anshul Raj');
   const [avatar, setAvatar] = useState<string | undefined>(defaultImages);
   const [timeOfBirth, setTimeOfBirth] = useState<Dayjs | null>(null);
   const [dateOfBirth, setDateOfBirth] = useState<Dayjs | null>(null);
@@ -74,98 +73,43 @@ export default function TabEditStep1() {
       <Grid item xs={12} sm={12}>
         <MainCard title="Let's know you better">
           <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Stack spacing={2.5} alignItems="center" sx={{ m: 3 }}>
-                <FormLabel
-                  htmlFor="change-avtar"
-                  sx={{
-                    position: 'relative',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    '&:hover .MuiBox-root': { opacity: 1 },
-                    cursor: 'pointer'
-                  }}
-                >
-                  <Avatar alt="Avatar 1" src={avatar} sx={{ width: 76, height: 76 }} />
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      backgroundColor: theme.palette.mode === ThemeMode.DARK ? 'rgba(255, 255, 255, .75)' : 'rgba(0,0,0,.65)',
-                      width: '100%',
-                      height: '100%',
-                      opacity: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Stack spacing={0.5} alignItems="center">
-                      <Camera style={{ color: theme.palette.secondary.lighter, fontSize: '1.5rem' }} />
-                      <Typography sx={{ color: 'secondary.lighter' }} variant="caption">
-                        Upload
-                      </Typography>
-                    </Stack>
-                  </Box>
-                </FormLabel>
-                <TextField
-                  type="file"
-                  id="change-avtar"
-                  placeholder="Outlined"
-                  variant="outlined"
-                  sx={{ display: 'none' }}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedImage(e.target.files?.[0])}
-                />
-              </Stack>
-            </Grid>
             {/* First Name */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="personal-first-name">First Name</InputLabel>
+                <InputLabel htmlFor="personal-full-name">Full Name</InputLabel>
                 <TextField
                   fullWidth
-                  id="personal-first-name"
-                  placeholder="First Name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
+                  id="personal-full-name"
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   autoFocus
+                  className="inputField"
                 />
               </Stack>
             </Grid>
-            {/* Last Name */}
-            <Grid item xs={12} sm={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="personal-last-name">Last Name</InputLabel>
-                <TextField
-                  fullWidth
-                  id="personal-last-name"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="personal-time-of-birth">Time of Birth</InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
                     value={timeOfBirth}
                     onChange={(newValue) => setTimeOfBirth(newValue)}
-                    slotProps={{ textField: { fullWidth: true } }} // ✅ Correct way to pass props
+                    slotProps={{ textField: { fullWidth: true } }}
+                    className="inputField" // ✅ Correct way to pass props
                   />
                 </LocalizationProvider>
               </Stack>
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="personal-date-of-birth">Date of Birth</InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={dateOfBirth}
                     onChange={(newValue) => setDateOfBirth(newValue)}
-                    slotProps={{ textField: { fullWidth: true } }} // ✅ Correct prop usage
+                    slotProps={{ textField: { fullWidth: true } }}
+                    className="inputField" // ✅ Correct prop usage
                   />
                 </LocalizationProvider>
               </Stack>
@@ -183,6 +127,7 @@ export default function TabEditStep1() {
                     fetchPlaces(newInputValue);
                   }}
                   renderInput={(params) => <TextField {...params} placeholder="Enter place of birth" fullWidth />}
+                  className="inputField"
                 />
               </Stack>
             </Grid>
@@ -194,7 +139,9 @@ export default function TabEditStep1() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

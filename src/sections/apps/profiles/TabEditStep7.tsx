@@ -52,6 +52,7 @@ export default function TabEditStep7() {
                       value={residentialAddress}
                       onChange={handleResidentialAddressChange}
                       autoFocus
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -64,6 +65,7 @@ export default function TabEditStep7() {
                       placeholder="Enter Phone Number"
                       value={phoneNumber}
                       onChange={handlePhoneNumberChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -76,6 +78,7 @@ export default function TabEditStep7() {
                       placeholder="Enter Email Address"
                       value={emailAddress}
                       onChange={handleEmailAddressChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -88,6 +91,7 @@ export default function TabEditStep7() {
                       placeholder="Enter Alternate Contact Number"
                       value={alternateContact}
                       onChange={handleAlternateContactChange}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -100,7 +104,7 @@ export default function TabEditStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="country">Country</InputLabel>
-                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty>
+                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty className="inputField">
                       <MenuItem value="" disabled>
                         Select Country
                       </MenuItem>
@@ -115,7 +119,7 @@ export default function TabEditStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="state">State</InputLabel>
-                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty>
+                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty className="inputField">
                       <MenuItem value="" disabled>
                         Select State
                       </MenuItem>
@@ -130,7 +134,7 @@ export default function TabEditStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="city">City</InputLabel>
-                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty>
+                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty className="inputField">
                       <MenuItem value="" disabled>
                         Select City
                       </MenuItem>
@@ -153,7 +157,7 @@ export default function TabEditStep7() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained" onClick={() => {}}>
+          <Button variant="contained" className="buttonStyle" onClick={() => {}}>
             Continue
           </Button>
         </Stack>

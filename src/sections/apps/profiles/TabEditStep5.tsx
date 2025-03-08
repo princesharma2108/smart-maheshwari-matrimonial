@@ -49,6 +49,7 @@ export default function TabEditStep5() {
                       value={highestQualification}
                       onChange={(e) => setHighestQualification(e.target.value)}
                       autoFocus
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -61,13 +62,21 @@ export default function TabEditStep5() {
                       placeholder="Enter Additional Qualification"
                       value={additionalQualification}
                       onChange={(e) => setAdditionalQualification(e.target.value)}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="occupation">Occupation</InputLabel>
-                    <Select fullWidth id="occupation" value={occupation} onChange={handleOccupationChange} displayEmpty>
+                    <Select
+                      fullWidth
+                      id="occupation"
+                      value={occupation}
+                      onChange={handleOccupationChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Occupation
                       </MenuItem>
@@ -91,6 +100,7 @@ export default function TabEditStep5() {
                       placeholder="Enter Company/Business Name"
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
+                      className="inputField"
                     />
                   </Stack>
                 </Grid>
@@ -103,7 +113,14 @@ export default function TabEditStep5() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="working-with">Working With</InputLabel>
-                    <Select fullWidth id="working-with" value={workingWith} onChange={handleWorkingWithChange} displayEmpty>
+                    <Select
+                      fullWidth
+                      id="working-with"
+                      value={workingWith}
+                      onChange={handleWorkingWithChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Work Type
                       </MenuItem>
@@ -118,7 +135,14 @@ export default function TabEditStep5() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="annual-income">Annual Income</InputLabel>
-                    <Select fullWidth id="annual-income" value={annualIncome} onChange={handleAnnualIncomeChange} displayEmpty>
+                    <Select
+                      fullWidth
+                      id="annual-income"
+                      value={annualIncome}
+                      onChange={handleAnnualIncomeChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Annual Income
                       </MenuItem>
@@ -132,7 +156,14 @@ export default function TabEditStep5() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="languages-known">Languages Known</InputLabel>
-                    <Select fullWidth id="languages-known" value={languagesKnown} onChange={handleLanguagesKnownChange} displayEmpty>
+                    <Select
+                      fullWidth
+                      id="languages-known"
+                      value={languagesKnown}
+                      onChange={handleLanguagesKnownChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Languages Known
                       </MenuItem>
@@ -156,7 +187,9 @@ export default function TabEditStep5() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

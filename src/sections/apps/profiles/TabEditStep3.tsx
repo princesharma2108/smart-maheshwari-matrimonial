@@ -37,7 +37,7 @@ export default function TabEditStep3() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="drinking-habits">Drinking Habits</InputLabel>
-                <Select fullWidth value={drinking} onChange={handleDrinkingChange} displayEmpty>
+                <Select fullWidth value={drinking} onChange={handleDrinkingChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Drinking Habits
                   </MenuItem>
@@ -52,7 +52,7 @@ export default function TabEditStep3() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="smoking-habits">Smoking Habits</InputLabel>
-                <Select fullWidth value={smoking} onChange={handleSmokingChange} displayEmpty>
+                <Select fullWidth value={smoking} onChange={handleSmokingChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Smoking Habits
                   </MenuItem>
@@ -67,7 +67,7 @@ export default function TabEditStep3() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="dietary-habits">Dietary Habits</InputLabel>
-                <Select fullWidth value={dietaryHabits} onChange={handleDietaryHabitsChange} displayEmpty>
+                <Select fullWidth value={dietaryHabits} onChange={handleDietaryHabitsChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Dietary Habits
                   </MenuItem>
@@ -88,7 +88,9 @@ export default function TabEditStep3() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>
