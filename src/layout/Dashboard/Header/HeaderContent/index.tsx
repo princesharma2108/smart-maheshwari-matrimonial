@@ -35,15 +35,15 @@ export default function HeaderContent() {
     <>
       {menuOrientation === MenuOrientation.HORIZONTAL && !downLG && <DrawerHeader open={true} />}
       {!downLG && <Search />}
-      {!downLG && megaMenu}
-      {!downLG && localization}
+      {/* {!downLG && megaMenu}
+      {!downLG && localization} */}
       {downLG && <Box sx={{ width: '100%', ml: 1 }} />}
 
       <Notification />
-      <FullScreen />
-      <Message />
-      {!downLG && <Profile />}
-      {downLG && <MobileSection />}
+      {/* <FullScreen />
+      <Message /> */}
+      {/* {!downLG && <Profile />}
+      {downLG && <MobileSection />} */}
     </>
   );
 }

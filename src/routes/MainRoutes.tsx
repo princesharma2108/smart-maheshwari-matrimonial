@@ -28,6 +28,9 @@ const UserTabPassword = Loadable(lazy(() => import('sections/apps/profiles/user/
 const UserTabSettings = Loadable(lazy(() => import('sections/apps/profiles/user/TabSettings')));
 
 const AppLatestMatches = Loadable(lazy(() => import('pages/apps/latestMatches/latestMatches')));
+const AppAdvancedSearch = Loadable(lazy(() => import('pages/apps/advancedSearch/advancedSearch')));
+const AppContactSuppport = Loadable(lazy(() => import('pages/apps/contactSupport/contactSupport')));
+const AppFeedback = Loadable(lazy(() => import('pages/apps/appFeedback/appFeedback')));
 
 const AccountProfile = Loadable(lazy(() => import('pages/apps/profiles/account')));
 const AccountTabProfile = Loadable(lazy(() => import('sections/apps/profiles/account/TabProfile')));
@@ -127,6 +130,33 @@ const MainRoutes = {
                 {
                   path: 'latestMatches',
                   element: <AppLatestMatches />
+                }
+              ]
+            },
+            {
+              path: 'appFeedback',
+              children: [
+                {
+                  path: 'appFeedback',
+                  element: <AppFeedback />
+                }
+              ]
+            },
+            {
+              path: 'contactSupport',
+              children: [
+                {
+                  path: 'contactSupport',
+                  element: <AppContactSuppport />
+                }
+              ]
+            },
+            {
+              path: 'advancedSearch',
+              children: [
+                {
+                  path: 'advancedSearch',
+                  element: <AppAdvancedSearch />
                 }
               ]
             },
