@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 
 // ==============================|| ACCOUNT PROFILE - LIFESTYLE PREFERENCES ||============================== //
 
-export default function LifestylePreferences() {
+export default function LifestylePreferencesEdit() {
   const theme = useTheme();
   const navigate = useNavigate();
   // State Variables

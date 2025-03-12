@@ -32,7 +32,7 @@ interface Props {
 
 // ==============================|| USER PROFILE - TABS ||============================== //
 
-export default function ProfileTabs({ focusInput }: Props) {
+export default function ProfileDetails({ focusInput }: Props) {
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const [avatar, setAvatar] = useState<string | undefined>(defaultImages);

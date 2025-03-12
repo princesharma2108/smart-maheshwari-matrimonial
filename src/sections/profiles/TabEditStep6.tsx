@@ -112,7 +112,9 @@ export default function TabEditStep6() {
           <Button variant="outlined" color="secondary">
             Previous
           </Button>
-          <Button variant="contained">Continue</Button>
+          <Button variant="contained" className="buttonStyle">
+            Continue
+          </Button>
         </Stack>
       </Grid>
     </Grid>

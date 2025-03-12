@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+import { Children, lazy } from 'react';
 
 // project-imports
 import ErrorBoundary from './ErrorBoundary';
@@ -26,7 +26,12 @@ const UserTabPersonal = Loadable(lazy(() => import('sections/apps/profiles/user/
 const UserTabPayment = Loadable(lazy(() => import('sections/apps/profiles/user/TabPayment')));
 const UserTabPassword = Loadable(lazy(() => import('sections/apps/profiles/user/TabPassword')));
 const UserTabSettings = Loadable(lazy(() => import('sections/apps/profiles/user/TabSettings')));
+const UserPersonalDetailsEdit = Loadable(lazy(() => import('sections/apps/profiles/user/personalDetailsEdit')));
 
+const AppEditProfile = Loadable(lazy(() => import('pages/apps/editProfile/editProfile')));
+const AppPersonalDetailsEdit = Loadable(lazy(() => import('sections/apps/editProfile/editProfile/personalDetailsEdit')));
+const EditAdjustPreference = Loadable(lazy(() => import('sections/apps/editProfile/editProfile/preferencesEdit')));
+const AppEditPhotos = Loadable(lazy(() => import('sections/apps/editProfile/editProfile/editPhotos')));
 const AppLatestMatches = Loadable(lazy(() => import('pages/apps/latestMatches/latestMatches')));
 const AppAdvancedSearch = Loadable(lazy(() => import('pages/apps/advancedSearch/advancedSearch')));
 const AppContactSuppport = Loadable(lazy(() => import('pages/apps/contactSupport/contactSupport')));
@@ -39,13 +44,6 @@ const AccountTabAccount = Loadable(lazy(() => import('sections/apps/profiles/acc
 const AccountTabPassword = Loadable(lazy(() => import('sections/apps/profiles/account/TabPassword')));
 const AccountTabRole = Loadable(lazy(() => import('sections/apps/profiles/account/TabRole')));
 const AccountTabSettings = Loadable(lazy(() => import('sections/apps/profiles/account/TabSettings')));
-const AccountTabStep1 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep1')));
-const AccountTabStep2 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep2')));
-const AccountTabStep3 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep3')));
-const AccountTabStep4 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep4')));
-const AccountTabStep5 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep5')));
-const AccountTabStep6 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep6')));
-const AccountTabStep7 = Loadable(lazy(() => import('sections/apps/profiles/TabEditStep7')));
 
 const AppECommProducts = Loadable(lazy(() => import('pages/apps/e-commerce/product')));
 const AppECommProductDetails = Loadable(lazy(() => import('pages/apps/e-commerce/product-details')));
@@ -160,7 +158,38 @@ const MainRoutes = {
                 }
               ]
             },
-            {},
+            {
+              path: 'preferencesEdit',
+              children: [
+                {
+                  path: 'preferencesEdit',
+                  element: <EditAdjustPreference />
+                }
+              ]
+            },
+            {
+              path: 'editProfile',
+              children: [
+                {
+                  path: 'editProfile',
+                  element: <AppEditProfile />,
+                  children: [
+                    {
+                      path: 'personalDetailsEdit',
+                      element: <AppPersonalDetailsEdit />
+                    },
+                    {
+                      path: 'preferencesEdit',
+                      element: <EditAdjustPreference />
+                    },
+                    {
+                      path: 'editPhotos',
+                      element: <AppEditPhotos />
+                    }
+                  ]
+                }
+              ]
+            },
             {
               path: 'profiles',
               children: [
@@ -191,34 +220,6 @@ const MainRoutes = {
                     {
                       path: 'settings',
                       element: <AccountTabSettings />
-                    },
-                    {
-                      path: 'step1',
-                      element: <AccountTabStep1 />
-                    },
-                    {
-                      path: 'step2',
-                      element: <AccountTabStep2 />
-                    },
-                    {
-                      path: 'step3',
-                      element: <AccountTabStep3 />
-                    },
-                    {
-                      path: 'step4',
-                      element: <AccountTabStep4 />
-                    },
-                    {
-                      path: 'step5',
-                      element: <AccountTabStep5 />
-                    },
-                    {
-                      path: 'step6',
-                      element: <AccountTabStep6 />
-                    },
-                    {
-                      path: 'step7',
-                      element: <AccountTabStep7 />
                     }
                   ]
                 },

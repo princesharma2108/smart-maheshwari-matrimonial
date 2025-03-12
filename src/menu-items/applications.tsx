@@ -74,8 +74,8 @@ const applications: NavItemType = {
       title: <FormattedMessage id="Edit Profile" />,
       type: 'item',
       icon: icons.profile,
-      url: '/apps/profiles/account/step1',
-      link: '/apps/profiles/account/:tab',
+      url: 'apps/editProfile/editProfile/personalDetailsEdit',
+      //link: '/apps/profiles/account/:tab',
       breadcrumbs: false
     },
     {

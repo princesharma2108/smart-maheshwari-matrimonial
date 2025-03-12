@@ -8,7 +8,7 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 
-export default function UploadPhotos() {
+export default function Questionare() {
   const { register, handleSubmit, reset } = useForm();
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -21,7 +21,6 @@ export default function UploadPhotos() {
     }
     console.log('Uploaded Photos:', images);
     navigate('/widget/statistics');
-    //navigate('/questionare');
     reset();
     setImages([]);
     setPreviews([]);
@@ -54,7 +53,7 @@ export default function UploadPhotos() {
       <Grid container spacing={3} justifyContent="center">
         {/* Title */}
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Typography variant="h3">Upload Photos</Typography>
+          <Typography variant="h3">Questionare</Typography>
           <Typography variant="body1" sx={{ mt: 1, color: 'gray' }}>
             You must upload at least 2 photos and a maximum of 10 photos.
           </Typography>

@@ -1,24 +1,25 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Typography, Grid, IconButton } from '@mui/material';
+import { Box, Button, Typography, Grid, IconButton, Link } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthDivider from 'sections/auth/AuthDivider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const navigate = useNavigate();
+
   // Handle form submission
   const onSubmit = (data: any) => {
     navigate('/personal-details');
-    console.log('Uploaded Biodata:', data.biodata[0]);
-    //alert('Biodata uploaded successfully!');
-    reset(); // Reset form after submission
-    handleRemoveFile(); // Remove file after upload
+    console.log('Uploaded Biodata:', data.biodata?.[0]);
+    reset();
+    handleRemoveFile();
   };
 
   // Handle file selection and preview
@@ -30,7 +31,7 @@ export default function UploadBiodata() {
         return;
       }
       setFilePreview(URL.createObjectURL(file));
-      setFileName(file.name); // Store filename
+      setFileName(file.name);
     }
   };
 
@@ -38,7 +39,7 @@ export default function UploadBiodata() {
   const handleRemoveFile = () => {
     setFilePreview(null);
     setFileName(null);
-    reset(); // Reset form field
+    reset();
   };
 
   return (
@@ -58,13 +59,7 @@ export default function UploadBiodata() {
 
         {/* Upload Button */}
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<CloudUploadIcon />}
-            //sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-            className="buttonStyle"
-          >
+          <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} className="buttonStyle">
             Choose File
             <input type="file" accept="application/pdf" {...register('biodata', { required: true })} onChange={handleFileChange} hidden />
           </Button>
@@ -102,6 +97,20 @@ export default function UploadBiodata() {
           >
             Upload
           </Button>
+        </Grid>
+
+        {/* Skip Link */}
+        <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography variant="body2">
+            If you don't have biodata, then{' '}
+            <Link
+              component={RouterLink}
+              to="/personal-details"
+              sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              Skip
+            </Link>
+          </Typography>
         </Grid>
       </Grid>
     </AuthWrapper>

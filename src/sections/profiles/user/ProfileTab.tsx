@@ -13,13 +13,13 @@ import { CardCoin, Lock, Profile, Setting3 } from 'iconsax-react';
 function getPathIndex(pathname: string) {
   let selectedTab = 0;
   switch (pathname) {
-    case '/apps/profiles/user/payment':
+    case 'sections/apps/profiles/account/TabAccount':
       selectedTab = 1;
       break;
     case '/apps/profiles/user/password':
       selectedTab = 2;
       break;
-    case '/apps/editProfile/editProfile/personalDetailsEdit':
+    case '/apps/profiles/user/personal':
     default:
       selectedTab = 0;
   }
@@ -33,9 +33,9 @@ export default function ProfileTab() {
   const { pathname } = useLocation();
 
   const [selectedIndex, setSelectedIndex] = useState(getPathIndex(pathname));
-  const handleListItemClick = (index: number, route: string) => {
+  const handleListItemClick = (index: number) => {
     setSelectedIndex(index);
-    navigate(route);
+    //navigate(route);
   };
 
   useEffect(() => {
@@ -46,20 +46,35 @@ export default function ProfileTab() {
     <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: 'secondary.main' } }}>
       <ListItemButton
         selected={selectedIndex === 0}
-        onClick={() => handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit')}
+        onClick={() => {
+          navigate('sections/apps/profiles/account/TabAccount');
+          handleListItemClick(0);
+        }}
       >
         <ListItemIcon>
           <Profile size={18} />
         </ListItemIcon>
         <ListItemText primary="Personal Details" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(1, '/apps/profiles/user/payment')}>
+      <ListItemButton
+        selected={selectedIndex === 1}
+        onClick={() => {
+          navigate('sections/apps/profiles/account/TabAccount');
+          handleListItemClick(1);
+        }}
+      >
         <ListItemIcon>
           <CardCoin size={18} />
         </ListItemIcon>
-        <ListItemText primary="Adjust Preferenc" />
+        <ListItemText primary="Adjust Preference" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(2, '/apps/profiles/user/password')}>
+      <ListItemButton
+        selected={selectedIndex === 2}
+        onClick={() => {
+          navigate('sections/apps/profiles/account/TabAccount');
+          handleListItemClick(2);
+        }}
+      >
         <ListItemIcon>
           <Lock size={18} />
         </ListItemIcon>

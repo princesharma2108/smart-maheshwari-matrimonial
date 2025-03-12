@@ -105,7 +105,13 @@ const AdditionalInformation: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-              <Button variant="outlined" color="secondary">
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => {
+                  navigate('/preferences');
+                }}
+              >
                 Previous
               </Button>
               <Button

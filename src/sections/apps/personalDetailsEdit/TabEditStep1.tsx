@@ -30,7 +30,6 @@ import defaultImages from 'assets/images/users/default.png';
 import { Apple, Camera, Facebook, Google } from 'iconsax-react';
 import Autocomplete from '@mui/material/Autocomplete';
 import 'assets/styles/styles.scss';
-import { useNavigate } from 'react-router-dom';
 // styles & constant
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -44,8 +43,7 @@ const MenuProps = {
 
 // ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
 
-export default function TabStep1() {
-  const navigate = useNavigate();
+export default function TabEditStep1() {
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const [fullName, setFullName] = useState('Anshul Raj');
@@ -138,13 +136,7 @@ export default function TabStep1() {
       </Grid>
       <Grid item xs={12}>
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              navigate('/upload-biodata');
-            }}
-          >
+          <Button variant="outlined" color="secondary">
             Previous
           </Button>
           <Button variant="contained" className="buttonStyle">

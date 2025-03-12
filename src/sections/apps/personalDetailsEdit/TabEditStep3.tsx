@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -8,16 +8,16 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
 
 // project-imports
 import MainCard from 'components/MainCard';
-import { useNavigate } from 'react-router-dom';
 
-// ==============================|| ACCOUNT PROFILE - LIFESTYLE PREFERENCES ||============================== //
+// ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
 
-export default function LifestylePreferences() {
+export default function TabEditStep3() {
   const theme = useTheme();
-  const navigate = useNavigate();
+
   // State Variables
   const [drinking, setDrinking] = useState('');
   const [smoking, setSmoking] = useState('');
@@ -28,44 +28,37 @@ export default function LifestylePreferences() {
   const handleSmokingChange = (event: SelectChangeEvent) => setSmoking(event.target.value);
   const handleDietaryHabitsChange = (event: SelectChangeEvent) => setDietaryHabits(event.target.value);
 
-  // Common options
-  const options = ['Yes', 'No', 'Occasionally', 'No Preference'];
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
-        <MainCard title="Lifestyle Preferences">
+        <MainCard title="Lifestyle">
           <Grid container spacing={3}>
-            {/* Drinking */}
+            {/* Drinking Habits */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="drinking">Drinking</InputLabel>
+                <InputLabel htmlFor="drinking-habits">Drinking Habits</InputLabel>
                 <Select fullWidth value={drinking} onChange={handleDrinkingChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
-                    Select an option
+                    Select Drinking Habits
                   </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="Never">Never</MenuItem>
+                  <MenuItem value="Occasionally">Occasionally</MenuItem>
+                  <MenuItem value="Frequently">Frequently</MenuItem>
                 </Select>
               </Stack>
             </Grid>
 
-            {/* Smoking */}
+            {/* Smoking Habits */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="smoking">Smoking</InputLabel>
+                <InputLabel htmlFor="smoking-habits">Smoking Habits</InputLabel>
                 <Select fullWidth value={smoking} onChange={handleSmokingChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
-                    Select an option
+                    Select Smoking Habits
                   </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="Non-Smoker">Non-Smoker</MenuItem>
+                  <MenuItem value="Occasionally">Occasionally</MenuItem>
+                  <MenuItem value="Regularly">Regularly</MenuItem>
                 </Select>
               </Stack>
             </Grid>
@@ -76,13 +69,12 @@ export default function LifestylePreferences() {
                 <InputLabel htmlFor="dietary-habits">Dietary Habits</InputLabel>
                 <Select fullWidth value={dietaryHabits} onChange={handleDietaryHabitsChange} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
-                    Select an option
+                    Select Dietary Habits
                   </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
+                  <MenuItem value="Vegetarian">Vegetarian</MenuItem>
+                  <MenuItem value="Non-Vegetarian">Non-Vegetarian</MenuItem>
+                  <MenuItem value="Vegan">Vegan</MenuItem>
+                  <MenuItem value="Eggetarian">Eggetarian</MenuItem>
                 </Select>
               </Stack>
             </Grid>
@@ -93,13 +85,7 @@ export default function LifestylePreferences() {
       {/* Navigation Buttons */}
       <Grid item xs={12}>
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              navigate('/personal-details');
-            }}
-          >
+          <Button variant="outlined" color="secondary">
             Previous
           </Button>
           <Button variant="contained" className="buttonStyle">
