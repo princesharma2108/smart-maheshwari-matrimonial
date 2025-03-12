@@ -20,8 +20,8 @@ export default function UploadPhotos() {
       return;
     }
     console.log('Uploaded Photos:', images);
-    navigate('/widget/statistics');
-    //navigate('/questionare');
+    //navigate('/widget/statistics');
+    navigate('/questionare');
     reset();
     setImages([]);
     setPreviews([]);
