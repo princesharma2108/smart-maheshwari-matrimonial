@@ -33,9 +33,11 @@ const AppPersonalDetailsEdit = Loadable(lazy(() => import('sections/apps/editPro
 const EditAdjustPreference = Loadable(lazy(() => import('sections/apps/editProfile/editProfile/preferencesEdit')));
 const AppEditPhotos = Loadable(lazy(() => import('sections/apps/editProfile/editProfile/editPhotos')));
 const AppLatestMatches = Loadable(lazy(() => import('pages/apps/latestMatches/latestMatches')));
+const AppSubscriptionPlan = Loadable(lazy(() => import('pages/apps/subscriptionPlan/subscriptionPlan')));
 const AppAdvancedSearch = Loadable(lazy(() => import('pages/apps/advancedSearch/advancedSearch')));
 const AppContactSuppport = Loadable(lazy(() => import('pages/apps/contactSupport/contactSupport')));
 const AppFeedback = Loadable(lazy(() => import('pages/apps/appFeedback/appFeedback')));
+const AppAboutUs = Loadable(lazy(() => import('pages/apps/aboutUs/aboutUs')));
 
 const AccountProfile = Loadable(lazy(() => import('pages/apps/profiles/account')));
 const AccountTabProfile = Loadable(lazy(() => import('sections/apps/profiles/account/TabProfile')));
@@ -123,6 +125,15 @@ const MainRoutes = {
               ]
             },
             {
+              path: 'aboutUs',
+              children: [
+                {
+                  path: 'aboutUs',
+                  element: <AppAboutUs />
+                }
+              ]
+            },
+            {
               path: 'latestMatches',
               children: [
                 {
@@ -155,6 +166,15 @@ const MainRoutes = {
                 {
                   path: 'advancedSearch',
                   element: <AppAdvancedSearch />
+                }
+              ]
+            },
+            {
+              path: 'subscriptionPlan',
+              children: [
+                {
+                  path: 'subscriptionPlan',
+                  element: <AppSubscriptionPlan />
                 }
               ]
             },

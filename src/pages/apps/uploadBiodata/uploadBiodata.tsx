@@ -86,15 +86,7 @@ export default function UploadBiodata() {
 
         {/* Upload Button */}
         <Grid item xs={12}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={handleSubmit(onSubmit)}
-            disabled={!fileName}
-            className="buttonStyle"
-          >
+          <Button type="submit" variant="contained" fullWidth onClick={handleSubmit(onSubmit)} disabled={!fileName} className="buttonStyle">
             Upload
           </Button>
         </Grid>

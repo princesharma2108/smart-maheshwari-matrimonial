@@ -70,11 +70,11 @@ const applications: NavItemType = {
       breadcrumbs: true
     },
     {
-      id: 'profile',
+      id: 'editProfile',
       title: <FormattedMessage id="Edit Profile" />,
       type: 'item',
       icon: icons.profile,
-      url: 'apps/editProfile/editProfile/personalDetailsEdit',
+      url: '/apps/editProfile/editProfile/personalDetailsEdit',
       //link: '/apps/profiles/account/:tab',
       breadcrumbs: false
     },
@@ -87,13 +87,29 @@ const applications: NavItemType = {
       breadcrumbs: true
     },
     {
-      id: 'contactSupport',
-      title: <FormattedMessage id="Contact Support" />,
+      id: 'aboutUs',
+      title: <FormattedMessage id="About us" />,
       type: 'item',
-      icon: icons.contactSupport,
-      url: '/apps/contactSupport/contactSupport',
+      icon: icons.appFeedback,
+      url: '/apps/aboutUs/aboutUs',
+      breadcrumbs: true
+    },
+    {
+      id: 'subscriptionPlan',
+      title: <FormattedMessage id="Subscription Plan" />,
+      type: 'item',
+      icon: icons.appFeedback,
+      url: '/apps/subscriptionPlan/subscriptionPlan',
       breadcrumbs: true
     }
+    // {
+    //   id: 'contactSupport',
+    //   title: <FormattedMessage id="Contact Support" />,
+    //   type: 'item',
+    //   icon: icons.contactSupport,
+    //   url: '/apps/contactSupport/contactSupport',
+    //   breadcrumbs: true
+    // }
   ]
 };
 

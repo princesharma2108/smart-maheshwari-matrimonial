@@ -1,12 +1,6 @@
 import { useRef } from 'react';
 import { Outlet } from 'react-router';
-
-// material-ui
 import Grid from '@mui/material/Grid';
-
-// project-imports
-import ProfileCard from 'sections/apps/profiles/user/ProfileCard';
-import ProfileTabs from 'sections/apps/profiles/user/ProfileTabs';
 import ProfileDetails from 'sections/apps/editProfile/profileDetails/ProfileDetails';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import { APP_DEFAULT_PATH } from 'config';
@@ -21,7 +15,7 @@ export default function EditProfile() {
   };
   let breadcrumbLinks = [
     { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Profile Details', to: '/apps/profiles/account/step1' },
+    { title: 'Edit Profile', to: '/apps/profiles/account/step1' },
     { title: 'Edit Profile' }
   ];
   return (
