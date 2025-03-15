@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
 import MainCard from 'components/MainCard';
 import splashLogo from 'assets/images/logo/splashLogo.png';
-
+import AnimateButton from 'components/@extended/AnimateButton';
 const subscriptionPlans = [
   { duration: '1 Month', price: 10 },
   { duration: '6 Months', price: 9 },
@@ -75,6 +75,27 @@ export default function SubscriptionPlan() {
               </Grid>
             );
           })}
+        </Grid>
+        <Grid
+          container
+          justifyContent="center"
+          display={'flex'}
+          flexDirection={'column'}
+          alignItems={'center'}
+          sx={{ textAlign: 'center', mt: 3 }}
+        >
+          <Typography>
+            You agree to the <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>.
+          </Typography>
+          <Typography>Subscription automatically renews unless auto-renew is turned off at least 24 hours</Typography>
+          <Typography>before the end of the current period.</Typography>
+        </Grid>
+        <Grid container justifyContent="center" display={'flex'} alignItems={'center'} sx={{ textAlign: 'center', mt: 3 }}>
+          <AnimateButton>
+            <Button variant="contained" sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}>
+              Start My Membership
+            </Button>
+          </AnimateButton>
         </Grid>
       </MainCard>
     </Grid>

@@ -108,7 +108,7 @@ export default function ProfileDetails({ focusInput }: Props) {
                 cursor: 'pointer'
               }}
             >
-              <Avatar alt="Avatar 1" src={avatar} sx={{ width: 124, height: 124, border: '1px dashed' }} />
+              <Avatar alt="Avatar 1" src={avatar} sx={{ width: 124, height: 124, border: '1px dashed #f00757' }} />
               <Box
                 sx={{
                   position: 'absolute',

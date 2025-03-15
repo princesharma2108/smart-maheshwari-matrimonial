@@ -45,21 +45,6 @@ export default function TabStep2() {
       <Grid item xs={12} sm={6}>
         <MainCard title="">
           <Grid container spacing={3}>
-            {/* Height */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="height">Height</InputLabel>
-                <Select fullWidth value={height} onChange={handleHeightChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select Height
-                  </MenuItem>
-                  <MenuItem value="Short">Short</MenuItem>
-                  <MenuItem value="Medium">Medium</MenuItem>
-                  <MenuItem value="Tall">Tall</MenuItem>
-                </Select>
-              </Stack>
-            </Grid>
-
             {/* Weight */}
             <Grid item xs={12}>
               <Stack spacing={1}>
@@ -72,6 +57,20 @@ export default function TabStep2() {
                   placeholder="Enter weight"
                   className="inputField"
                 />
+              </Stack>
+            </Grid>
+            {/* Height */}
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="height">Height</InputLabel>
+                <Select fullWidth value={height} onChange={handleHeightChange} displayEmpty className="inputFieldLogin">
+                  <MenuItem value="" disabled>
+                    Select Height
+                  </MenuItem>
+                  <MenuItem value="Short">Short</MenuItem>
+                  <MenuItem value="Medium">Medium</MenuItem>
+                  <MenuItem value="Tall">Tall</MenuItem>
+                </Select>
               </Stack>
             </Grid>
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Box, Button, Typography, Grid, Paper, Link } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AuthWrapper from 'sections/auth/AuthWrapper';
-
+import AnimateButton from 'components/@extended/AnimateButton';
 const sections = [
   {
     title: 'Personality Insights',
@@ -225,9 +225,18 @@ export default function Questionnaire() {
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <Button variant="contained" fullWidth onClick={() => setShowQuestions(true)}>
-                Start Now
-              </Button>
+              <AnimateButton>
+                <Button
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  className="buttonStyle"
+                  onClick={() => setShowQuestions(true)}
+                >
+                  Start Now
+                </Button>
+              </AnimateButton>
             </Grid>
             <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
               <Typography variant="body2">

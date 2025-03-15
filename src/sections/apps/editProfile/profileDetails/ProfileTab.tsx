@@ -43,7 +43,32 @@ export default function ProfileTab() {
   }, [pathname]);
 
   return (
-    <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: 'secondary.main' } }}>
+    <List
+      component="nav"
+      sx={{
+        p: 0,
+        '& .MuiListItemIcon-root': {
+          minWidth: 32,
+          color: 'secondary.main' // Default icon color
+        },
+        '& .MuiListItemButton-root': {
+          //color: 'primary.main', // Default text color
+          '&.Mui-selected': {
+            backgroundColor: '#FFE1E7', // Background color when selected
+            color: '#f00757', // Text color when selected
+            '& .MuiListItemIcon-root': {
+              color: '#f00757' // Change icon color when selected
+            },
+            '& .MuiListItemText-primary': {
+              color: '#f00757' // Change text color when selected
+            },
+            '&:hover': {
+              backgroundColor: '#FFE1E7'
+            }
+          }
+        }
+      }}
+    >
       <ListItemButton
         selected={selectedIndex === 0}
         onClick={() => handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit')}
@@ -53,6 +78,7 @@ export default function ProfileTab() {
         </ListItemIcon>
         <ListItemText primary="Personal Details" />
       </ListItemButton>
+
       <ListItemButton
         selected={selectedIndex === 1}
         onClick={() => handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit')}
@@ -62,6 +88,7 @@ export default function ProfileTab() {
         </ListItemIcon>
         <ListItemText primary="Adjust Preference" />
       </ListItemButton>
+
       <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos')}>
         <ListItemIcon>
           <Lock size={18} />

@@ -6,6 +6,7 @@ import { handlerCustomerDialog } from 'api/customer';
 import { NavActionType } from 'config';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import SupportIcon from '@mui/icons-material/Support';
+import InfoIcon from '@mui/icons-material/Info';
 // assets
 import {
   Add,
@@ -26,7 +27,8 @@ import {
 import { NavItemType } from 'types/menu';
 import LatestMatches from 'pages/apps/latestMatches/latestMatches';
 import AdvancedSearch from 'pages/apps/advancedSearch/advancedSearch';
-
+import CardMembershipIcon from '@mui/icons-material/CardMembership';
+import SubscriptionPlan from 'pages/apps/subscriptionPlan/subscriptionPlan';
 // icons
 const icons = {
   applications: KyberNetwork,
@@ -42,7 +44,9 @@ const icons = {
   latestMatches: TrendUp,
   advancedSearch: FilterSearch,
   appFeedback: FeedbackIcon,
-  contactSupport: SupportIcon
+  contactSupport: SupportIcon,
+  aboutUs: InfoIcon,
+  subscriptionPlan: CardMembershipIcon
 };
 
 // ==============================|| MENU ITEMS - APPLICATIONS ||============================== //
@@ -78,28 +82,28 @@ const applications: NavItemType = {
       //link: '/apps/profiles/account/:tab',
       breadcrumbs: false
     },
+    // {
+    //   id: 'appFeedback',
+    //   title: <FormattedMessage id="App Feedback" />,
+    //   type: 'item',
+    //   icon: icons.appFeedback,
+    //   url: '/apps/appFeedback/appFeedback',
+    //   breadcrumbs: true
+    // },
     {
-      id: 'appFeedback',
-      title: <FormattedMessage id="App Feedback" />,
+      id: 'subscriptionPlan',
+      title: <FormattedMessage id="Subscription Plan" />,
       type: 'item',
-      icon: icons.appFeedback,
-      url: '/apps/appFeedback/appFeedback',
+      icon: icons.subscriptionPlan,
+      url: '/apps/subscriptionPlan/subscriptionPlan',
       breadcrumbs: true
     },
     {
       id: 'aboutUs',
       title: <FormattedMessage id="About us" />,
       type: 'item',
-      icon: icons.appFeedback,
+      icon: icons.aboutUs,
       url: '/apps/aboutUs/aboutUs',
-      breadcrumbs: true
-    },
-    {
-      id: 'subscriptionPlan',
-      title: <FormattedMessage id="Subscription Plan" />,
-      type: 'item',
-      icon: icons.appFeedback,
-      url: '/apps/subscriptionPlan/subscriptionPlan',
       breadcrumbs: true
     }
     // {

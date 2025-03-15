@@ -127,7 +127,8 @@ export default function UploadPhotos() {
             If you don't have photos, then{' '}
             <Link
               component={RouterLink}
-              to="/widget/statistics"
+              //to="/widget/statistics"
+              to="/questionare"
               sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
             >
               Skip

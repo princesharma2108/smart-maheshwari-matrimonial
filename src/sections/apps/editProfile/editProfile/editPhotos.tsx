@@ -109,7 +109,7 @@ export default function EditPhotos() {
             )}
 
             {/* Upload Button */}
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <Button
                 type="submit"
                 variant="contained"
@@ -121,20 +121,6 @@ export default function EditPhotos() {
               >
                 Upload
               </Button>
-            </Grid>
-
-            {/* Skip Link */}
-            <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
-              <Typography variant="body2">
-                If you don't have photos, then{' '}
-                <Link
-                  component={RouterLink}
-                  to="/widget/statistics"
-                  sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-                >
-                  Skip
-                </Link>
-              </Typography>
             </Grid>
           </Grid>
         </MainCard>

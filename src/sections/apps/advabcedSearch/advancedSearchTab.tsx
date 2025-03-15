@@ -192,7 +192,7 @@ export default function AdvancedSearchTab() {
 
                       console.log(`Section: ${title}, Selected Count: ${selectedArray.length}, Disabled: ${isDisabled}`);
                       return (
-                        <Grid item xs={12} sm={6} md={3} key={option.name}>
+                        <Grid item xs={12} sm={6} md={4} key={option.name}>
                           <Box
                             sx={{
                               display: 'flex',
