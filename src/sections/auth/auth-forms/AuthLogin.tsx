@@ -1,4 +1,10 @@
-import { useState, SyntheticEvent } from 'react';
+import { useState, SyntheticEvent, useEffect, useRef } from 'react';
+
+declare global {
+  interface Window {
+    phoneEmailListener: ((userObj: { user_json_url: string; otp: string }) => void) | null;
+  }
+}
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { preload } from 'swr';
 
@@ -28,6 +34,7 @@ import { fetcher } from 'utils/axios';
 import 'assets/styles/styles.scss';
 // assets
 import { Eye, EyeSlash } from 'iconsax-react';
+import { Box } from '@mui/material';
 
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -36,8 +43,14 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
   const navigate = useNavigate();
   const { isLoggedIn, login } = useAuth();
   const scriptedRef = useScriptRef();
-
+  const phoneButtonRef = useRef<HTMLDivElement>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [otp, setOtp] = useState<string | null>(null); // Store OTP
+  const [userJsonUrl, setUserJsonUrl] = useState<string | null>(null); // Store user URL
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -45,6 +58,60 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
   const handleMouseDownPassword = (event: SyntheticEvent) => {
     event.preventDefault();
   };
+  useEffect(() => {
+    if (!buttonRef.current) return;
+
+    // Load the script only if not already included
+    if (!document.querySelector('script[src="https://www.phone.email/sign_in_button_v1.js"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://www.phone.email/sign_in_button_v1.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+
+    // Define listener to capture OTP and user JSON URL
+    window.phoneEmailListener = async (userObj: { user_json_url: string; otp: string }) => {
+      console.log('userObj', userObj);
+      console.log('userObj1', userObj.otp);
+      console.log('userObjurl2', userObj.user_json_url);
+      const url = userObj.user_json_url;
+      setOtp(userObj.otp); // Update state with OTP
+      setUserJsonUrl(userObj.user_json_url); // Store user URL
+      navigate('/upload-biodata');
+    };
+
+    return () => {
+      window.phoneEmailListener = null; // Cleanup
+    };
+  }, []);
+  useEffect(() => {
+    if (!buttonRef.current) return;
+
+    const handlePhoneEmailLogin = async () => {
+      try {
+        setIsSubmitting(true);
+        setLoginError(null);
+
+        await login(formData.email, formData.password);
+
+        if (scriptedRef.current) {
+          navigate('/upload-biodata');
+        }
+      } catch (err: any) {
+        console.error(err);
+        setLoginError(err.message);
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    const buttonElement = buttonRef.current;
+    buttonElement.addEventListener('click', handlePhoneEmailLogin);
+
+    return () => {
+      buttonElement.removeEventListener('click', handlePhoneEmailLogin);
+    };
+  }, [formData, scriptedRef, login, navigate]);
 
   return (
     <>
@@ -60,6 +127,8 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
+            setFormData({ email: values.email, password: values.password }); // Save values for phone button login
+            setIsSubmitting(true); // Show loading state
             await login(values.email, values.password);
             if (scriptedRef.current) {
               setStatus({ success: true });
@@ -81,7 +150,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} justifyContent={'center'}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="email-login">Email Address</InputLabel>
@@ -139,7 +208,6 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                   </FormHelperText>
                 )}
               </Grid>
-
               <Grid item xs={12} sx={{ mt: -1 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                   <FormControlLabel
@@ -148,11 +216,12 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                         checked={checked}
                         onChange={(event) => setChecked(event.target.checked)}
                         name="checked"
-                        color="primary"
+                        //color="primary"
                         size="small"
+                        className="inputFieldCheckbox"
                       />
                     }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
+                    label={<Typography variant="h6">Remember Me</Typography>}
                   />
 
                   <Link variant="h6" component={RouterLink} to={isLoggedIn && forgot ? forgot : '/forgot-password'} color="text.primary">
@@ -180,6 +249,17 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                   </Button>
                 </AnimateButton>
               </Grid>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pt: '10px !important', pb: '10px !important' }}
+              >
+                <Typography variant="body1">OR</Typography>
+              </Grid>
+              {/* Phone Verification Button */}
+              <div style={{ textAlign: 'center', marginTop: '0px' }}>
+                <div ref={buttonRef} className="pe_signin_button" data-client-id="13139718047550239662" style={{ width: '100%' }}></div>
+              </div>
             </Grid>
           </form>
         )}

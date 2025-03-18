@@ -49,18 +49,7 @@ const AdditionalInformation: React.FC = () => {
 
   return (
     <BackgroundWrapper>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          width: '100%',
-          maxWidth: 800,
-          mx: 'auto',
-          bgcolor: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: 2
-        }}
-      >
+      <>
         <Typography variant="h5" gutterBottom>
           Additional Information
         </Typography>
@@ -126,7 +115,7 @@ const AdditionalInformation: React.FC = () => {
             </Stack>
           </Grid>
         </Grid>
-      </Paper>
+      </>
     </BackgroundWrapper>
   );
 };

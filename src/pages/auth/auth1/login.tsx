@@ -27,43 +27,44 @@ export default function Login() {
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
-        <Grid item xs={12} sx={{ textAlign: 'center' }}>
+        <Grid item xs={12} sx={{ textAlign: 'center', pt: '0px !important' }}>
           <Logo />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ pt: '20px !important' }}>
+          <AuthLogin forgot="/auth/forgot-password" />
+        </Grid>
+        <Grid item xs={12} sx={{ pt: '14px !important' }}>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <AuthSocButton>
                 <img src={imgFacebook} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Facebook
               </AuthSocButton>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <AuthSocButton>
-                <img src={imgGoogle} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Google
+                <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
               </AuthSocButton>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <AuthDivider>
-            <Typography variant="body1">OR</Typography>
-          </AuthDivider>
-        </Grid>
-        <Grid item xs={12}>
-          <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-            <Typography variant="h3">Login</Typography>
+        <Grid item xs={12} sx={{ pt: '14px !important' }}>
+          <Stack direction="row" justifyContent="center" alignItems="baseline" spacing={0.5} sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
+            {/* <Typography variant="h3">Login</Typography> */}
+            <Typography variant="body1" sx={{ textDecoration: 'none', color: '#40444C' }}>
+              Don&apos;t have an account?
+            </Typography>
             <Typography
               component={Link}
               to={isLoggedIn ? '/auth/register' : '/register'}
               variant="body1"
               sx={{ textDecoration: 'none', color: '#F00757' }}
             >
-              Don&apos;t have an account?
+              Sign Up
+            </Typography>
+            <Typography variant="body1" sx={{ textDecoration: 'none', color: '#40444C' }}>
+              here
             </Typography>
           </Stack>
-        </Grid>
-        <Grid item xs={12}>
-          <AuthLogin forgot="/auth/forgot-password" />
         </Grid>
       </Grid>
     </AuthWrapper>

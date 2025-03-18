@@ -3,6 +3,7 @@ import { Box, Button, Typography, Grid, Paper, Link } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AnimateButton from 'components/@extended/AnimateButton';
+import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 const sections = [
   {
     title: 'Personality Insights',
@@ -208,7 +209,7 @@ export default function Questionnaire() {
   };
 
   return (
-    <AuthWrapper>
+    <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">
         {!showQuestions ? (
           <>
@@ -224,7 +225,7 @@ export default function Questionnaire() {
                 It only takes 2 minutes!
               </Typography>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
               <AnimateButton>
                 <Button
                   fullWidth
@@ -346,6 +347,6 @@ export default function Questionnaire() {
           </>
         )}
       </Grid>
-    </AuthWrapper>
+    </BackgroundWrapper>
   );
 }

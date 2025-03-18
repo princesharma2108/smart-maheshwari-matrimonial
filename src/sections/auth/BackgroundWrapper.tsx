@@ -8,6 +8,7 @@ import loginBG2 from 'assets/images/login/loginBG2.jpeg';
 import loginBG3 from 'assets/images/login/loginBG3.jpeg';
 // project imports
 import AuthCard from './AuthCard';
+import { Paper } from '@mui/material';
 
 interface Props {
   children: ReactElement;
@@ -32,7 +33,20 @@ export default function BackgroundWrapper({ children }: Props) {
         padding: 3
       }}
     >
-      {children}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          width: '100%',
+          maxWidth: 800,
+          mx: 'auto',
+          bgcolor: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: 2
+        }}
+      >
+        {children}
+      </Paper>
     </Box>
   );
 }

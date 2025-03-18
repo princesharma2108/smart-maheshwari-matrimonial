@@ -12,7 +12,8 @@ export default function AuthSocButton({ children, ...other }: ButtonProps) {
       fullWidth
       sx={{
         bgcolor: 'secondary.100',
-        borderColor: theme.palette.secondary[200],
+        // borderColor: theme.palette.secondary[200],
+        border :"1px solid #B6BAC3",
         color: 'secondary.main',
         '&:hover,&:focus': { bgcolor: 'secondary.100', borderColor: '#F00757', color: '#F00757' }
       }}

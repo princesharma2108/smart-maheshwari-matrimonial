@@ -3,11 +3,11 @@ import { ReactElement } from 'react';
 // material-ui
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import loginBG from 'assets/images/login/loginBG.jpeg';
-import loginBG2 from 'assets/images/login/loginBG2.jpeg';
-import loginBG3 from 'assets/images/login/loginBG3.jpeg';
+import loginImage from 'assets/images/login/loginImage.jpg';
+
 // project imports
 import AuthCard from './AuthCard';
+import { Card } from '@mui/material';
 
 interface Props {
   children: ReactElement;
@@ -21,46 +21,66 @@ export default function AuthWrapper({ children }: Props) {
       sx={{
         minHeight: '100vh',
         backgroundColor: '#FFE1E7',
-        // backgroundImage: `url(${loginBG2})`,
-        // backgroundSize: 'cover',
-        // backgroundPosition: 'center',
-        // backgroundRepeat: 'no-repeat',
-        // backgroundAttachment: 'fixed',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'start',
         justifyContent: 'center',
         padding: 3
       }}
     >
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        sx={
-          {
-            // minHeight: '100vh'
-          }
-        }
+      <Card
+        sx={{
+          padding: 4,
+          boxShadow: 3,
+          borderRadius: 2,
+          maxWidth: 900,
+          width: '100%',
+          height: { xs: 'auto', md: 700 }, // Set a fixed height for large screens
+          display: 'flex',
+          flexDirection: 'row'
+        }}
       >
-        <Grid item xs={12}>
+        <Grid container sx={{ flexGrow: 1, height: '100%' }}>
+          {/* Left Side - Auth Form */}
           <Grid
             item
             xs={12}
-            container
-            justifyContent="center"
-            alignItems="center"
+            md={6}
             sx={{
-              //minHeight: { xs: 'calc(100vh - 210px)', sm: 'calc(100vh - 134px)', md: 'calc(100vh - 112px)' },
-              position: 'relative',
-              zIndex: 1 // Ensures AuthCard stays above the background image
+              display: 'flex',
+              alignItems: 'start',
+              justifyContent: 'center',
+              padding: 3
             }}
           >
-            <Grid item>
-              <AuthCard>{children}</AuthCard>
-            </Grid>
+            {children}
+          </Grid>
+
+          {/* Right Side - Image (Takes Full Height) */}
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              display: 'flex',
+              alignItems: 'start',
+              justifyContent: 'center',
+              height: '100%', // Make image section take full height
+              backgroundColor: '#F5F5F5' // Optional background color for contrast
+            }}
+          >
+            <img
+              src={loginImage}
+              alt="Login Background"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover', // Ensure the image covers the entire section
+                borderRadius: '8px'
+              }}
+            />
           </Grid>
         </Grid>
-      </Grid>
+      </Card>
     </Box>
   );
 }

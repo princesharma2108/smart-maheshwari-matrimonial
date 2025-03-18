@@ -10,7 +10,7 @@ export default function AuthCard({ children, ...other }: MainCardProps) {
   return (
     <MainCard
       sx={{
-        maxWidth: { xs: 400, md: 480 },
+        maxWidth: { xs: 600, md: 680 },
         margin: { xs: 2.5, md: 3 },
         '& > *': {
           flexGrow: 1,

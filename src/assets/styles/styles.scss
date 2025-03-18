@@ -4,6 +4,14 @@
     background-color: #f00757;
   }
 }
+// .pe_signin_button {
+//   display: block;
+//   position: relative; /* Ensure it stays within the normal document flow */
+//   margin-top: 16px; /* Add spacing below the login button */
+//   width: 100%;
+//   text-align: center; /* Align the button properly */
+//   background-color: #f00757;
+// }
 
 .inputFieldLogin {
   // & .MuiOutlinedInput-notchedOutline {
@@ -17,6 +25,7 @@
     border-width: 1px; // Optional: make it bolder
   }
 }
+
 .inputField {
   & .MuiOutlinedInput-root {
     // & fieldset {

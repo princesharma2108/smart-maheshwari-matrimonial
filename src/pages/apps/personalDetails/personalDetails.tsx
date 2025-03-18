@@ -34,18 +34,7 @@ const PersonalDetails: React.FC = () => {
 
   return (
     <BackgroundWrapper>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          width: '100%',
-          maxWidth: 800,
-          mx: 'auto',
-          bgcolor: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: 2
-        }}
-      >
+      <>
         <Typography variant="h5" gutterBottom>
           Personal Details
         </Typography>
@@ -77,7 +66,7 @@ const PersonalDetails: React.FC = () => {
         <TabPanel value={tabIndex} index={6}>
           <TabStep7 />
         </TabPanel>
-      </Paper>
+      </>
     </BackgroundWrapper>
   );
 };

@@ -26,49 +26,49 @@ export default function Register() {
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
-        <Grid item xs={12} sx={{ textAlign: 'center' }}>
+        <Grid item xs={12} sx={{ textAlign: 'center', pt: '0px !important' }}>
           <Logo />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ pt: '20px !important' }}>
+          <Stack sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
+            <Typography variant="h3">Sign up</Typography>
+            <Typography variant="body1">
+              Create an account to get started, already have an account?{' '}
+              <Typography
+                component={Link}
+                to={isLoggedIn ? '/auth/login' : '/'}
+                variant="body1"
+                sx={{ textDecoration: 'none', color: '#f00757', display: 'inline' }}
+              >
+                Log in Here
+              </Typography>
+            </Typography>
+          </Stack>
+        </Grid>
+        <Grid item xs={12} sx={{ pt: '20px !important' }}>
+          <FirebaseRegister />
+        </Grid>
+        <Grid item xs={12} sx={{ pt: '20px !important' }}>
+          <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* <AuthDivider> */}
+            <Typography variant="body1">OR</Typography>
+            {/* </AuthDivider> */}
+          </Grid>
           <Grid container spacing={1}>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <AuthSocButton>
                 <img src={imgFacebook} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Facebook
               </AuthSocButton>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <AuthSocButton>
-                <img src={imgTwitter} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Twitter
-              </AuthSocButton>
-            </Grid>
-            <Grid item xs={12}>
-              <AuthSocButton>
-                <img src={imgGoogle} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Google
+                <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
               </AuthSocButton>
             </Grid>
           </Grid>
         </Grid>
         <Grid item xs={12}>
-          <AuthDivider>
-            <Typography variant="body1">OR</Typography>
-          </AuthDivider>
-        </Grid>
-        <Grid item xs={12}>
-          <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-            <Typography variant="h3">Sign up</Typography>
-            <Typography
-              component={Link}
-              to={isLoggedIn ? '/auth/login' : '/login'}
-              variant="body1"
-              sx={{ textDecoration: 'none' }}
-              color="primary"
-            >
-              Already have an account?
-            </Typography>
-          </Stack>
-        </Grid>
-        <Grid item xs={12}>
-          <FirebaseRegister />
+          <Typography variant="body2">By Signing Up, you agree to our Terms of Service and Privacy Policy</Typography>
         </Grid>
       </Grid>
     </AuthWrapper>

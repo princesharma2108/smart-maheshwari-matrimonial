@@ -7,6 +7,7 @@ import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthDivider from 'sections/auth/AuthDivider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
@@ -43,7 +44,7 @@ export default function UploadBiodata() {
   };
 
   return (
-    <AuthWrapper>
+    <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">
         {/* Title */}
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
@@ -85,7 +86,7 @@ export default function UploadBiodata() {
         )}
 
         {/* Upload Button */}
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
           <Button type="submit" variant="contained" fullWidth onClick={handleSubmit(onSubmit)} disabled={!fileName} className="buttonStyle">
             Upload
           </Button>
@@ -105,6 +106,6 @@ export default function UploadBiodata() {
           </Typography>
         </Grid>
       </Grid>
-    </AuthWrapper>
+    </BackgroundWrapper>
   );
 }

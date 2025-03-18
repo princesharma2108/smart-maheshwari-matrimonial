@@ -7,6 +7,7 @@ import AuthWrapper from 'sections/auth/AuthWrapper';
 import AuthDivider from 'sections/auth/AuthDivider';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 
 export default function UploadPhotos() {
   const { register, handleSubmit, reset } = useForm();
@@ -50,7 +51,7 @@ export default function UploadPhotos() {
   };
 
   return (
-    <AuthWrapper>
+    <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">
         {/* Title */}
         <Grid item xs={12} sx={{ textAlign: 'center' }}>
@@ -107,11 +108,11 @@ export default function UploadPhotos() {
         )}
 
         {/* Upload Button */}
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
           <Button
             type="submit"
             variant="contained"
-            color="primary"
+            size="small"
             fullWidth
             onClick={handleSubmit(onSubmit)}
             disabled={images.length < 2}
@@ -136,6 +137,6 @@ export default function UploadPhotos() {
           </Typography>
         </Grid>
       </Grid>
-    </AuthWrapper>
+    </BackgroundWrapper>
   );
 }
