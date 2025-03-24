@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -9,27 +9,59 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-
+import 'assets/styles/styles.scss';
 // project-imports
 import MainCard from 'components/MainCard';
 
 // ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
-
-export default function TabEditStep4() {
+interface TabEditStep4Props {
+  fatherName: string;
+  setFatherName: (value: string) => void;
+  motherName: string;
+  setMotherName: (value: string) => void;
+  hometown: string;
+  setHometown: (value: string) => void;
+  siblings: string;
+  setSiblings: (value: string) => void;
+  familyIncome: string;
+  setFamilyIncome: (value: string) => void;
+  familyType: string;
+  setFamilyType: (value: string) => void;
+  familyTypeOptions: any;
+  siblingOptions: any;
+  incomeOptions: any;
+}
+export default function TabEditStep4({
+  fatherName,
+  setFatherName,
+  motherName,
+  setMotherName,
+  hometown,
+  setHometown,
+  siblings,
+  setSiblings,
+  familyIncome,
+  setFamilyIncome,
+  familyType,
+  setFamilyType,
+  familyTypeOptions = [],
+  siblingOptions = []
+  //incomeOptions = []
+}: TabEditStep4Props) {
   const theme = useTheme();
-
-  // State Variables
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [hometown, setHometown] = useState('');
-  const [siblings, setSiblings] = useState('');
-  const [familyIncome, setFamilyIncome] = useState('');
-  const [familyType, setFamilyType] = useState('');
-
+  const [selectedIncomeRange, setSelectedIncomRange] = useState('');
   // Handlers
   const handleSiblingsChange = (event: SelectChangeEvent) => setSiblings(event.target.value);
-  const handleFamilyIncomeChange = (event: SelectChangeEvent) => setFamilyIncome(event.target.value);
+  const handleFamilyIncomeChange = (event: SelectChangeEvent) => {
+    const selectedRange = event.target.value;
+    setSelectedIncomRange(selectedRange);
+    const [, maxIncome] = selectedRange.split(' - '); // Extract the second number (upper bound)
+    const numericIncome = Number(maxIncome) * 100000; // Convert to INR
+    setFamilyIncome(numericIncome.toString()); // Store as a string
+  };
+
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
+  const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
 
   return (
     <Grid container spacing={3}>
@@ -45,8 +77,8 @@ export default function TabEditStep4() {
                       fullWidth
                       id="father-name"
                       placeholder="Enter Father's Name"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      value={fatherName}
+                      onChange={(e) => setFatherName(e.target.value)}
                       autoFocus
                       className="inputField"
                     />
@@ -59,8 +91,8 @@ export default function TabEditStep4() {
                       fullWidth
                       id="mother-name"
                       placeholder="Enter Mother's Name"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                      value={motherName}
+                      onChange={(e) => setMotherName(e.target.value)}
                       className="inputField"
                     />
                   </Stack>
@@ -89,24 +121,32 @@ export default function TabEditStep4() {
                       <MenuItem value="" disabled>
                         Select Number of Siblings
                       </MenuItem>
-                      <MenuItem value="No Siblings">No Siblings</MenuItem>
-                      <MenuItem value="1 Sibling">1 Sibling</MenuItem>
-                      <MenuItem value="2 Siblings">2 Siblings</MenuItem>
-                      <MenuItem value="More than 2">More than 2</MenuItem>
+                      {siblingOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="family-income">Family Income</InputLabel>
-                    <Select fullWidth value={familyIncome} onChange={handleFamilyIncomeChange} displayEmpty className="inputFieldLogin">
+                    <Select
+                      fullWidth
+                      value={selectedIncomeRange}
+                      onChange={handleFamilyIncomeChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Family Income Range
                       </MenuItem>
-                      <MenuItem value="Less than $20,000">Less than $20,000</MenuItem>
-                      <MenuItem value="$20,000 - $50,000">$20,000 - $50,000</MenuItem>
-                      <MenuItem value="$50,000 - $100,000">$50,000 - $100,000</MenuItem>
-                      <MenuItem value="Above $100,000">Above $100,000</MenuItem>
+                      {incomeOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -117,9 +157,11 @@ export default function TabEditStep4() {
                       <MenuItem value="" disabled>
                         Select Family Type
                       </MenuItem>
-                      <MenuItem value="Nuclear Family">Nuclear Family</MenuItem>
-                      <MenuItem value="Joint Family">Joint Family</MenuItem>
-                      <MenuItem value="Extended Family">Extended Family</MenuItem>
+                      {familyTypeOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -127,16 +169,6 @@ export default function TabEditStep4() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

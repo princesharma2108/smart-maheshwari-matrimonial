@@ -8,9 +8,8 @@ import 'assets/styles/styles.scss';
 import { getGeneralData } from 'apiServices/data';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
-import { c } from 'vite/dist/node/moduleRunnerTransport.d-CXw_Ws6P';
 import { useNavigate } from 'react-router-dom';
-import { profileDetails } from 'apiServices/user';
+import { postUserStage, profileDetails } from 'apiServices/user';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -19,15 +18,15 @@ interface TabPanelProps {
 interface ErrorData {
   response: any;
 }
+interface ResponseData {
+  status: string;
+  message: string;
+  response: any;
+}
 interface ResponseGeneralData {
   status: string;
   message: string;
   generalData: any;
-}
-interface ResponseData {
-  status: string;
-  message: string;
-  created: boolean;
 }
 const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   return (
@@ -48,7 +47,9 @@ const Preferences: React.FC = () => {
   const [nonNegotiableSmoking, setNonNegotiableSmoking] = useState<string | null>(null);
   const [nonNegotiableDietary, setNonNegotiableDietary] = useState<string | null>(null);
   //Personal Preferences
-  const [age, setAge] = useState('');
+  const [age, setAge] = useState<[number, number]>([0, 0]);
+  const [minAge, setMinAge] = useState(0);
+  const [maxAge, setMaxAge] = useState(0);
   const [familyType, setFamilyType] = useState('');
   const [familyBackground, setFamilyBackground] = useState('');
   const [maritalStatus, setMaritalStatus] = useState('');
@@ -61,7 +62,7 @@ const Preferences: React.FC = () => {
   const [profession, setProfession] = useState('');
   const [workingWith, setWorkingWith] = useState('');
   const [location, setLocation] = useState('');
-  const [hobbies, setHobbies] = useState('');
+  const [hobbies, setHobbies] = useState<string[]>([]);
   const [nonNegotiableQualification, setNonNegotiableQualification] = useState<string | null>(null);
   const [nonNegotiableProfession, setNonNegotiableProfession] = useState<string | null>(null);
   const [nonNegotiableWorkingWith, setNonNegotiableWorkingWith] = useState<string | null>(null);
@@ -135,6 +136,27 @@ const Preferences: React.FC = () => {
     const storedData = localStorage.getItem('matrimonialDetails');
     const matrimonialStoredData = storedData ? JSON.parse(storedData) : {};
     console.log('matrimonialDataJSON2', matrimonialStoredData);
+    // Collect only non-null and non-empty nonNegotiable values
+    const nonNegotiables: string[] = [];
+    const nonNegotiableValues = [
+      nonNegotiableDrinking,
+      nonNegotiableSmoking,
+      nonNegotiableDietary,
+      nonNegotiableAge,
+      nonNegotiableFamilyType,
+      nonNegotiableFamilyBackground,
+      nonNegotiableMaritalStatus,
+      nonNegotiableQualification,
+      nonNegotiableProfession,
+      nonNegotiableWorkingWith,
+      nonNegotiableLocation,
+      nonNegotiableHobbies
+    ];
+    nonNegotiableValues.forEach((value) => {
+      if (value !== null && value !== '') {
+        nonNegotiables.push(value);
+      }
+    });
     const matrimonialData = {
       matrimonialId: matrimonialId,
       firstName: matrimonialStoredData.firstName,
@@ -198,22 +220,9 @@ const Preferences: React.FC = () => {
       drinking: drinking,
       smoking: smoking,
       dietaryHabits: dietaryHabits,
-      minAge: 24,
-      maxAge: 29,
-      nonNegotiables: [
-        'Smoking',
-        'DietaryHabits',
-        'Drinking',
-        'Age',
-        'FamilyType',
-        'FamilyBackground',
-        'MaritalStatus',
-        'Qualification',
-        'Location',
-        'Profession',
-        'Hobbies',
-        'WorkingWith'
-      ],
+      minAge: minAge,
+      maxAge: maxAge,
+      nonNegotiables: nonNegotiables,
       workingWith: workingWith
     };
     // Save preferenceData in local storage
@@ -228,6 +237,8 @@ const Preferences: React.FC = () => {
     const storedPreferenceData = localStorage.getItem('preferenceData');
     if (storedPreferenceData) {
       const preferenceData = JSON.parse(storedPreferenceData);
+      setMinAge(preferenceData.minAge || '');
+      setMaxAge(preferenceData.maxAge || '');
       setMaritalStatus(preferenceData.maritalStatus || '');
       setFamilyType(preferenceData.familyType || '');
       setFamilyBackground(preferenceData.familyBackground || '');
@@ -239,7 +250,82 @@ const Preferences: React.FC = () => {
       setSmoking(preferenceData.smoking || '');
       setDietaryHabits(preferenceData.dietaryHabits || '');
       setWorkingWith(preferenceData.workingWith || '');
+      console.log('nonNegotiables:', preferenceData.nonNegotiables);
+      // Update non-negotiable state variables based on stored nonNegotiables
+      if (preferenceData.nonNegotiables.includes('Drinking')) {
+        setNonNegotiableDrinking('Drinking');
+      }
+      if (preferenceData.nonNegotiables.includes('Smoking')) {
+        setNonNegotiableSmoking('Smoking');
+      }
+      if (preferenceData.nonNegotiables.includes('DietaryHabits')) {
+        setNonNegotiableDietary('DietaryHabits');
+      }
+      if (preferenceData.nonNegotiables.includes('Age')) {
+        setNonNegotiableAge('Age');
+      }
+      if (preferenceData.nonNegotiables.includes('FamilyType')) {
+        setNonNegotiableFamilyType('FamilyType');
+      }
+      if (preferenceData.nonNegotiables.includes('FamilyBackground')) {
+        setNonNegotiableFamilyBackground('FamilyBackground');
+      }
+      if (preferenceData.nonNegotiables.includes('MaritalStatus')) {
+        setNonNegotiableMaritalStatus('MaritalStatus');
+      }
+      if (preferenceData.nonNegotiables.includes('Qualification')) {
+        setNonNegotiableQualification('Qualification');
+      }
+      if (preferenceData.nonNegotiables.includes('Profession')) {
+        setNonNegotiableProfession('Profession');
+      }
+      if (preferenceData.nonNegotiables.includes('WorkingWith')) {
+        setNonNegotiableWorkingWith('WorkingWith');
+      }
+      if (preferenceData.nonNegotiables.includes('Location')) {
+        setNonNegotiableLocation('Location');
+      }
+      if (preferenceData.nonNegotiables.includes('Hobbies')) {
+        setNonNegotiableHobbies('Hobbies');
+      }
     }
+  }, []);
+  const postUserStageAPI = async () => {
+    //navigate('/upload-photos');
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 3
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    postUserStageAPI();
   }, []);
   return (
     <BackgroundWrapper>
@@ -275,8 +361,12 @@ const Preferences: React.FC = () => {
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
           <PersonalPreferences
-            age={age}
+            age={age as [number, number]}
             setAge={setAge}
+            minAge={minAge}
+            setMinAge={setMinAge}
+            maxAge={maxAge}
+            setMaxAge={setMaxAge}
             familyType={familyType}
             setFamilyType={setFamilyType}
             familyBackground={familyBackground}

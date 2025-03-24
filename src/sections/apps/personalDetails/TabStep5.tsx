@@ -24,8 +24,10 @@ interface TabStep5Props {
   setCompanyName: (value: string) => void;
   workingWith: string;
   setWorkingWith: (value: string) => void;
-  annualIncome: string;
-  setAnnualIncome: (value: string) => void;
+  minAnnualIncome: string;
+  setMinAnnualIncome: (value: string) => void;
+  maxAnnualIncome: string;
+  setMaxAnnualIncome: (value: string) => void;
   languagesKnown: string[];
   setLanguagesKnown: (value: string[]) => void;
   qualificationOptions: any;
@@ -45,25 +47,35 @@ export default function TabStep5({
   setCompanyName,
   workingWith,
   setWorkingWith,
-  annualIncome,
-  setAnnualIncome,
+  minAnnualIncome,
+  setMinAnnualIncome,
+  maxAnnualIncome,
+  setMaxAnnualIncome,
   languagesKnown,
   setLanguagesKnown,
   qualificationOptions = [],
   occupationOptions = [],
   workingWithOptions = [],
-  incomeOptions = [],
+  //incomeOptions = [],
   languageOptions = []
 }: TabStep5Props) {
   const theme = useTheme();
-
+  const [annualIncome, setAnnualIncome] = useState('');
   // Handlers
   const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
   const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
-  const handleAnnualIncomeChange = (event: SelectChangeEvent) => setAnnualIncome(event.target.value);
+  const handleAnnualIncomeChange = (event: SelectChangeEvent) => {
+    const selectedRange = event.target.value;
+    setAnnualIncome(selectedRange);
+    // Extract min and max values
+    const [min, max] = selectedRange.split(' - ').map((val) => parseInt(val) * 100000); // Convert Lakhs to Rupees
+    setMinAnnualIncome(min.toString());
+    setMaxAnnualIncome(max.toString());
+  };
   const handleLanguagesKnownChange = (event: SelectChangeEvent<string[]>) => {
     setLanguagesKnown(event.target.value as string[]);
   };
+  const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
 
   return (
     <Grid container spacing={3}>

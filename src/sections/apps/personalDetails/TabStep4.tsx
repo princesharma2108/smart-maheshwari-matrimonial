@@ -45,15 +45,24 @@ export default function TabStep4({
   familyType,
   setFamilyType,
   familyTypeOptions = [],
-  siblingOptions = [],
-  incomeOptions = []
+  siblingOptions = []
+  //incomeOptions = []
 }: TabStep4Props) {
   const theme = useTheme();
-
+  const [selectedIncomeRange, setSelectedIncomRange] = useState('');
   // Handlers
   const handleSiblingsChange = (event: SelectChangeEvent) => setSiblings(event.target.value);
-  const handleFamilyIncomeChange = (event: SelectChangeEvent) => setFamilyIncome(event.target.value);
+  const handleFamilyIncomeChange = (event: SelectChangeEvent) => {
+    const selectedRange = event.target.value;
+    setSelectedIncomRange(selectedRange);
+    const [, maxIncome] = selectedRange.split(' - '); // Extract the second number (upper bound)
+    const numericIncome = Number(maxIncome) * 100000; // Convert to INR
+    setFamilyIncome(numericIncome.toString()); // Store as a string
+  };
+
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
+  const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -123,7 +132,13 @@ export default function TabStep4({
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="family-income">Family Income</InputLabel>
-                    <Select fullWidth value={familyIncome} onChange={handleFamilyIncomeChange} displayEmpty className="inputFieldLogin">
+                    <Select
+                      fullWidth
+                      value={selectedIncomeRange}
+                      onChange={handleFamilyIncomeChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                    >
                       <MenuItem value="" disabled>
                         Select Family Income Range
                       </MenuItem>

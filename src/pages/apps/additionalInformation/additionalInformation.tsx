@@ -91,7 +91,7 @@ const AdditionalInformation: React.FC = () => {
     getAboutMeAPI();
   }, []);
   const handleSaveProfileDetailsAPI = async () => {
-    navigate('/upload-photos');
+    //navigate('/upload-photos');
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
     const storedData = localStorage.getItem('matrimonialDetails');
@@ -161,22 +161,9 @@ const AdditionalInformation: React.FC = () => {
       drinking: preferenceStoredData.drinking,
       smoking: preferenceStoredData.smoking,
       dietaryHabits: preferenceStoredData.dietaryHabits,
-      minAge: 24,
-      maxAge: 29,
-      nonNegotiables: [
-        'Smoking',
-        'DietaryHabits',
-        'Drinking',
-        'Age',
-        'FamilyType',
-        'FamilyBackground',
-        'MaritalStatus',
-        'Qualification',
-        'Location',
-        'Profession',
-        'Hobbies',
-        'WorkingWith'
-      ],
+      minAge: preferenceStoredData.minAge,
+      maxAge: preferenceStoredData.maxAge,
+      nonNegotiables: preferenceStoredData.nonNegotiables,
       workingWith: preferenceStoredData.workingWith
     };
     // Save preferenceData in local storage
@@ -199,7 +186,7 @@ const AdditionalInformation: React.FC = () => {
           color: 'success'
         }
       } as SnackbarProps);
-      //navigate('/upload-photos');
+      navigate('/upload-photos');
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

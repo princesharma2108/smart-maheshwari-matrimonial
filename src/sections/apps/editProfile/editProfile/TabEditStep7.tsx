@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // Material-UI
 import { useTheme } from '@mui/material/styles';
@@ -9,21 +9,44 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
-
 // Project Imports
 import MainCard from 'components/MainCard';
-
-export default function TabEditStep7() {
+import { useNavigate } from 'react-router-dom';
+import 'assets/styles/styles.scss';
+interface TabEditStep7Props {
+  residentialAddress: string;
+  setResidentialAddress: (value: string) => void;
+  phoneNumber: string;
+  setPhoneNumber: (value: string) => void;
+  emailAddress: string;
+  setEmailAddress: (value: string) => void;
+  alternateContact: string;
+  setAlternateContact: (value: string) => void;
+  country: string;
+  setCountry: (value: string) => void;
+  state: string;
+  setState: (value: string) => void;
+  city: string;
+  setCity: (value: string) => void;
+}
+export default function TabEditStep7({
+  residentialAddress,
+  setResidentialAddress,
+  phoneNumber,
+  setPhoneNumber,
+  emailAddress,
+  setEmailAddress,
+  alternateContact,
+  setAlternateContact,
+  country,
+  setCountry,
+  state,
+  setState,
+  city,
+  setCity
+}: TabEditStep7Props) {
   const theme = useTheme();
-
-  // State Variables
-  const [residentialAddress, setResidentialAddress] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [alternateContact, setAlternateContact] = useState('');
-  const [country, setCountry] = useState('');
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
+  const navigate = useNavigate();
 
   // Handlers
   const handleResidentialAddressChange = (event: ChangeEvent<HTMLInputElement>) => setResidentialAddress(event.target.value);
@@ -33,13 +56,11 @@ export default function TabEditStep7() {
   const handleCountryChange = (event: SelectChangeEvent) => setCountry(event.target.value);
   const handleStateChange = (event: SelectChangeEvent) => setState(event.target.value);
   const handleCityChange = (event: SelectChangeEvent) => setCity(event.target.value);
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <MainCard title="Contact Information">
           <Grid container spacing={3}>
-            {/* Left Column */}
             <Grid item xs={12} sm={6}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -97,14 +118,12 @@ export default function TabEditStep7() {
                 </Grid>
               </Grid>
             </Grid>
-
-            {/* Right Column */}
             <Grid item xs={12} sm={6}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="country">Country</InputLabel>
-                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty className="inputField">
+                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select Country
                       </MenuItem>
@@ -119,7 +138,7 @@ export default function TabEditStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="state">State</InputLabel>
-                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty className="inputField">
+                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select State
                       </MenuItem>
@@ -134,7 +153,7 @@ export default function TabEditStep7() {
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="city">City</InputLabel>
-                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty className="inputField">
+                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty className="inputFieldLogin">
                       <MenuItem value="" disabled>
                         Select City
                       </MenuItem>
@@ -150,17 +169,6 @@ export default function TabEditStep7() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle" onClick={() => {}}>
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

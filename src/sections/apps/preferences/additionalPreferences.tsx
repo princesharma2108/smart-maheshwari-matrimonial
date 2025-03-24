@@ -25,8 +25,8 @@ interface AdditionalPreferencesProps {
   setWorkingWith: (value: string) => void;
   location: string;
   setLocation: (value: string) => void;
-  hobbies: string;
-  setHobbies: (value: string) => void;
+  hobbies: string[];
+  setHobbies: (value: string[]) => void;
   nonNegotiableQualification: string;
   setNonNegotiableQualification: (value: string) => void;
   nonNegotiableProfession: string;
@@ -121,15 +121,15 @@ export default function AdditionalPreferences({
                 nonNegotiable: nonNegotiableWorkingWith,
                 setNonNegotiable: setNonNegotiableWorkingWith,
                 data: workingWithOptionsData
-              },
-              {
-                label: 'Hobbies',
-                value: hobbies,
-                setValue: setHobbies,
-                nonNegotiable: nonNegotiableHobbies,
-                setNonNegotiable: setNonNegotiableHobbies,
-                data: hobbiesData
               }
+              // {
+              //   label: 'Hobbies',
+              //   value: hobbies,
+              //   setValue: setHobbies,
+              //   nonNegotiable: nonNegotiableHobbies,
+              //   setNonNegotiable: setNonNegotiableHobbies,
+              //   data: hobbiesData
+              // }
             ].map(({ label, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
@@ -159,6 +159,45 @@ export default function AdditionalPreferences({
                 </Stack>
               </Grid>
             ))}
+            {/* Hobbies */}
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!!nonNegotiableHobbies}
+                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
+                        className="inputFieldCheckbox"
+                      />
+                    }
+                    label="Non-negotiable"
+                  />
+                </Stack>
+                <Select
+                  multiple
+                  fullWidth
+                  value={Array.isArray(hobbies) ? hobbies : []} // Ensuring value is always an array
+                  onChange={(event) => {
+                    setHobbies(event.target.value as string[]);
+                  }}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  renderValue={(selected) => (Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Hobby')}
+                >
+                  <MenuItem value="" disabled>
+                    Select Hobby
+                  </MenuItem>
+                  {hobbiesData?.sort().map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <Checkbox checked={hobbies.includes(option)} className="inputFieldCheckbox" />
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Stack>
+            </Grid>
           </Grid>
         </MainCard>
       </Grid>

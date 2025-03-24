@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Typography, Grid, IconButton, Link } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -8,7 +8,7 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
-import { uploadBiodata } from 'apiServices/user';
+import { postUserStage, uploadBiodata } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 interface ErrorData {
@@ -104,6 +104,43 @@ export default function UploadBiodata() {
       } as SnackbarProps);
     }
   };
+  const postUserStageAPI = async () => {
+    //navigate('/upload-photos');
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 1
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    postUserStageAPI();
+  }, []);
   return (
     <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">

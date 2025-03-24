@@ -1,111 +1,116 @@
 import { useState } from 'react';
-
-// material-ui
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-
-// project-imports
+import { Grid, Stack, Button, MenuItem, InputLabel, Select, SelectChangeEvent, Checkbox, FormControlLabel } from '@mui/material';
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
+import 'assets/styles/styles.scss';
 
-// ==============================|| ACCOUNT PROFILE - LIFESTYLE PREFERENCES ||============================== //
+interface LifestylePreferencesEditProps {
+  drinking: string;
+  setDrinking: (value: string) => void;
+  smoking: string;
+  setSmoking: (value: string) => void;
+  dietaryHabits: string;
+  setDietaryHabits: (value: string) => void;
+  nonNegotiableDrinking: string;
+  setNonNegotiableDrinking: (value: string) => void;
+  nonNegotiableSmoking: string;
+  setNonNegotiableSmoking: (value: string) => void;
+  nonNegotiableDietary: string;
+  setNonNegotiableDietary: (value: string) => void;
+  drinkingOptions: string[];
+  smokingOptions: string[];
+  dietaryOptions: string[];
+}
 
-export default function LifestylePreferencesEdit() {
-  const theme = useTheme();
+export default function LifestylePreferencesEdit({
+  drinking,
+  setDrinking,
+  smoking,
+  setSmoking,
+  dietaryHabits,
+  setDietaryHabits,
+  nonNegotiableDrinking,
+  setNonNegotiableDrinking,
+  nonNegotiableSmoking,
+  setNonNegotiableSmoking,
+  nonNegotiableDietary,
+  setNonNegotiableDietary,
+  drinkingOptions = [],
+  smokingOptions = [],
+  dietaryOptions = []
+}: LifestylePreferencesEditProps) {
   const navigate = useNavigate();
-  // State Variables
-  const [drinking, setDrinking] = useState('');
-  const [smoking, setSmoking] = useState('');
-  const [dietaryHabits, setDietaryHabits] = useState('');
 
-  // Handlers
-  const handleDrinkingChange = (event: SelectChangeEvent) => setDrinking(event.target.value);
-  const handleSmokingChange = (event: SelectChangeEvent) => setSmoking(event.target.value);
-  const handleDietaryHabitsChange = (event: SelectChangeEvent) => setDietaryHabits(event.target.value);
+  const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
 
-  // Common options
-  const options = ['Yes', 'No', 'Occasionally', 'No Preference'];
+  const handleCheckboxToggle = (setter: (value: string) => void, value: string, currentValue: string) => {
+    setter(currentValue ? '' : value.replace(/\s/g, '')); // Toggles between '' and value
+  };
 
+  const getOptions = (options: string[]) => [...options.sort(), 'No Preference'];
+  console.log('nonNegotiableDietary', nonNegotiableDietary);
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} sm={12}>
+      <Grid item xs={12}>
         <MainCard title="Lifestyle Preferences">
           <Grid container spacing={3}>
-            {/* Drinking */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="drinking">Drinking</InputLabel>
-                <Select fullWidth value={drinking} onChange={handleDrinkingChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
+            {[
+              {
+                label: 'Drinking',
+                value: drinking,
+                setter: setDrinking,
+                nonNegotiable: nonNegotiableDrinking,
+                setNonNegotiable: setNonNegotiableDrinking,
+                options: drinkingOptions
+              },
+              {
+                label: 'Smoking',
+                value: smoking,
+                setter: setSmoking,
+                nonNegotiable: nonNegotiableSmoking,
+                setNonNegotiable: setNonNegotiableSmoking,
+                options: smokingOptions
+              },
+              {
+                label: 'Dietary Habits',
+                value: dietaryHabits,
+                setter: setDietaryHabits,
+                nonNegotiable: nonNegotiableDietary,
+                setNonNegotiable: setNonNegotiableDietary,
+                options: dietaryOptions
+              }
+            ].map(({ label, value, setter, nonNegotiable, setNonNegotiable, options }) => (
+              <Grid item xs={12} key={label}>
+                <Stack spacing={1}>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <InputLabel>{label}</InputLabel>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={!!nonNegotiable}
+                          onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
+                          className="inputFieldCheckbox"
+                        />
+                      }
+                      label="Non-negotiable"
+                    />
+                  </Stack>
+                  <Select fullWidth value={value} onChange={handleSelectChange(setter)} displayEmpty className="inputFieldLogin">
+                    <MenuItem value="" disabled>
+                      Select an option
                     </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
-            {/* Smoking */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="smoking">Smoking</InputLabel>
-                <Select fullWidth value={smoking} onChange={handleSmokingChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
-            {/* Dietary Habits */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="dietary-habits">Dietary Habits</InputLabel>
-                <Select fullWidth value={dietaryHabits} onChange={handleDietaryHabitsChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {options.map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
+                    {getOptions(options).map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+              </Grid>
+            ))}
           </Grid>
         </MainCard>
-      </Grid>
-
-      {/* Navigation Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              navigate('/personal-details');
-            }}
-          >
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

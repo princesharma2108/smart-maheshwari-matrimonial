@@ -45,6 +45,7 @@ export default function TabStep6({
   const handleManglikChange = (event: SelectChangeEvent) => setManglik(event.target.value);
   const handleGunnMatchingChange = (event: ChangeEvent<HTMLInputElement>) => setGunnMatchingImportant(event.target.checked);
   const handleIncludeUnknownManglikChange = (event: ChangeEvent<HTMLInputElement>) => setIncludeUnknownManglik(event.target.checked);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>

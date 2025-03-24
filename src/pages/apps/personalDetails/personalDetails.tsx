@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { fi } from 'date-fns/locale';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
-import { profileDetails } from 'apiServices/user';
+import { postUserStage, profileDetails } from 'apiServices/user';
 import { getGeneralData } from 'apiServices/data';
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -29,7 +29,7 @@ interface ErrorData {
 interface ResponseData {
   status: string;
   message: string;
-  created: boolean;
+  response: any;
 }
 interface ResponseGeneralData {
   status: string;
@@ -78,7 +78,8 @@ const PersonalDetails: React.FC = () => {
   const [occupation, setOccupation] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [workingWith, setWorkingWith] = useState('');
-  const [annualIncome, setAnnualIncome] = useState('');
+  const [minAnnualIncome, setMinAnnualIncome] = useState('');
+  const [maxAnnualIncome, setMaxAnnualIncome] = useState('');
   const [languagesKnown, setLanguagesKnown] = useState<string[]>([]);
   //Tab 6
   const [gotra, setGotra] = useState('');
@@ -145,8 +146,8 @@ const PersonalDetails: React.FC = () => {
       occupation: occupation,
       occupationCompany: companyName,
       occupationLocation: state, // Assuming occupation location is a state
-      minAnnualIncome: annualIncome, // If you have separate min/max income, modify accordingly
-      maxAnnualIncome: annualIncome,
+      minAnnualIncome: minAnnualIncome, // If you have separate min/max income, modify accordingly
+      maxAnnualIncome: maxAnnualIncome,
       gotra: gotra,
       hobbies: hobbies, // Converting hobbies string to an array
       address: residentialAddress,
@@ -166,39 +167,6 @@ const PersonalDetails: React.FC = () => {
       smoking: smoking,
       locationType: placeOfBirth, // If different from birthPlace, change it accordingly
       manglik: manglik
-    };
-    const preferenceData = {
-      userId: 'U911736589941',
-      maritalStatus: 'Never Married',
-      familyType: 'Lower Middle Class',
-      familyBackground: 'Nuclear Family',
-      qualification: 'High School',
-      preferredLocation: '',
-      locationType: 'Urban',
-      minAnnualIncome: 0,
-      maxAnnualIncome: 0,
-      profession: 0,
-      hobbies: ['Cooking', 'Writing'],
-      drinking: 'Yes',
-      smoking: 'Yes',
-      dietaryHabits: 'Vegan',
-      minAge: 24,
-      maxAge: 29,
-      nonNegotiables: [
-        'Smoking',
-        'DietaryHabits',
-        'Drinking',
-        'Age',
-        'FamilyType',
-        'FamilyBackground',
-        'MaritalStatus',
-        'Qualification',
-        'Location',
-        'Profession',
-        'Hobbies',
-        'WorkingWith'
-      ],
-      workingWith: 'Private Company'
     };
     // **Store matrimonial data in localStorage**
     localStorage.setItem('matrimonialDetails', JSON.stringify(matrimonialData));
@@ -292,7 +260,8 @@ const PersonalDetails: React.FC = () => {
         setOccupation(matrimonialData.occupation || '');
         setCompanyName(matrimonialData.occupationCompany || '');
         setState(matrimonialData.occupationLocation || '');
-        setAnnualIncome(matrimonialData.minAnnualIncome || '');
+        setMinAnnualIncome(matrimonialData.minAnnualIncome || '');
+        setMaxAnnualIncome(matrimonialData.maxAnnualIncome || '');
         setGotra(matrimonialData.gotra || '');
         setHobbies(matrimonialData.hobbies || []);
         setResidentialAddress(matrimonialData.address || '');
@@ -310,7 +279,43 @@ const PersonalDetails: React.FC = () => {
       }
     }
   }, []);
-
+  const postUserStageAPI = async () => {
+    //navigate('/upload-photos');
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 2
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    postUserStageAPI();
+  }, []);
   return (
     <BackgroundWrapper>
       <>
@@ -409,8 +414,10 @@ const PersonalDetails: React.FC = () => {
             setCompanyName={setCompanyName}
             workingWith={workingWith}
             setWorkingWith={setWorkingWith}
-            annualIncome={annualIncome}
-            setAnnualIncome={setAnnualIncome}
+            minAnnualIncome={minAnnualIncome}
+            setMinAnnualIncome={setMinAnnualIncome}
+            maxAnnualIncome={maxAnnualIncome}
+            setMaxAnnualIncome={setMaxAnnualIncome}
             languagesKnown={languagesKnown}
             setLanguagesKnown={setLanguagesKnown}
             qualificationOptions={qualificationData || []}

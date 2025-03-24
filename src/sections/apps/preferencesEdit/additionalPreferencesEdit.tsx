@@ -1,5 +1,4 @@
 import { useState } from 'react';
-
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
@@ -8,113 +7,190 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 // project-imports
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
+import 'assets/styles/styles.scss';
 
-// ==============================|| ACCOUNT PROFILE - PERSONAL PREFERENCES ||============================== //
+interface AdditionalPreferencesEditProps {
+  qualification: string;
+  setQualification: (value: string) => void;
+  profession: string;
+  setProfession: (value: string) => void;
+  workingWith: string;
+  setWorkingWith: (value: string) => void;
+  location: string;
+  setLocation: (value: string) => void;
+  hobbies: string[];
+  setHobbies: (value: string[]) => void;
+  nonNegotiableQualification: string;
+  setNonNegotiableQualification: (value: string) => void;
+  nonNegotiableProfession: string;
+  setNonNegotiableProfession: (value: string) => void;
+  nonNegotiableWorkingWith: string;
+  setNonNegotiableWorkingWith: (value: string) => void;
+  nonNegotiableLocation: string;
+  setNonNegotiableLocation: (value: string) => void;
+  nonNegotiableHobbies: string;
+  setNonNegotiableHobbies: (value: string) => void;
+  professionData: string[];
+  qualificationData: string[];
+  hobbiesData: string[];
+  locationData: string[];
+  workingWithOptionsData: string[];
+}
 
-export default function AdditionalPreferencesEdit() {
+export default function AdditionalPreferencesEdit({
+  qualification,
+  setQualification,
+  profession,
+  setProfession,
+  workingWith,
+  setWorkingWith,
+  location,
+  setLocation,
+  hobbies,
+  setHobbies,
+  nonNegotiableQualification,
+  setNonNegotiableQualification,
+  nonNegotiableProfession,
+  setNonNegotiableProfession,
+  nonNegotiableWorkingWith,
+  setNonNegotiableWorkingWith,
+  nonNegotiableLocation,
+  setNonNegotiableLocation,
+  nonNegotiableHobbies,
+  setNonNegotiableHobbies,
+  professionData = [],
+  qualificationData = [],
+  hobbiesData = [],
+  locationData = [],
+  workingWithOptionsData = []
+}: AdditionalPreferencesEditProps) {
   const theme = useTheme();
   const navigate = useNavigate();
-  // State Variables
-  const [qualification, setQualification] = useState('');
-  const [location, setLocation] = useState('');
-  const [profession, setProfession] = useState('');
-  const [workingWith, setWorkingWith] = useState('');
-  const [hobbies, setHobbies] = useState('');
 
-  // Handlers
-  const handleQualificationChange = (event: SelectChangeEvent) => setQualification(event.target.value);
-  const handleLocationChange = (event: SelectChangeEvent) => setLocation(event.target.value);
-  const handleProfessionChange = (event: SelectChangeEvent) => setProfession(event.target.value);
-  const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
-  const handleHobbiesChange = (event: SelectChangeEvent) => setHobbies(event.target.value);
+  const handleChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => {
+    setter(event.target.value);
+  };
 
+  const handleCheckboxChange = (setChecked: (value: string) => void, label: string, checked: boolean) => {
+    setChecked(checked ? label.replace(/\s/g, '') : '');
+  };
+
+  const getOptionsWithNoPreference = (data: string[]) => [...data.sort(), 'No Preference'];
+  console.log('nonNegotiableWorkingWith', nonNegotiableWorkingWith);
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} sm={12}>
+      <Grid item xs={12}>
         <MainCard title="Additional Preferences">
           <Grid container spacing={3}>
-            {/* Qualification */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="qualification">Qualification</InputLabel>
-                <Select fullWidth value={qualification} onChange={handleQualificationChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {['High School', "Bachelor's", "Master's", 'PhD', 'Diploma', 'Other', 'No Preference'].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
+            {[
+              {
+                label: 'Qualification',
+                value: qualification,
+                setValue: setQualification,
+                nonNegotiable: nonNegotiableQualification,
+                setNonNegotiable: setNonNegotiableQualification,
+                data: qualificationData
+              },
+              {
+                label: 'Location',
+                value: location,
+                setValue: setLocation,
+                nonNegotiable: nonNegotiableLocation,
+                setNonNegotiable: setNonNegotiableLocation,
+                data: locationData
+              },
+              {
+                label: 'Profession',
+                value: profession,
+                setValue: setProfession,
+                nonNegotiable: nonNegotiableProfession,
+                setNonNegotiable: setNonNegotiableProfession,
+                data: professionData
+              },
+              {
+                label: 'Working With',
+                value: workingWith,
+                setValue: setWorkingWith,
+                nonNegotiable: nonNegotiableWorkingWith,
+                setNonNegotiable: setNonNegotiableWorkingWith,
+                data: workingWithOptionsData
+              }
+              // {
+              //   label: 'Hobbies',
+              //   value: hobbies,
+              //   setValue: setHobbies,
+              //   nonNegotiable: nonNegotiableHobbies,
+              //   setNonNegotiable: setNonNegotiableHobbies,
+              //   data: hobbiesData
+              // }
+            ].map(({ label, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
+              <Grid item xs={12} key={label}>
+                <Stack spacing={1}>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <InputLabel htmlFor={label.toLowerCase()}>{label}</InputLabel>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={!!nonNegotiable}
+                          onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
+                          className="inputFieldCheckbox"
+                        />
+                      }
+                      label="Non-negotiable"
+                    />
+                  </Stack>
+                  <Select fullWidth value={value} onChange={handleChange(setValue)} displayEmpty className="inputFieldLogin">
+                    <MenuItem value="" disabled>
+                      Select an option
                     </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
-            {/* Location */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="location">Location</InputLabel>
-                <Select fullWidth value={location} onChange={handleLocationChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {['Urban', 'Suburban', 'Rural', 'No Preference'].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
-            {/* Profession */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="profession">Profession</InputLabel>
-                <Select fullWidth value={profession} onChange={handleProfessionChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {['Software Engineer', 'Doctor', 'Teacher', 'Business', 'Other', 'No Preference'].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
-            {/* Working With */}
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="working-with">Working With</InputLabel>
-                <Select fullWidth value={workingWith} onChange={handleWorkingWithChange} displayEmpty className="inputFieldLogin">
-                  <MenuItem value="" disabled>
-                    Select an option
-                  </MenuItem>
-                  {['Private Sector', 'Government', 'Self-Employed', 'Freelancer', 'Retired', 'No Preference'].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Stack>
-            </Grid>
-
+                    {getOptionsWithNoPreference(data).map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+              </Grid>
+            ))}
             {/* Hobbies */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
-                <Select fullWidth value={hobbies} onChange={handleHobbiesChange} displayEmpty className="inputFieldLogin">
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!!nonNegotiableHobbies}
+                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
+                        className="inputFieldCheckbox"
+                      />
+                    }
+                    label="Non-negotiable"
+                  />
+                </Stack>
+                <Select
+                  multiple
+                  fullWidth
+                  value={Array.isArray(hobbies) ? hobbies : []} // Ensuring value is always an array
+                  onChange={(event) => {
+                    setHobbies(event.target.value as string[]);
+                  }}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  renderValue={(selected) => (Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Hobby')}
+                >
                   <MenuItem value="" disabled>
-                    Select an option
+                    Select Hobby
                   </MenuItem>
-                  {['Reading', 'Traveling', 'Cooking', 'Sports', 'Music', 'Gaming', 'Painting', 'Other', 'No Preference'].map((option) => (
+                  {hobbiesData?.sort().map((option) => (
                     <MenuItem key={option} value={option}>
+                      <Checkbox checked={hobbies.includes(option)} className="inputFieldCheckbox" />
                       {option}
                     </MenuItem>
                   ))}
@@ -123,24 +199,6 @@ export default function AdditionalPreferencesEdit() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-
-      {/* Navigation Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              navigate('/additional-information');
-            }}
-            className="buttonStyle"
-          >
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

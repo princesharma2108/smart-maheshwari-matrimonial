@@ -30,6 +30,7 @@ import defaultImages from 'assets/images/users/default.png';
 import { Apple, Camera, Facebook, Google } from 'iconsax-react';
 import Autocomplete from '@mui/material/Autocomplete';
 import 'assets/styles/styles.scss';
+import { useNavigate } from 'react-router-dom';
 // styles & constant
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,20 +44,31 @@ const MenuProps = {
 
 // ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
 
-export default function TabEditStep1() {
+interface TabEditStep1Props {
+  fullName: string;
+  setFullName: (value: string) => void;
+  timeOfBirth: Dayjs | null;
+  setTimeOfBirth: (value: Dayjs | null) => void;
+  dateOfBirth: Dayjs | null;
+  setDateOfBirth: (value: Dayjs | null) => void;
+  placeOfBirth: string;
+  setPlaceOfBirth: (value: string) => void;
+}
+
+export default function TabEditStep1({
+  fullName,
+  setFullName,
+  timeOfBirth,
+  setTimeOfBirth,
+  dateOfBirth,
+  setDateOfBirth,
+  placeOfBirth,
+  setPlaceOfBirth
+}: TabEditStep1Props) {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
-  const [fullName, setFullName] = useState('Anshul Raj');
-  const [avatar, setAvatar] = useState<string | undefined>(defaultImages);
-  const [timeOfBirth, setTimeOfBirth] = useState<Dayjs | null>(null);
-  const [dateOfBirth, setDateOfBirth] = useState<Dayjs | null>(null);
-  const [placeOfBirth, setPlaceOfBirth] = useState('');
   const [placeOptions, setPlaceOptions] = useState<string[]>([]);
-  useEffect(() => {
-    if (selectedImage) {
-      setAvatar(URL.createObjectURL(selectedImage));
-    }
-  }, [selectedImage]);
 
   // Fetch place suggestions
   const fetchPlaces = async (query: string) => {
@@ -67,7 +79,7 @@ export default function TabEditStep1() {
 
     setPlaceOptions(data.map((place: any) => place.display_name));
   };
-
+  console.log('dateOfBirth', dateOfBirth);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -108,6 +120,7 @@ export default function TabEditStep1() {
                   <DatePicker
                     value={dateOfBirth}
                     onChange={(newValue) => setDateOfBirth(newValue)}
+                    format="DD-MM-YYYY"
                     slotProps={{ textField: { fullWidth: true } }}
                     className="inputField" // ✅ Correct prop usage
                   />
@@ -133,16 +146,6 @@ export default function TabEditStep1() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

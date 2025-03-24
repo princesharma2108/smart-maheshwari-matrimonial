@@ -56,3 +56,24 @@ export const uploadPhoto = async <T>(data: any, config?: AxiosRequestConfig): Pr
     throw error;
   }
 };
+
+// Get User Stage
+export const getUserStage = async <T>(userId: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>(`/get-stage?userId=${userId}`, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
+// Post User Stage
+export const postUserStage = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>('/stages', data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};

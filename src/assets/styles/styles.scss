@@ -67,3 +67,23 @@
     color: #f00757; // Hover effect on active tab
   }
 }
+.customSlider {
+  color: #f00757 !important; /* Change main slider color */
+}
+
+.customSlider .MuiSlider-thumb {
+  background-color: #f00757 !important; /* Thumb color */
+}
+
+.customSlider .MuiSlider-track {
+  background-color: #f00757!important; /* Track color */
+}
+
+.customSlider .MuiSlider-rail {
+  background-color: #ccc !important; /* Rail (unfilled area) color */
+}
+
+.customSlider .MuiSlider-markLabel {
+  color: #000 !important; /* Change mark labels color */
+  font-weight: bold !important;
+}

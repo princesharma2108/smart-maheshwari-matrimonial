@@ -152,7 +152,7 @@ export default function TabStep2({
                   </MenuItem>
                   {hobbiesOptions?.sort().map((option) => (
                     <MenuItem key={option} value={option}>
-                      <Checkbox checked={hobbies.includes(option)} />
+                      <Checkbox checked={hobbies.includes(option)} className="inputFieldCheckbox" />
                       {option}
                     </MenuItem>
                   ))}

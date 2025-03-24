@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Grid, Stack, Button, MenuItem, InputLabel, Select, SelectChangeEvent, Checkbox, FormControlLabel } from '@mui/material';
+import { Grid, Stack, Button, MenuItem, InputLabel, Select, SelectChangeEvent, Checkbox, FormControlLabel, Slider } from '@mui/material';
 import MainCard from 'components/MainCard';
 import 'assets/styles/styles.scss';
+import Typography from '@mui/material/Typography';
 
 interface PersonalPreferencesProps {
-  age: string;
-  setAge: (value: string) => void;
+  age: [number, number];
+  setAge: (value: [number, number]) => void;
+  minAge: number;
+  setMinAge: (value: number) => void;
+  maxAge: number;
+  setMaxAge: (value: number) => void;
   familyType: string;
   setFamilyType: (value: string) => void;
   familyBackground: string;
@@ -30,6 +35,10 @@ interface PersonalPreferencesProps {
 export default function PersonalPreferences({
   age,
   setAge,
+  minAge,
+  setMinAge,
+  maxAge,
+  setMaxAge,
   familyType,
   setFamilyType,
   familyBackground,
@@ -49,12 +58,24 @@ export default function PersonalPreferences({
   familyBackgroundData = [],
   maritalOptionsData = []
 }: PersonalPreferencesProps) {
+  useEffect(() => {
+    if (minAge && maxAge) {
+      setAge([minAge, maxAge]);
+    }
+  }, [minAge, maxAge]);
+
   const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
 
   const handleCheckboxToggle = (setter: (value: string) => void, value: string, currentValue: string) => {
     setter(currentValue ? '' : value.replace(/\s/g, '')); // Toggles between '' and value
   };
-
+  const handleRangeChange = (_: Event, newValue: number | number[]) => {
+    if (Array.isArray(newValue)) {
+      setAge(newValue as [number, number]);
+      setMinAge(newValue[0]);
+      setMaxAge(newValue[1]);
+    }
+  };
   const getOptions = (options: string[]) => [...options.sort(), 'No Preference'];
   console.log('nonNegotiableFamilyType', nonNegotiableFamilyType);
   return (
@@ -62,15 +83,51 @@ export default function PersonalPreferences({
       <Grid item xs={12}>
         <MainCard title="Personal Preferences">
           <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <InputLabel>Age Range</InputLabel>
+
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={!!nonNegotiableAge}
+                        onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'Age', nonNegotiableAge)}
+                        className="inputFieldCheckbox"
+                      />
+                    }
+                    label="Non-negotiable"
+                  />
+                </Stack>
+                <Typography variant="body1" sx={{ mt: 0, display: 'flex', justifyContent: 'flex-start', alignSelf: 'flex-start' }}>
+                  {`Selected Age Range: ${age[0]} - ${age[1]}`}
+                </Typography>
+                <Slider
+                  value={age}
+                  onChange={handleRangeChange}
+                  valueLabelDisplay="auto"
+                  min={18}
+                  max={60}
+                  marks={[
+                    { value: 18, label: '18' },
+                    { value: 30, label: '30' },
+                    { value: 40, label: '40' },
+                    { value: 50, label: '50' },
+                    { value: 60, label: '60' }
+                  ]}
+                  className="customSlider"
+                />
+              </Stack>
+            </Grid>
             {[
-              {
-                label: 'Age',
-                value: age,
-                setter: setAge,
-                nonNegotiable: nonNegotiableAge,
-                setNonNegotiable: setNonNegotiableAge,
-                options: qualificationData
-              },
+              // {
+              //   label: 'Age',
+              //   value: age,
+              //   setter: setAge,
+              //   nonNegotiable: nonNegotiableAge,
+              //   setNonNegotiable: setNonNegotiableAge,
+              //   options: qualificationData
+              // },
               {
                 label: 'Family Type',
                 value: familyType,
