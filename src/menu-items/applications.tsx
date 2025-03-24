@@ -57,14 +57,14 @@ const applications: NavItemType = {
   icon: icons.applications,
   type: 'group',
   children: [
-    {
-      id: 'latestMatches',
-      title: <FormattedMessage id="Latest Matches" />,
-      type: 'item',
-      icon: icons.latestMatches,
-      url: '/apps/latestMatches/latestMatches',
-      breadcrumbs: true
-    },
+    // {
+    //   id: 'latestMatches',
+    //   title: <FormattedMessage id="Latest Matches" />,
+    //   type: 'item',
+    //   icon: icons.latestMatches,
+    //   url: '/apps/latestMatches/latestMatches',
+    //   breadcrumbs: true
+    // },
     {
       id: 'advancedSearch',
       title: <FormattedMessage id="Advanced Search" />,

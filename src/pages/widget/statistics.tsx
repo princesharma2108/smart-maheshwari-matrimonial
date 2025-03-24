@@ -19,9 +19,21 @@ import loginBG3 from 'assets/images/login/loginBG3.jpeg';
 import Button from '@mui/material/Button';
 import './latestMatches.scss';
 import { Box } from '@mui/material';
-
+import { getMatchResults } from 'apiServices/data';
+import latestMatchBG from 'assets/images/latestMatches/latestMatchBG.png';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+import { useEffect, useState } from 'react';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
-
+interface ResponseData {
+  status: string;
+  message: string;
+  count: number;
+  data: any;
+}
+interface ErrorData {
+  response: any;
+}
 const profiles = [
   {
     name: 'Anju Maheshwari',
@@ -74,53 +86,125 @@ const profiles = [
   }
 ];
 
-const MatchProfile = ({ profile }: { profile: (typeof profiles)[0] }) => (
-  <Grid container spacing={0} sx={{ height: '450px', marginBottom: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <Grid item xs={4} sx={{ height: '100%', display: 'flex', boxShadow: '-5px 0px 10px rgba(0,0,0,0.1)', borderRadius: '10px 0 0 10px' }}>
-      <img src={profile.image} alt="Match" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px 0 0 10px' }} />
+const matchProfiles = {
+  count: 2,
+  data: [
+    {
+      age: 23,
+      degree: 'Graduation',
+      distance: 0,
+      employment: 'Employed',
+      gunScore: 23,
+      height: '5ft 6in - 167cm',
+      income: '1.0-10.0Lac/Year',
+      liked: null,
+      location: 'Aligarh',
+      maritalStatus: 'Never Married',
+      matchScore: 78,
+      matchedAt: '2025-02-19T17:54:24',
+      matchedUserID: 'U491737982139',
+      matrimonialId: 'MP831737982139',
+      name: 'Agtaja Maheshwari',
+      profilePic: {
+        compressed: '',
+        original: 'https://smartmatrimony.s3.amazonaws.com/MP831737982139_8685491086.jpg'
+      },
+      requestMatch: true,
+      isManglik: true
+    },
+    {
+      age: 24,
+      degree: "Bachelor's of Design",
+      distance: 0,
+      employment: 'Employed',
+      gunScore: 23,
+      height: '4ft 8in - 142cm',
+      income: '1.0-12.0Lac/Year',
+      liked: null,
+      location: 'Hathras',
+      maritalStatus: 'Never Married',
+      matchScore: 90,
+      matchedAt: '2025-02-19T17:54:24',
+      matchedUserID: 'U781737980499',
+      matrimonialId: 'MP271737980499',
+      name: 'Adit Maheshw',
+      profilePic: {
+        compressed: '',
+        original: 'https://smartmatrimony.s3.amazonaws.com/MP271737980499_1814267079.jpg'
+      },
+      requestMatch: false,
+      isManglik: false
+    }
+  ],
+  message: 'Matchmaking data retrieved successfully',
+  status: 'success'
+};
+const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) => (
+  <Grid container spacing={0} sx={{ height: '450px', marginBottom: 3, display: 'flex', alignItems: 'center' }}>
+    {/* Left Side: Profile Picture */}
+    <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '10px 0 0 10px' }}>
+      <img
+        src={profile?.profilePic?.original || latestMatchBG} // Fallback image if null
+        alt="Match"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px 0 0 10px' }}
+      />
     </Grid>
-    <Grid item xs={4} sx={{ height: '100%', display: 'flex', boxShadow: '5px 0px 10px rgba(0,0,0,0.1)', borderRadius: '0 10px 10px 0' }}>
+
+    {/* Right Side: Profile Details */}
+    <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '0 10px 10px 0' }}>
       <Paper
         elevation={3}
         sx={{
           p: 3,
           width: '100%',
-          backgroundColor: '#FFF3EB',
+          backgroundColor: '#FAF7F2',
           borderRadius: '0 10px 10px 0',
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
-          height: '100%'
+          height: '100%',
+          boxShadow: 'none'
         }}
       >
-        <Grid container justifyContent="space-between">
+        {/* Name & Manglik Status */}
+        <Grid container flexDirection="column" alignItems="left">
           <Typography variant="h4" fontWeight="bold">
-            {profile.name}
+            {profile?.name || 'Unknown'}
           </Typography>
-          <Typography variant="h6" fontWeight="bold" color={'#f00757'}>
-            {profile.manglik}
+          <Typography variant="h6" fontWeight="bold" color="#f00757">
+            {profile?.isManglik ? 'Manglik' : 'Non-Manglik'}
           </Typography>
         </Grid>
-        <Typography variant="h6">
-          <b>📍 {profile.location}</b>
-        </Typography>
-        <Typography variant="h6">
-          <b>🎂 Age:</b> {profile.age}
-        </Typography>
-        <Typography variant="h6">
-          <b>📏 Height:</b> {profile.height}
-        </Typography>
-        <Typography variant="h6">
-          <b>🎓 Education:</b> {profile.education}
-        </Typography>
-        <Typography variant="h6">
-          <b>💼 Profession:</b> {profile.profession}
-        </Typography>
-        <Typography variant="h6">
-          <b>💰 Income:</b> {profile.income}
-        </Typography>
+
+        {/* Location, Age, Degree */}
+        <Grid container alignItems="center" gap="8px">
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={locationIconBlack} alt="Location" /> {profile?.location || 'Unknown'}
+          </Typography>
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={birthdayIconBlack} alt="Age" /> {profile?.age ? `${profile.age} years` : 'N/A'}
+          </Typography>
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={degreeIconBlack} alt="Degree" /> {profile?.degree || 'Not Specified'}
+          </Typography>
+        </Grid>
+
+        {/* Height, Employment, Income */}
+        <Grid container alignItems="center" gap="8px">
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={heightIcon} height={16} width={16} alt="Height" /> {profile?.height || 'N/A'}
+          </Typography>
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={professionIcon} alt="Profession" /> {profile?.employment || 'Unemployed'}
+          </Typography>
+          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img src={incomeIconBlack} alt="Income" /> {profile?.income || 'Not Disclosed'}
+          </Typography>
+        </Grid>
+
+        {/* Match Request Button */}
         <Box sx={{ flexGrow: 1 }} />
-        {profile.requestMatch && (
+        {profile?.requestMatch ? (
           <Box sx={{ width: '100%' }}>
             <AnimateButton>
               <Button variant="contained" sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}>
@@ -128,14 +212,38 @@ const MatchProfile = ({ profile }: { profile: (typeof profiles)[0] }) => (
               </Button>
             </AnimateButton>
           </Box>
-        )}
+        ) : null}
       </Paper>
     </Grid>
   </Grid>
 );
 
-export default function WidgetStatistics() {
+export default function LatestMatches() {
   const theme = useTheme();
+  const userId = localStorage.getItem('userId');
+  const [matchProfilesData, setMatchProfiles] = useState([]);
+  const getMatchResultsAPI = async () => {
+    try {
+      const response = await getMatchResults(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseData;
+      console.log('responseData', responseData);
+      setMatchProfiles(responseData.data);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    getMatchResultsAPI();
+  }, []);
   return (
     <>
       <Grid container marginBottom={3} display="flex" justifyContent="space-between" alignItems="center">
@@ -168,10 +276,14 @@ export default function WidgetStatistics() {
           <img src={notificationIcon} alt="Notifications" />
         </Grid>
       </Grid>
-
-      {profiles.map((profile, index) => (
-        <MatchProfile key={index} profile={profile} />
-      ))}
+      {/* Display two profiles per row */}
+      <Grid container spacing={3}>
+        {matchProfiles.data.map((profile, index) => (
+          <Grid item xs={12} md={6} key={index}>
+            <MatchProfile profile={profile} />
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent, useEffect, useRef } from 'react';
+import { useState, SyntheticEvent, useEffect, useRef, useReducer } from 'react';
 
 declare global {
   interface Window {
@@ -35,22 +35,50 @@ import 'assets/styles/styles.scss';
 // assets
 import { Eye, EyeSlash } from 'iconsax-react';
 import { Box } from '@mui/material';
-
+// reducer - state management
+import { LOGIN, LOGOUT } from 'contexts/auth-reducer/actions';
+import authReducer from 'contexts/auth-reducer/auth';
+import { AuthProps, JWTContextType } from 'types/auth';
+import { loginUser } from 'apiServices/authentication';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+//import axios from 'utils/axios';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { KeyedObject } from 'types/root';
+interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  created: false;
+  expiresMilliseconds: number;
+  matrimonialId: string;
+  message: string;
+  status: string;
+  token: string;
+  userId: string;
+  username: string;
+}
 // ============================|| JWT - LOGIN ||============================ //
 
+// constant
+const initialState: AuthProps = {
+  isLoggedIn: false,
+  isInitialized: false,
+  user: null
+};
+
 export default function AuthLogin({ forgot }: { forgot?: string }) {
+  const [state, dispatch] = useReducer(authReducer, initialState);
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
   const { isLoggedIn, login } = useAuth();
   const scriptedRef = useScriptRef();
-  const phoneButtonRef = useRef<HTMLDivElement>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [otp, setOtp] = useState<string | null>(null); // Store OTP
-  const [userJsonUrl, setUserJsonUrl] = useState<string | null>(null); // Store user URL
   const buttonRef = useRef<HTMLDivElement>(null);
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -72,50 +100,82 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
     // Define listener to capture OTP and user JSON URL
     window.phoneEmailListener = async (userObj: { user_json_url: string; otp: string }) => {
       console.log('userObj', userObj);
-      console.log('userObj1', userObj.otp);
-      console.log('userObjurl2', userObj.user_json_url);
-      const url = userObj.user_json_url;
-      setOtp(userObj.otp); // Update state with OTP
-      setUserJsonUrl(userObj.user_json_url); // Store user URL
-      navigate('/upload-biodata');
+
+      try {
+        const response = await fetch(userObj.user_json_url);
+        const userData = await response.json();
+
+        if (userData && userData.user_phone_number) {
+          setPhoneNumber(userData.user_phone_number);
+        } else {
+          console.warn('Phone number not found in user data');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
     };
 
     return () => {
       window.phoneEmailListener = null; // Cleanup
     };
   }, []);
+
+  console.log('phoneNumber', phoneNumber);
   useEffect(() => {
-    if (!buttonRef.current) return;
+    if (phoneNumber) {
+      loginUserAPI(phoneNumber);
+    }
+  }, [phoneNumber]);
 
-    const handlePhoneEmailLogin = async () => {
-      try {
-        setIsSubmitting(true);
-        setLoginError(null);
-
-        await login(formData.email, formData.password);
-
-        if (scriptedRef.current) {
-          navigate('/upload-biodata');
+  const loginUserAPI = async (phoneNumber: string) => {
+    console.log('inLoginUserAPI');
+    const loginData = {
+      user: phoneNumber,
+      password: '12345'
+    };
+    const registerData = {
+      phoneNumber: phoneNumber,
+      emailAddress: null,
+      googleToken: null,
+      appVersion: '1.0.4'
+    };
+    try {
+      await login(registerData);
+      // const responseData = response.data as ResponseData;
+      // const { token, matrimonialId, username, userId, message } = response.data;
+      // localStorage.setItem('userData', JSON.stringify(response.data));
+      // localStorage.setItem('token', token);
+      // localStorage.setItem('userId', userId);
+      // localStorage.setItem('matrimonialId', matrimonialId);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: 'Login Successfully',
+        variant: 'alert',
+        alert: {
+          color: 'success'
         }
-      } catch (err: any) {
-        console.error(err);
-        setLoginError(err.message);
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
-
-    const buttonElement = buttonRef.current;
-    buttonElement.addEventListener('click', handlePhoneEmailLogin);
-
-    return () => {
-      buttonElement.removeEventListener('click', handlePhoneEmailLogin);
-    };
-  }, [formData, scriptedRef, login, navigate]);
-
+      } as SnackbarProps);
+      window.location.href = '/upload-biodata';
+      //navigate('/widget/statistics');
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <>
-      <Formik
+      {/* <Formik
         initialValues={{
           email: 'info@phoenixcoded.co',
           password: '123456',
@@ -127,8 +187,6 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            setFormData({ email: values.email, password: values.password }); // Save values for phone button login
-            setIsSubmitting(true); // Show loading state
             await login(values.email, values.password);
             if (scriptedRef.current) {
               setStatus({ success: true });
@@ -153,14 +211,17 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             <Grid container spacing={3} justifyContent={'center'}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="email-login">User</InputLabel>
                   <OutlinedInput
                     id="email-login"
                     type="email"
                     value={values.email}
                     name="email"
                     onBlur={handleBlur}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setUser(e.target.value); // Update email state
+                    }}
                     placeholder="Enter email address"
                     fullWidth
                     error={Boolean(touched.email && errors.email)}
@@ -184,7 +245,10 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     value={values.password}
                     name="password"
                     onBlur={handleBlur}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      handleChange(e);
+                      setPassword(e.target.value); // Update password state
+                    }}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -249,21 +313,17 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                   </Button>
                 </AnimateButton>
               </Grid>
-              <Grid
-                item
-                xs={12}
-                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pt: '10px !important', pb: '10px !important' }}
-              >
-                <Typography variant="body1">OR</Typography>
-              </Grid>
-              {/* Phone Verification Button */}
-              <div style={{ textAlign: 'center', marginTop: '0px' }}>
-                <div ref={buttonRef} className="pe_signin_button" data-client-id="13139718047550239662" style={{ width: '100%' }}></div>
-              </div>
             </Grid>
           </form>
         )}
-      </Formik>
+      </Formik> */}
+
+      {/* Phone Verification Button */}
+      <Grid container spacing={3} justifyContent={'center'}>
+        <div style={{ textAlign: 'center', marginTop: '0px' }}>
+          <div ref={buttonRef} className="pe_signin_button" data-client-id="13139718047550239662" style={{ width: '100%' }}></div>
+        </div>
+      </Grid>
     </>
   );
 }

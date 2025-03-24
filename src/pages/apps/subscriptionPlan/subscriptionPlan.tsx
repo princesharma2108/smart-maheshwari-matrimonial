@@ -1,17 +1,88 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Typography, Button, Stack } from '@mui/material';
 import MainCard from 'components/MainCard';
 import checkPlan from 'assets/images/subscription/checkPlan.svg';
 import uncheckPlan from 'assets/images/subscription/uncheckPlan.svg';
+import { getSubscriptionPlan } from 'apiServices/data';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
 
-const subscriptionPlans = [
-  { duration: '1 Month', price: 7, features: [true, true, true, false, false, false] },
-  { duration: '6 Months', price: 9, features: [true, true, true, true, false, false] },
-  { duration: '12 Months', price: 10, features: [true, true, true, true, true, false] }
+interface ResponseData {
+  status: string;
+  message: string;
+  subcriptions: any[] | null;
+}
+
+interface ErrorData {
+  response: any;
+}
+
+const subscriptions = [
+  {
+    planId: 1,
+    planName: 'Premium Plan',
+    planDescription: 'Access to premium features',
+    benefits: [
+      'All benefits of the Monthly Plan',
+      'Exclusive access to advanced astrology insights',
+      'Dedicated relationship guidance and tips',
+      'Profile boost for higher visibility',
+      'Complimentary compatibility report with every new connection'
+    ],
+    price: 100,
+    currency: 'INR',
+    duration: 180,
+    bestSeller: 0
+  },
+  {
+    planId: 2,
+    planName: 'Basic Plan',
+    planDescription: 'A basic plan with limited features.',
+    benefits: [
+      'All benefits of the Monthly Plan',
+      'Exclusive access to advanced astrology insights',
+      'Dedicated relationship guidance and tips'
+    ],
+    price: 1,
+    currency: 'INR',
+    duration: 12,
+    bestSeller: 1
+  }
 ];
 
 export default function SubscriptionPlan() {
   const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
+  const [subscriptionPlansData, setSubscriptionPlansData] = useState<any[]>(subscriptions); // Default to `subscriptions`
+
+  const getSubscriptionPlanAPI = async () => {
+    try {
+      const response = await getSubscriptionPlan();
+      const responseData = response.data as ResponseData;
+
+      if (!responseData.subcriptions) {
+        throw new Error('No subscription data available');
+      }
+
+      setSubscriptionPlansData(responseData.subcriptions);
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error);
+
+      const errorMessage = (error as ErrorData)?.response?.data?.message || 'Failed to load subscription plans';
+
+      openSnackbar({
+        open: true,
+        message: errorMessage,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+
+  useEffect(() => {
+    getSubscriptionPlanAPI();
+  }, []);
 
   return (
     <Grid container justifyContent="center">
@@ -26,60 +97,75 @@ export default function SubscriptionPlan() {
 
         {/* Plans Section */}
         <Grid container display="flex" justifyContent="center" gap="32px" sx={{ mt: '32px' }}>
-          {subscriptionPlans.map((plan, index) => (
-            <Grid
-              key={index}
-              item
-              xs={12}
-              md={3}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '32px',
-                border: '1px solid #B6BAC3',
-                borderRadius: '10px',
-                p: '32px 52px',
-                backgroundColor: selectedPlan === index ? '#f8f9fa' : 'transparent'
-              }}
-            >
-              <Typography variant="h3">{plan.duration} Plan</Typography>
-              <Grid item display="flex" flexDirection="column" alignItems="center">
-                <Typography variant="h1">${plan.price}</Typography>
-                <Typography variant="body1">User/Month</Typography>
-              </Grid>
-
-              {/* Features List */}
-              <Grid item display="flex" flexDirection="column" gap="12px">
-                {plan.features.map((feature, idx) => (
-                  <Stack key={idx} direction="row" spacing={2}>
-                    <img src={feature ? checkPlan : uncheckPlan} alt="feature-check" />
-                    <Typography variant="body1">Feature {idx + 1}</Typography>
-                  </Stack>
-                ))}
-              </Grid>
-
-              {/* Choose Plan Button */}
-              <Button
-                variant="contained"
-                onClick={() => setSelectedPlan(index)}
+          {subscriptionPlansData.length > 0 ? (
+            subscriptionPlansData.map((plan, index) => (
+              <Grid
+                key={plan.planId || index}
+                item
+                xs={12}
+                md={3}
                 sx={{
-                  backgroundColor: selectedPlan === index ? '#f00757' : 'transparent',
-                  color: selectedPlan === index ? '#fff' : '#f00757',
-                  border: '1px solid #f00757',
-                  mt: 2,
-                  '&:hover': {
-                    backgroundColor: '#f00757',
-                    color: '#fff',
-                    borderColor: '#f00757'
-                  }
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '32px',
+                  border: '1px solid #B6BAC3',
+                  borderRadius: '10px',
+                  p: '32px 52px',
+                  backgroundColor: selectedPlan === plan.planId ? '#f8f9fa' : 'transparent'
                 }}
               >
-                {'Choose Plan'}
-              </Button>
-            </Grid>
-          ))}
+                <Typography variant="h3">{plan.planName || 'N/A'}</Typography>
+                <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                  {plan.planDescription || 'No description available'}
+                </Typography>
+
+                {/* Price Section */}
+                <Grid item display="flex" flexDirection="column" alignItems="center">
+                  <Typography variant="h1">
+                    {plan.currency || 'USD'} {plan.price !== undefined ? plan.price : 'N/A'}
+                  </Typography>
+                  <Typography variant="body1">for {plan.duration || 'N/A'} months</Typography>
+                </Grid>
+
+                {/* Benefits List */}
+                <Grid item display="flex" flexDirection="column" gap="12px">
+                  {(plan.benefits && plan.benefits.length > 0 ? plan.benefits : ['No benefits listed']).map(
+                    (benefit: string, idx: number) => (
+                      <Stack key={idx} direction="row" spacing={2}>
+                        <img src={checkPlan} alt="check" />
+                        <Typography variant="body1">{benefit}</Typography>
+                      </Stack>
+                    )
+                  )}
+                </Grid>
+
+                {/* Choose Plan Button */}
+                <Button
+                  variant="contained"
+                  onClick={() => setSelectedPlan(plan.planId)}
+                  sx={{
+                    backgroundColor: selectedPlan === plan.planId ? '#f00757' : 'transparent',
+                    color: selectedPlan === plan.planId ? '#fff' : '#f00757',
+                    border: '1px solid #f00757',
+                    mt: 2,
+                    '&:hover': {
+                      backgroundColor: '#f00757',
+                      color: '#fff',
+                      borderColor: '#f00757'
+                    }
+                  }}
+                >
+                  {'Choose Plan'}
+                </Button>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="h5" sx={{ mt: 2 }}>
+              No subscription plans available.
+            </Typography>
+          )}
         </Grid>
       </MainCard>
     </Grid>

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // Material-UI
 import { useTheme } from '@mui/material/styles';
@@ -14,28 +14,37 @@ import TextField from '@mui/material/TextField';
 import 'assets/styles/styles.scss';
 // Project Imports
 import MainCard from 'components/MainCard';
-
-export default function TabStep6() {
+interface TabStep6Props {
+  gotra: string;
+  setGotra: (value: string) => void;
+  manglik: string;
+  setManglik: (value: string) => void;
+  gunnMatchingImportant: boolean;
+  setGunnMatchingImportant: (value: boolean) => void;
+  includeUnknownManglik: boolean;
+  setIncludeUnknownManglik: (value: boolean) => void;
+  gotraOptions: any;
+  manglikOptions: any;
+}
+export default function TabStep6({
+  gotra,
+  setGotra,
+  manglik,
+  setManglik,
+  gunnMatchingImportant,
+  setGunnMatchingImportant,
+  includeUnknownManglik,
+  setIncludeUnknownManglik,
+  gotraOptions = [],
+  manglikOptions = []
+}: TabStep6Props) {
   const theme = useTheme();
-
-  // State Variables
-  const [gotra, setGotra] = useState('');
-  const [manglik, setManglik] = useState('');
-  const [occupation, setOccupation] = useState('');
-  const [workingWith, setWorkingWith] = useState('');
-  const [annualIncome, setAnnualIncome] = useState('');
-  const [gunnMatchingImportant, setGunnMatchingImportant] = useState(false);
-  const [includeUnknownManglik, setIncludeUnknownManglik] = useState(false);
 
   // Handlers
   const handleGotraChange = (event: SelectChangeEvent) => setGotra(event.target.value);
   const handleManglikChange = (event: SelectChangeEvent) => setManglik(event.target.value);
-  const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
-  const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
-  const handleAnnualIncomeChange = (event: SelectChangeEvent) => setAnnualIncome(event.target.value);
   const handleGunnMatchingChange = (event: ChangeEvent<HTMLInputElement>) => setGunnMatchingImportant(event.target.checked);
   const handleIncludeUnknownManglikChange = (event: ChangeEvent<HTMLInputElement>) => setIncludeUnknownManglik(event.target.checked);
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -51,10 +60,11 @@ export default function TabStep6() {
                       <MenuItem value="" disabled>
                         Select Gotra
                       </MenuItem>
-                      <MenuItem value="Bhardwaj">Bhardwaj</MenuItem>
-                      <MenuItem value="Kashyap">Kashyap</MenuItem>
-                      <MenuItem value="Vashishth">Vashishth</MenuItem>
-                      <MenuItem value="Other">Other</MenuItem>
+                      {gotraOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -81,9 +91,11 @@ export default function TabStep6() {
                       <MenuItem value="" disabled>
                         Select Manglik Status
                       </MenuItem>
-                      <MenuItem value="Yes">Yes</MenuItem>
-                      <MenuItem value="No">No</MenuItem>
-                      <MenuItem value="Don't Know">Don't Know</MenuItem>
+                      {manglikOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -105,17 +117,6 @@ export default function TabStep6() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // Material-UI
 import { useTheme } from '@mui/material/styles';
@@ -12,24 +12,58 @@ import TextField from '@mui/material/TextField';
 import 'assets/styles/styles.scss';
 // Project Imports
 import MainCard from 'components/MainCard';
-
-export default function TabStep5() {
+import { Checkbox } from '@mui/material';
+interface TabStep5Props {
+  highestQualification: string;
+  setHighestQualification: (value: string) => void;
+  additionalQualification: string;
+  setAdditionalQualification: (value: string) => void;
+  occupation: string;
+  setOccupation: (value: string) => void;
+  companyName: string;
+  setCompanyName: (value: string) => void;
+  workingWith: string;
+  setWorkingWith: (value: string) => void;
+  annualIncome: string;
+  setAnnualIncome: (value: string) => void;
+  languagesKnown: string[];
+  setLanguagesKnown: (value: string[]) => void;
+  qualificationOptions: any;
+  occupationOptions: any;
+  workingWithOptions: any;
+  incomeOptions: any;
+  languageOptions: any;
+}
+export default function TabStep5({
+  highestQualification,
+  setHighestQualification,
+  additionalQualification,
+  setAdditionalQualification,
+  occupation,
+  setOccupation,
+  companyName,
+  setCompanyName,
+  workingWith,
+  setWorkingWith,
+  annualIncome,
+  setAnnualIncome,
+  languagesKnown,
+  setLanguagesKnown,
+  qualificationOptions = [],
+  occupationOptions = [],
+  workingWithOptions = [],
+  incomeOptions = [],
+  languageOptions = []
+}: TabStep5Props) {
   const theme = useTheme();
-
-  // State Variables
-  const [highestQualification, setHighestQualification] = useState('');
-  const [additionalQualification, setAdditionalQualification] = useState('');
-  const [occupation, setOccupation] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [workingWith, setWorkingWith] = useState('');
-  const [annualIncome, setAnnualIncome] = useState('');
-  const [languagesKnown, setLanguagesKnown] = useState('');
 
   // Handlers
   const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
   const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
   const handleAnnualIncomeChange = (event: SelectChangeEvent) => setAnnualIncome(event.target.value);
-  const handleLanguagesKnownChange = (event: SelectChangeEvent) => setLanguagesKnown(event.target.value);
+  const handleLanguagesKnownChange = (event: SelectChangeEvent<string[]>) => {
+    setLanguagesKnown(event.target.value as string[]);
+  };
 
   return (
     <Grid container spacing={3}>
@@ -80,14 +114,11 @@ export default function TabStep5() {
                       <MenuItem value="" disabled>
                         Select Occupation
                       </MenuItem>
-                      <MenuItem value="Software Engineer">Software Engineer</MenuItem>
-                      <MenuItem value="Doctor">Doctor</MenuItem>
-                      <MenuItem value="Teacher">Teacher</MenuItem>
-                      <MenuItem value="Entrepreneur">Entrepreneur</MenuItem>
-                      <MenuItem value="Banker">Banker</MenuItem>
-                      <MenuItem value="Government Employee">Government Employee</MenuItem>
-                      <MenuItem value="Freelancer">Freelancer</MenuItem>
-                      <MenuItem value="Others">Others</MenuItem>
+                      {occupationOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -124,11 +155,11 @@ export default function TabStep5() {
                       <MenuItem value="" disabled>
                         Select Work Type
                       </MenuItem>
-                      <MenuItem value="Private Sector">Private Sector</MenuItem>
-                      <MenuItem value="Government Sector">Government Sector</MenuItem>
-                      <MenuItem value="Business">Business</MenuItem>
-                      <MenuItem value="Self-Employed">Self-Employed</MenuItem>
-                      <MenuItem value="Retired">Retired</MenuItem>
+                      {workingWithOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -146,10 +177,11 @@ export default function TabStep5() {
                       <MenuItem value="" disabled>
                         Select Annual Income
                       </MenuItem>
-                      <MenuItem value="Less than $20,000">Less than $20,000</MenuItem>
-                      <MenuItem value="$20,000 - $50,000">$20,000 - $50,000</MenuItem>
-                      <MenuItem value="$50,000 - $100,000">$50,000 - $100,000</MenuItem>
-                      <MenuItem value="Above $100,000">Above $100,000</MenuItem>
+                      {incomeOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -157,22 +189,26 @@ export default function TabStep5() {
                   <Stack spacing={1}>
                     <InputLabel htmlFor="languages-known">Languages Known</InputLabel>
                     <Select
+                      multiple // Enable multiple selections
                       fullWidth
                       id="languages-known"
-                      value={languagesKnown}
+                      value={Array.isArray(languagesKnown) ? languagesKnown : []} // Ensure value is always an array
                       onChange={handleLanguagesKnownChange}
                       displayEmpty
                       className="inputFieldLogin"
+                      renderValue={(selected) =>
+                        Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Languages Known'
+                      }
                     >
                       <MenuItem value="" disabled>
                         Select Languages Known
                       </MenuItem>
-                      <MenuItem value="English">English</MenuItem>
-                      <MenuItem value="Spanish">Spanish</MenuItem>
-                      <MenuItem value="French">French</MenuItem>
-                      <MenuItem value="German">German</MenuItem>
-                      <MenuItem value="Hindi">Hindi</MenuItem>
-                      <MenuItem value="Mandarin">Mandarin</MenuItem>
+                      {languageOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          <Checkbox checked={languagesKnown.includes(option)} />
+                          {option}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -180,17 +216,6 @@ export default function TabStep5() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

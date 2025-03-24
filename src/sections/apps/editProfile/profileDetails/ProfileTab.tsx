@@ -9,6 +9,17 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 // assets
 import { CardCoin, Lock, Profile, Setting3 } from 'iconsax-react';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+import { getUserDetails } from 'apiServices/data';
+interface ResponseData {
+  status: string;
+  message: string;
+  data: any;
+}
+interface ErrorData {
+  response: any;
+}
 
 function getPathIndex(pathname: string) {
   let selectedTab = 0;
@@ -31,8 +42,8 @@ function getPathIndex(pathname: string) {
 export default function ProfileTab() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
   const [selectedIndex, setSelectedIndex] = useState(getPathIndex(pathname));
+
   const handleListItemClick = (index: number, route: string) => {
     setSelectedIndex(index);
     navigate(route);

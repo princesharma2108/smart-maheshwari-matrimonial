@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Tabs,
   Tab,
@@ -18,13 +18,23 @@ import {
 import loginBG from 'assets/images/login/loginBG.jpeg';
 import { useNavigate } from 'react-router-dom';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
-
+import { getAboutMe, getGeneralData } from 'apiServices/data';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+import { profileDetails } from 'apiServices/user';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
 }
-
+interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  status: string;
+  message: string;
+  response: any;
+}
 const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   return (
     <div role="tabpanel" hidden={value !== index} style={{ padding: '16px' }}>
@@ -35,6 +45,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 const AdditionalInformation: React.FC = () => {
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
+  const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
   const navigate = useNavigate();
   const handleAboutMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAboutMe(event.target.value);
@@ -46,7 +57,162 @@ const AdditionalInformation: React.FC = () => {
     'I enjoy quiet evenings with a good book or a movie. I believe in meaningful conversations and strong personal connections.',
     'A fun-loving and social person, I love spending time with family and friends. My weekends are filled with laughter, music, and great food.'
   ];
-
+  const getAboutMeAPI = async () => {
+    const storedData = localStorage.getItem('matrimonialDetails');
+    const matrimonialData = storedData ? JSON.parse(storedData) : {};
+    const storedPreferenceData = localStorage.getItem('preferenceData');
+    const preferenceData = storedPreferenceData ? JSON.parse(storedPreferenceData) : null;
+    const profileDetailsData = {
+      preference: preferenceData,
+      matrimonial: matrimonialData
+    };
+    const data = { userProfileDetails: profileDetailsData };
+    try {
+      const response = await getAboutMe(data);
+      const responseData = response.data as ResponseData;
+      console.log('responseData', responseData);
+      // Extract descriptions and update state
+      const descriptions = responseData.response.map((item: any) => item.description);
+      setAboutMeDescriptions(descriptions);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    getAboutMeAPI();
+  }, []);
+  const handleSaveProfileDetailsAPI = async () => {
+    navigate('/upload-photos');
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const userId = localStorage.getItem('userId');
+    const storedData = localStorage.getItem('matrimonialDetails');
+    const matrimonialStoredData = storedData ? JSON.parse(storedData) : {};
+    const storedPreferenceData = localStorage.getItem('preferenceData');
+    const preferenceStoredData = storedPreferenceData ? JSON.parse(storedPreferenceData) : null;
+    console.log('matrimonialDataJSON2', matrimonialStoredData);
+    const matrimonialData = {
+      matrimonialId: matrimonialId,
+      firstName: matrimonialStoredData.firstName,
+      lastName: 'lastName', // If you have lastName, replace this with the actual variable
+      birthTime: matrimonialStoredData.birthTime || '', // Ensuring a fallback in case of null
+      dateOfBirth: matrimonialStoredData.dateOfBirth || '', // Ensuring a fallback in case of null
+      birthPlace: matrimonialStoredData.birthPlace,
+      gender: matrimonialStoredData.gender,
+      disabilityStatus: matrimonialStoredData.disabilityStatus,
+      heightCM: matrimonialStoredData.heightCM,
+      weightKG: matrimonialStoredData.weightKG,
+      bloodGroup: matrimonialStoredData.bloodGroup,
+      complexion: matrimonialStoredData.complexion,
+      maritalStatus: matrimonialStoredData.maritalStatus,
+      fatherName: matrimonialStoredData.fatherName,
+      motherName: matrimonialStoredData.motherName,
+      nativePlace: matrimonialStoredData.nativePlace,
+      siblingCount: matrimonialStoredData.siblingCount,
+      familyIncomeINR: matrimonialStoredData.familyIncomeINR,
+      familyType: matrimonialStoredData.familyType,
+      qualification: matrimonialStoredData.qualification,
+      additionalQualification: matrimonialStoredData.additionalQualification,
+      occupation: matrimonialStoredData.occupation,
+      occupationCompany: matrimonialStoredData.occupationCompany,
+      occupationLocation: matrimonialStoredData.occupationLocation, // Assuming occupation location is a state
+      minAnnualIncome: matrimonialStoredData.minAnnualIncome, // If you have separate min/max income, modify accordingly
+      maxAnnualIncome: matrimonialStoredData.maxAnnualIncome,
+      gotra: matrimonialStoredData.gotra,
+      hobbies: matrimonialStoredData.hobbies, // Converting hobbies string to an array
+      address: matrimonialStoredData.address,
+      phone: matrimonialStoredData.phone,
+      email: matrimonialStoredData.email,
+      alternateContact: matrimonialStoredData.alternateContact,
+      languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
+      aboutMe: selectedAboutMe,
+      countryCode: 'IN', // If this is dynamic, you may need a variable for it
+      city: matrimonialStoredData.city,
+      state: matrimonialStoredData.state,
+      country: matrimonialStoredData.country,
+      isGunnMatchingImportant: matrimonialStoredData.isGunnMatchingImportant,
+      isManglik: matrimonialStoredData.isManglik, // Assuming manglik is a string and needs conversion
+      dietary: matrimonialStoredData.dietary,
+      drinking: matrimonialStoredData.drinking,
+      smoking: matrimonialStoredData.smoking,
+      locationType: matrimonialStoredData.locationType, // If different from birthPlace, change it accordingly
+      manglik: matrimonialStoredData.manglik
+    };
+    const preferenceData = {
+      userId: userId,
+      maritalStatus: preferenceStoredData.maritalStatus,
+      familyType: preferenceStoredData.familyType,
+      familyBackground: preferenceStoredData.familyBackground,
+      qualification: preferenceStoredData.qualification,
+      preferredLocation: '',
+      locationType: preferenceStoredData.location,
+      minAnnualIncome: 0,
+      maxAnnualIncome: 0,
+      profession: preferenceStoredData.profession,
+      hobbies: preferenceStoredData.hobbies,
+      drinking: preferenceStoredData.drinking,
+      smoking: preferenceStoredData.smoking,
+      dietaryHabits: preferenceStoredData.dietaryHabits,
+      minAge: 24,
+      maxAge: 29,
+      nonNegotiables: [
+        'Smoking',
+        'DietaryHabits',
+        'Drinking',
+        'Age',
+        'FamilyType',
+        'FamilyBackground',
+        'MaritalStatus',
+        'Qualification',
+        'Location',
+        'Profession',
+        'Hobbies',
+        'WorkingWith'
+      ],
+      workingWith: preferenceStoredData.workingWith
+    };
+    // Save preferenceData in local storage
+    localStorage.setItem('preferenceData', JSON.stringify(preferenceData));
+    const profileDetailsData = {
+      preference: preferenceData,
+      matrimonial: matrimonialData
+    };
+    try {
+      const response = await profileDetails(profileDetailsData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      //navigate('/upload-photos');
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <BackgroundWrapper>
       <>
@@ -64,7 +230,7 @@ const AdditionalInformation: React.FC = () => {
                 </Typography>
                 <FormControl component="fieldset">
                   <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
-                    {aboutMeOptions.map((text, index) => (
+                    {aboutMeDescriptions.map((text, index) => (
                       <FormControlLabel
                         key={index}
                         value={text}
@@ -84,7 +250,11 @@ const AdditionalInformation: React.FC = () => {
                             }}
                           />
                         }
-                        label={<Typography variant="body2">{text}</Typography>}
+                        label={
+                          <Typography variant="body2" sx={{ mt: 2 }}>
+                            {text}
+                          </Typography>
+                        }
                       />
                     ))}
                   </RadioGroup>
@@ -106,7 +276,7 @@ const AdditionalInformation: React.FC = () => {
               <Button
                 variant="contained"
                 onClick={() => {
-                  navigate('/upload-photos');
+                  handleSaveProfileDetailsAPI();
                 }}
                 className="buttonStyle"
               >

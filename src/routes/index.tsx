@@ -14,7 +14,7 @@ import PersonalDetails from 'pages/apps/personalDetails/personalDetails';
 import Preferences from 'pages/apps/preferences/preferences';
 import AdditionalInformation from 'pages/apps/additionalInformation/additionalInformation';
 import UploadPhotos from 'pages/apps/uploadPhotos/uploadPhotos';
-import Questionare from 'pages/apps/questionare/questionare';
+import Questionare from 'pages/apps/questionare/questionnaire';
 
 // ==============================|| ROUTES RENDER ||============================== //
 

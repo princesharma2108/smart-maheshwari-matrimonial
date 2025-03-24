@@ -18,12 +18,117 @@ import imgFacebook from 'assets/images/auth/facebook.svg';
 import imgTwitter from 'assets/images/auth/twitter.svg';
 import imgGoogle from 'assets/images/auth/google.svg';
 import { Box } from '@mui/material';
-
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { auth, db } from 'config/firebase';
+import { useEffect, useReducer, useState } from 'react';
+import { LOGIN, LOGOUT } from 'contexts/auth-reducer/actions';
+import authReducer from 'contexts/auth-reducer/auth';
+import { AuthProps, JWTContextType } from 'types/auth';
+import { loginUser } from 'apiServices/authentication';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
 // ================================|| LOGIN ||================================ //
-
+interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  created: false;
+  expiresMilliseconds: number;
+  matrimonialId: string;
+  message: string;
+  status: string;
+  token: string;
+  userId: string;
+  username: string;
+}
+// constant
+const initialState: AuthProps = {
+  isLoggedIn: false,
+  isInitialized: false,
+  user: null
+};
+interface UserDetails {
+  email: string;
+  firstName: string;
+  photo: string;
+  lastName: string;
+}
 export default function Login() {
-  const { isLoggedIn } = useAuth();
-
+  const { isLoggedIn, login } = useAuth();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  function googleLogin() {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).then(async (result) => {
+      console.log(result);
+      const user = result.user;
+      setUserId(user.uid);
+      setUserEmail(user.email);
+      if (result.user) {
+        await setDoc(doc(db, 'Users', user.uid), {
+          email: user.email,
+          firstName: user.displayName,
+          photo: user.photoURL,
+          lastName: ''
+        });
+      }
+    });
+  }
+  console.log('userDetailsLogin', userDetails);
+  const loginUserAPI = async (userEmail: string, userId: string) => {
+    console.log('inLoginUserAPI');
+    const loginData = {
+      user: userEmail,
+      password: '12345'
+    };
+    const registerData = {
+      phoneNumber: null,
+      emailAddress: userEmail,
+      googleToken: userId,
+      appVersion: '1.0.4'
+    };
+    try {
+      const response = await login(registerData);
+      console.log('response', response);
+      //const responseData = response.data as ResponseData;
+      // const { token, matrimonialId, username, userId, message } = responseData;
+      // localStorage.setItem('userData', JSON.stringify(responseData));
+      // localStorage.setItem('token', token);
+      // localStorage.setItem('userId', userId);
+      // localStorage.setItem('matrimonialId', matrimonialId);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: 'User logged in successfully',
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      window.location.href = '/upload-biodata';
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    if (userEmail && userId) {
+      loginUserAPI(userEmail, userId);
+    }
+  }, [userEmail, userId]);
   return (
     <AuthWrapper>
       <Grid container spacing={3}>
@@ -33,6 +138,13 @@ export default function Login() {
         <Grid item xs={12} sx={{ pt: '20px !important' }}>
           <AuthLogin forgot="/auth/forgot-password" />
         </Grid>
+        <Grid
+          item
+          xs={12}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pt: '10px !important', pb: '10px !important' }}
+        >
+          <Typography variant="body1">OR</Typography>
+        </Grid>
         <Grid item xs={12} sx={{ pt: '14px !important' }}>
           <Grid container spacing={1}>
             {/* <Grid item xs={12}>
@@ -41,7 +153,7 @@ export default function Login() {
               </AuthSocButton>
             </Grid> */}
             <Grid item xs={12}>
-              <AuthSocButton>
+              <AuthSocButton onClick={googleLogin}>
                 <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
               </AuthSocButton>
             </Grid>

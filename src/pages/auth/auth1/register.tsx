@@ -17,11 +17,104 @@ import FirebaseRegister from 'sections/auth/auth-forms/AuthRegister';
 import imgFacebook from 'assets/images/auth/facebook.svg';
 import imgTwitter from 'assets/images/auth/twitter.svg';
 import imgGoogle from 'assets/images/auth/google.svg';
-
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { setDoc, doc, getDoc } from 'firebase/firestore';
+import { auth, db } from 'config/firebase';
+import { useEffect, useState } from 'react';
+import { registerUser } from 'apiServices/authentication';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
 // ================================|| REGISTER ||================================ //
 
 export default function Register() {
   const { isLoggedIn } = useAuth();
+  interface UserDetails {
+    email: string;
+    firstName: string;
+    photo: string;
+    lastName: string;
+  }
+  interface ErrorData {
+    response: any;
+  }
+  interface ResponseData {
+    created: false;
+    expiresMilliseconds: number;
+    matrimonialId: string;
+    message: string;
+    status: string;
+    token: string;
+    userId: string;
+    username: string;
+  }
+
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  function googleLogin() {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider).then(async (result) => {
+      console.log('result', result);
+      const user = result.user;
+      setUserId(user.uid);
+      setUserEmail(user.email);
+      if (result.user) {
+        await setDoc(doc(db, 'Users', user.uid), {
+          email: user.email,
+          firstName: user.displayName,
+          photo: user.photoURL,
+          lastName: ''
+        });
+      }
+    });
+  }
+  console.log('userDetailsLogin', userDetails);
+  console.log('userDetailsId', userId);
+  console.log('userDetailsEmail', userEmail);
+  useEffect(() => {
+    if (userEmail && userId) {
+      registerUserAPI(userEmail, userId);
+    }
+  }, [userEmail, userId]);
+
+  const registerUserAPI = async (userEmail: string, userId: string) => {
+    console.log('inRegisterUserAPI');
+    const registerData = {
+      phoneNumber: null,
+      emailAddress: userEmail,
+      googleToken: userId,
+      appVersion: '1.0.4'
+    };
+    try {
+      const response = await registerUser(registerData);
+      console.log('response', response);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      //window.location.href = '/';
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
 
   return (
     <AuthWrapper>
@@ -54,14 +147,14 @@ export default function Register() {
             <Typography variant="body1">OR</Typography>
             {/* </AuthDivider> */}
           </Grid>
-          <Grid container spacing={1}>
+          <Grid container spacing={1} sx={{ pt: '20px !important' }}>
             {/* <Grid item xs={12}>
               <AuthSocButton>
                 <img src={imgFacebook} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Facebook
               </AuthSocButton>
             </Grid> */}
             <Grid item xs={12}>
-              <AuthSocButton>
+              <AuthSocButton onClick={googleLogin}>
                 <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
               </AuthSocButton>
             </Grid>

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // Material-UI
 import { useTheme } from '@mui/material/styles';
@@ -13,18 +13,40 @@ import TextField from '@mui/material/TextField';
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
-
-export default function TabStep7() {
+interface TabStep7Props {
+  residentialAddress: string;
+  setResidentialAddress: (value: string) => void;
+  phoneNumber: string;
+  setPhoneNumber: (value: string) => void;
+  emailAddress: string;
+  setEmailAddress: (value: string) => void;
+  alternateContact: string;
+  setAlternateContact: (value: string) => void;
+  country: string;
+  setCountry: (value: string) => void;
+  state: string;
+  setState: (value: string) => void;
+  city: string;
+  setCity: (value: string) => void;
+}
+export default function TabStep7({
+  residentialAddress,
+  setResidentialAddress,
+  phoneNumber,
+  setPhoneNumber,
+  emailAddress,
+  setEmailAddress,
+  alternateContact,
+  setAlternateContact,
+  country,
+  setCountry,
+  state,
+  setState,
+  city,
+  setCity
+}: TabStep7Props) {
   const theme = useTheme();
   const navigate = useNavigate();
-  // State Variables
-  const [residentialAddress, setResidentialAddress] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [emailAddress, setEmailAddress] = useState('');
-  const [alternateContact, setAlternateContact] = useState('');
-  const [country, setCountry] = useState('');
-  const [state, setState] = useState('');
-  const [city, setCity] = useState('');
 
   // Handlers
   const handleResidentialAddressChange = (event: ChangeEvent<HTMLInputElement>) => setResidentialAddress(event.target.value);
@@ -34,13 +56,11 @@ export default function TabStep7() {
   const handleCountryChange = (event: SelectChangeEvent) => setCountry(event.target.value);
   const handleStateChange = (event: SelectChangeEvent) => setState(event.target.value);
   const handleCityChange = (event: SelectChangeEvent) => setCity(event.target.value);
-
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <MainCard title="Contact Information">
           <Grid container spacing={3}>
-            {/* Left Column */}
             <Grid item xs={12} sm={6}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -98,8 +118,6 @@ export default function TabStep7() {
                 </Grid>
               </Grid>
             </Grid>
-
-            {/* Right Column */}
             <Grid item xs={12} sm={6}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -151,24 +169,6 @@ export default function TabStep7() {
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              // navigate('/dashboard/default');
-              navigate('/preferences');
-            }}
-            className="buttonStyle"
-          >
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

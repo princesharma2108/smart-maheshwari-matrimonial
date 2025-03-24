@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -13,31 +13,70 @@ import TextField from '@mui/material/TextField';
 import 'assets/styles/styles.scss';
 // project-imports
 import MainCard from 'components/MainCard';
+import { Checkbox } from '@mui/material';
 
 // ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
-
-export default function TabStep2() {
+interface TabStep2Props {
+  weight: string;
+  setWeight: (value: string) => void;
+  height: string;
+  setHeight: (value: string) => void;
+  gender: string;
+  setGender: (value: string) => void;
+  hobbies: string[];
+  setHobbies: (value: string[]) => void;
+  disability: string;
+  setDisability: (value: string) => void;
+  bloodGroup: string;
+  setBloodGroup: (value: string) => void;
+  complexion: string;
+  setComplexion: (value: string) => void;
+  maritalStatus: string;
+  setMaritalStatus: (value: string) => void;
+  heightOptions: any;
+  hobbiesOptions: string[];
+  disabilities: string[];
+  bloodGroupOptions: string[];
+  complexionOptions: any;
+  maritalOptions: any;
+}
+export default function TabStep2({
+  weight,
+  setWeight,
+  height,
+  setHeight,
+  gender,
+  setGender,
+  hobbies,
+  setHobbies,
+  disability,
+  setDisability,
+  bloodGroup,
+  setBloodGroup,
+  complexion,
+  setComplexion,
+  maritalStatus,
+  setMaritalStatus,
+  heightOptions = [],
+  hobbiesOptions = [],
+  disabilities = [],
+  bloodGroupOptions = [],
+  complexionOptions = [],
+  maritalOptions = []
+}: TabStep2Props) {
   const theme = useTheme();
 
-  // State Variables
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-  const [gender, setGender] = useState('');
-  const [hobbies, setHobbies] = useState('');
-  const [disability, setDisability] = useState('');
-  const [bloodGroup, setBloodGroup] = useState('');
-  const [complexion, setComplexion] = useState('');
-  const [maritalStatus, setMaritalStatus] = useState('');
-
   // Handlers
-  const handleHeightChange = (event: SelectChangeEvent) => setHeight(event.target.value);
+  // const handleHeightChange = (event: SelectChangeEvent) => setHeight(event.target.value);
+  // const handleWeightChange = (event: ChangeEvent<HTMLInputElement>) => setWeight(event.target.value);
+  // const handleGenderChange = (event: SelectChangeEvent) => setGender(event.target.value);
+  // const handleHobbiesChange = (event: SelectChangeEvent) => setHobbies(event.target.value);
+  // const handleDisabilityChange = (event: SelectChangeEvent) => setDisability(event.target.value);
+  // const handleBloodGroupChange = (event: SelectChangeEvent) => setBloodGroup(event.target.value);
+  // const handleComplexionChange = (event: SelectChangeEvent) => setComplexion(event.target.value);
+  // const handleMaritalStatusChange = (event: SelectChangeEvent) => setMaritalStatus(event.target.value);
+  const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
   const handleWeightChange = (event: ChangeEvent<HTMLInputElement>) => setWeight(event.target.value);
-  const handleGenderChange = (event: SelectChangeEvent) => setGender(event.target.value);
-  const handleHobbiesChange = (event: SelectChangeEvent) => setHobbies(event.target.value);
-  const handleDisabilityChange = (event: SelectChangeEvent) => setDisability(event.target.value);
-  const handleBloodGroupChange = (event: SelectChangeEvent) => setBloodGroup(event.target.value);
-  const handleComplexionChange = (event: SelectChangeEvent) => setComplexion(event.target.value);
-  const handleMaritalStatusChange = (event: SelectChangeEvent) => setMaritalStatus(event.target.value);
 
   return (
     <Grid container spacing={3}>
@@ -63,13 +102,15 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="height">Height</InputLabel>
-                <Select fullWidth value={height} onChange={handleHeightChange} displayEmpty className="inputFieldLogin">
+                <Select fullWidth value={height} onChange={handleSelectChange(setHeight)} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Height
                   </MenuItem>
-                  <MenuItem value="Short">Short</MenuItem>
-                  <MenuItem value="Medium">Medium</MenuItem>
-                  <MenuItem value="Tall">Tall</MenuItem>
+                  {heightOptions?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -78,13 +119,15 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="gender">Gender</InputLabel>
-                <Select fullWidth value={gender} onChange={handleGenderChange} displayEmpty className="inputFieldLogin">
+                <Select fullWidth value={gender} onChange={handleSelectChange(setGender)} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Gender
                   </MenuItem>
-                  <MenuItem value="Male">Male</MenuItem>
-                  <MenuItem value="Female">Female</MenuItem>
-                  <MenuItem value="Other">Other</MenuItem>
+                  {['Male', 'Female', 'Other'].sort().map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -93,14 +136,26 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
-                <Select fullWidth value={hobbies} onChange={handleHobbiesChange} displayEmpty className="inputFieldLogin">
+                <Select
+                  multiple
+                  fullWidth
+                  value={Array.isArray(hobbies) ? hobbies : []} // Ensuring value is always an array
+                  onChange={(event) => {
+                    setHobbies(event.target.value as string[]);
+                  }}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  renderValue={(selected) => (Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Hobby')}
+                >
                   <MenuItem value="" disabled>
                     Select Hobby
                   </MenuItem>
-                  <MenuItem value="Reading">Reading</MenuItem>
-                  <MenuItem value="Sports">Sports</MenuItem>
-                  <MenuItem value="Music">Music</MenuItem>
-                  <MenuItem value="Gaming">Gaming</MenuItem>
+                  {hobbiesOptions?.sort().map((option) => (
+                    <MenuItem key={option} value={option}>
+                      <Checkbox checked={hobbies.includes(option)} />
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -116,14 +171,15 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="disability">Disability</InputLabel>
-                <Select fullWidth value={disability} onChange={handleDisabilityChange} displayEmpty className="inputFieldLogin">
+                <Select fullWidth value={disability} onChange={handleSelectChange(setDisability)} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Disability
                   </MenuItem>
-                  <MenuItem value="None">None</MenuItem>
-                  <MenuItem value="Visual Impairment">Visual Impairment</MenuItem>
-                  <MenuItem value="Hearing Impairment">Hearing Impairment</MenuItem>
-                  <MenuItem value="Physical Disability">Physical Disability</MenuItem>
+                  {disabilities?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -132,18 +188,15 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="blood-group">Blood Group</InputLabel>
-                <Select fullWidth value={bloodGroup} onChange={handleBloodGroupChange} displayEmpty className="inputFieldLogin">
+                <Select fullWidth value={bloodGroup} onChange={handleSelectChange(setBloodGroup)} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Blood Group
                   </MenuItem>
-                  <MenuItem value="A+">A+</MenuItem>
-                  <MenuItem value="A-">A-</MenuItem>
-                  <MenuItem value="B+">B+</MenuItem>
-                  <MenuItem value="B-">B-</MenuItem>
-                  <MenuItem value="O+">O+</MenuItem>
-                  <MenuItem value="O-">O-</MenuItem>
-                  <MenuItem value="AB+">AB+</MenuItem>
-                  <MenuItem value="AB-">AB-</MenuItem>
+                  {bloodGroupOptions?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -152,13 +205,15 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="complexion">Complexion</InputLabel>
-                <Select fullWidth value={complexion} onChange={handleComplexionChange} displayEmpty className="inputFieldLogin">
+                <Select fullWidth value={complexion} onChange={handleSelectChange(setComplexion)} displayEmpty className="inputFieldLogin">
                   <MenuItem value="" disabled>
                     Select Complexion
                   </MenuItem>
-                  <MenuItem value="Fair">Fair</MenuItem>
-                  <MenuItem value="Medium">Medium</MenuItem>
-                  <MenuItem value="Dark">Dark</MenuItem>
+                  {complexionOptions?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -167,31 +222,26 @@ export default function TabStep2() {
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="marital-status">Marital Status</InputLabel>
-                <Select fullWidth value={maritalStatus} onChange={handleMaritalStatusChange} displayEmpty className="inputFieldLogin">
+                <Select
+                  fullWidth
+                  value={maritalStatus}
+                  onChange={handleSelectChange(setMaritalStatus)}
+                  displayEmpty
+                  className="inputFieldLogin"
+                >
                   <MenuItem value="" disabled>
                     Select Marital Status
                   </MenuItem>
-                  <MenuItem value="Single">Single</MenuItem>
-                  <MenuItem value="Married">Married</MenuItem>
-                  <MenuItem value="Divorced">Divorced</MenuItem>
-                  <MenuItem value="Widowed">Widowed</MenuItem>
+                  {maritalOptions?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-
-      {/* Navigation Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary">
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

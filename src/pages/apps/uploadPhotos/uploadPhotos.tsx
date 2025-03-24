@@ -8,48 +8,119 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
-
+import { uploadBiodata, uploadPhoto } from 'apiServices/user';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  message: string;
+  status: string;
+}
 export default function UploadPhotos() {
   const { register, handleSubmit, reset } = useForm();
-  const [images, setImages] = useState<File[]>([]);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const navigate = useNavigate();
 
   const onSubmit = (data: any) => {
-    if (images.length < 2) {
-      alert('Please upload at least 2 photos.');
-      return;
-    }
-    console.log('Uploaded Photos:', images);
+    uploadPhotosAPI();
+    console.log('Uploaded Photos:', selectedImages);
     //navigate('/widget/statistics');
-    navigate('/questionare');
-    reset();
-    setImages([]);
-    setPreviews([]);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    if (images.length + files.length > 10) {
+    console.log('FilesInput', files);
+    if (selectedImages.length + files.length > 10) {
       alert('You can upload a maximum of 10 photos.');
       return;
     }
 
-    const validFiles = files.filter((file) => file.type.startsWith('image/'));
-    if (validFiles.length !== files.length) {
-      alert('Only image files (JPEG, PNG) are allowed.');
-      return;
-    }
+    // const validFiles = files.filter((file) => file.type.startsWith('image/'));
+    // if (validFiles.length !== files.length) {
+    //   alert('Only image files (JPEG, PNG) are allowed.');
+    //   return;
+    // }
 
-    setImages((prev) => [...prev, ...validFiles]);
-    setPreviews((prev) => [...prev, ...validFiles.map((file) => URL.createObjectURL(file))]);
+    // setSelectedImages((prev) => [...prev, ...validFiles]);
+    // setPreviews((prev) => [...prev, ...validFiles.map((file) => URL.createObjectURL(file))]);
+    setSelectedImages((prev) => [...prev, ...files]);
+    setPreviews((prev) => [...prev, ...files.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
+    setSelectedFiles(files);
   };
 
   const handleRemoveFile = (index: number) => {
-    setImages(images.filter((_, i) => i !== index));
+    setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
   };
-
+  const uploadPhotosAPI = async () => {
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const uploadData = {
+      matrimonialId: matrimonialId,
+      appVersion: '1.0.4'
+    };
+    let fileData = [];
+    // Create a FormData object
+    const formData = new FormData();
+    // formData.append('data', JSON.stringify(uploadData));
+    if (matrimonialId) {
+      formData.append('matrimonialId', matrimonialId);
+    } else {
+      console.warn('No matrimonialId found in localStorage.');
+    }
+    // Only append the file if it's selected
+    if (selectedImages) {
+      console.log('uploadPhotos', selectedImages);
+      console.log('uploadPhotos2', selectedFiles);
+      console.log(
+        'Selected files:',
+        selectedFiles.map((file) => file.name)
+      );
+      fileData = selectedFiles.map((file) => file.name);
+      // selectedImages.forEach((file, index) => {
+      //   formData.append(`photos`, file); // Change `file${index + 1}` to `photos`
+      // });
+      selectedFiles.forEach((file) => {
+        formData.append('photos', file);
+      });
+    } else {
+      console.log('No file selected, proceeding without image');
+    }
+    formData.append('appVersion', '1.0.4');
+    try {
+      const response = await uploadPhoto(formData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      navigate('/questionare');
+      reset();
+      setSelectedImages([]);
+      setPreviews([]);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">
@@ -75,7 +146,7 @@ export default function UploadPhotos() {
             component="label"
             startIcon={<CloudUploadIcon />}
             sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-            disabled={images.length >= 10}
+            disabled={selectedImages.length >= 10}
             className="buttonStyle"
           >
             Choose Files
@@ -87,7 +158,7 @@ export default function UploadPhotos() {
         {previews.length > 0 && (
           <Grid item xs={12}>
             <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
-              Selected Photos ({images.length}/10)
+              Selected Photos ({selectedImages.length}/10)
             </Typography>
             <Grid container spacing={2} justifyContent="center">
               {previews.map((preview, index) => (
@@ -108,14 +179,14 @@ export default function UploadPhotos() {
         )}
 
         {/* Upload Button */}
-        <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
+        <Grid item xs={6} md={6} sx={{ textAlign: 'center' }}>
           <Button
             type="submit"
             variant="contained"
-            size="small"
+            // size="small"
             fullWidth
             onClick={handleSubmit(onSubmit)}
-            disabled={images.length < 2}
+            disabled={selectedImages.length < 2}
             className="buttonStyle"
           >
             Upload

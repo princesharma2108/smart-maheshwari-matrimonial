@@ -8,19 +8,27 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
-
+import { uploadBiodata } from 'apiServices/user';
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  message: string;
+  status: string;
+}
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   // Handle form submission
   const onSubmit = (data: any) => {
-    navigate('/personal-details');
     console.log('Uploaded Biodata:', data.biodata?.[0]);
-    reset();
-    handleRemoveFile();
+    uploadBiodataAPI();
   };
 
   // Handle file selection and preview
@@ -33,6 +41,7 @@ export default function UploadBiodata() {
       }
       setFilePreview(URL.createObjectURL(file));
       setFileName(file.name);
+      setSelectedFile(file);
     }
   };
 
@@ -43,6 +52,58 @@ export default function UploadBiodata() {
     reset();
   };
 
+  const uploadBiodataAPI = async () => {
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const uploadData = {
+      matrimonialId: matrimonialId,
+      appVersion: '1.0.4'
+    };
+    // Create a FormData object
+    const formData = new FormData();
+    // formData.append('data', JSON.stringify(uploadData));
+    if (matrimonialId) {
+      formData.append('matrimonialId', matrimonialId);
+    } else {
+      console.warn('No matrimonialId found in localStorage.');
+    }
+    // Only append the file if it's selected
+    if (selectedFile) {
+      console.log('uploadBiodataPDF', selectedFile);
+      formData.append('file', selectedFile);
+    } else {
+      console.log('No file selected, proceeding without image');
+    }
+    formData.append('appVersion', '1.0.4');
+    try {
+      const response = await uploadBiodata(formData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      navigate('/personal-details');
+      reset();
+      handleRemoveFile();
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <BackgroundWrapper>
       <Grid container spacing={3} justifyContent="center">
@@ -86,7 +147,7 @@ export default function UploadBiodata() {
         )}
 
         {/* Upload Button */}
-        <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
+        <Grid item xs={6} md={6} sx={{ textAlign: 'center' }}>
           <Button type="submit" variant="contained" fullWidth onClick={handleSubmit(onSubmit)} disabled={!fileName} className="buttonStyle">
             Upload
           </Button>

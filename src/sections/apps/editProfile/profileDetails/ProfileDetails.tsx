@@ -25,7 +25,17 @@ import defaultImages from 'assets/images/users/default.png';
 
 // assets
 import { Apple, Camera, Facebook, Google } from 'iconsax-react';
-
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
+import { getUserDetails } from 'apiServices/data';
+interface ResponseData {
+  status: string;
+  message: string;
+  data: any;
+}
+interface ErrorData {
+  response: any;
+}
 interface Props {
   focusInput: () => void;
 }
@@ -36,67 +46,51 @@ export default function ProfileDetails({ focusInput }: Props) {
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const [avatar, setAvatar] = useState<string | undefined>(defaultImages);
-
+  const [userName, setUsername] = useState('');
+  const [profileUrl, setProfileUrl] = useState('');
+  const [photosUrl, setPhotosUrl] = useState([]);
+  const [prefernceDetails, setPrefernceDetails] = useState({});
+  const [profileDetails, setProfileDetails] = useState({});
   useEffect(() => {
     if (selectedImage) {
       setAvatar(URL.createObjectURL(selectedImage));
     }
   }, [selectedImage]);
 
-  const [anchorEl, setAnchorEl] = useState<Element | (() => Element) | null | undefined>(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement> | undefined) => {
-    setAnchorEl(event?.currentTarget);
+  const getUserDetailsAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseData;
+      console.log('responseData', responseData);
+      setUsername(responseData.data.username);
+      setPhotosUrl(responseData.data.photos);
+      localStorage.setItem('photosUrl', JSON.stringify(responseData.data.photos));
+      setProfileUrl(responseData.data.profileUrl);
+      setProfileDetails(responseData.data.profile);
+      localStorage.setItem('profileDetails', JSON.stringify(responseData.data.profile));
+      setPrefernceDetails(responseData.data.preferences);
+      localStorage.setItem('preferenceDetails', JSON.stringify(responseData.data.preferences));
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
   };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  useEffect(() => {
+    getUserDetailsAPI();
+  }, []);
   return (
     <MainCard>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          {/* <Stack direction="row" justifyContent="flex-end">
-            <IconButton
-              variant="light"
-              color="secondary"
-              id="basic-button"
-              aria-controls={open ? 'basic-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-              sx={{ transform: 'rotate(90deg)' }}
-            >
-              <MoreIcon />
-            </IconButton>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            >
-              <MenuItem
-                component={Link}
-                to="/apps/profiles/user/personal"
-                onClick={() => {
-                  handleClose();
-                  setTimeout(() => {
-                    focusInput();
-                  });
-                }}
-              >
-                Edit
-              </MenuItem>
-              <MenuItem onClick={handleClose} disabled>
-                Delete
-              </MenuItem>
-            </Menu>
-          </Stack> */}
           <Stack spacing={2.5} alignItems="center">
             <FormLabel
               htmlFor="change-avtar"
@@ -108,7 +102,7 @@ export default function ProfileDetails({ focusInput }: Props) {
                 cursor: 'pointer'
               }}
             >
-              <Avatar alt="Avatar 1" src={avatar} sx={{ width: 124, height: 124, border: '1px dashed #f00757' }} />
+              <Avatar alt="Avatar 1" src={profileUrl} sx={{ width: 124, height: 124, border: '1px dashed #f00757' }} />
               <Box
                 sx={{
                   position: 'absolute',
@@ -138,7 +132,7 @@ export default function ProfileDetails({ focusInput }: Props) {
               onChange={(e: ChangeEvent<HTMLInputElement>) => setSelectedImage(e.target.files?.[0])}
             />
             <Stack spacing={0.5} alignItems="center">
-              <Typography variant="h5">Stebin Ben</Typography>
+              <Typography variant="h5">{userName}</Typography>
             </Stack>
           </Stack>
         </Grid>

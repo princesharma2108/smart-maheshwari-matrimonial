@@ -10,9 +10,11 @@ import authReducer from 'contexts/auth-reducer/auth';
 
 // project import
 import Loader from 'components/Loader';
-import axios from 'utils/axios';
+//import axios from 'utils/axios';
+import axios from 'axios';
 import { KeyedObject } from 'types/root';
 import { AuthProps, JWTContextType } from 'types/auth';
+import { apiUrl } from 'apiServices/apiUrl';
 
 const chance = new Chance();
 
@@ -82,15 +84,20 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
     init();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/account/login', { email, password });
-    const { serviceToken, user } = response.data;
-    setSession(serviceToken);
+  // const login = async (email?: string, password?: string, registerData?: any) => {
+  const login = async (registerData: any) => {
+    // const response = await axios.post(`${apiUrl}/login`, { user, password });
+    const response = await axios.post(`${apiUrl}/register`, registerData);
+    const { token, matrimonialId, username, userId, message } = response.data;
+    localStorage.setItem('userData', JSON.stringify(response.data));
+    localStorage.setItem('token', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('matrimonialId', matrimonialId);
+    setSession(token);
     dispatch({
       type: LOGIN,
       payload: {
-        isLoggedIn: true,
-        user
+        isLoggedIn: true
       }
     });
   };
