@@ -13,7 +13,8 @@ import {
   FormControl,
   Grid,
   Stack,
-  Button
+  Button,
+  CircularProgress
 } from '@mui/material';
 import loginBG from 'assets/images/login/loginBG.jpeg';
 import { useNavigate } from 'react-router-dom';
@@ -46,18 +47,14 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 const AdditionalInformation: React.FC = () => {
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
   const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const handleAboutMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAboutMe(event.target.value);
   };
 
-  const aboutMeOptions = [
-    'I am a passionate traveler who loves exploring new cultures and cuisines. Adventure and spontaneity define my lifestyle.',
-    'I am a dedicated professional focused on career growth while maintaining a healthy work-life balance. Fitness and reading are my favorite pastimes.',
-    'I enjoy quiet evenings with a good book or a movie. I believe in meaningful conversations and strong personal connections.',
-    'A fun-loving and social person, I love spending time with family and friends. My weekends are filled with laughter, music, and great food.'
-  ];
   const getAboutMeAPI = async () => {
+    setIsLoading(true);
     const storedData = localStorage.getItem('matrimonialDetails');
     const matrimonialData = storedData ? JSON.parse(storedData) : {};
     const storedPreferenceData = localStorage.getItem('preferenceData');
@@ -85,12 +82,15 @@ const AdditionalInformation: React.FC = () => {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {
     getAboutMeAPI();
   }, []);
   const handleSaveProfileDetailsAPI = async () => {
+    setIsLoading(true);
     //navigate('/upload-photos');
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
@@ -198,11 +198,29 @@ const AdditionalInformation: React.FC = () => {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   return (
     <BackgroundWrapper>
       <>
+        {isLoading && ( // Show Loader When API is in Progress
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+              position: 'absolute',
+              width: '100%',
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              zIndex: 9999
+            }}
+          >
+            <CircularProgress size={60} sx={{ color: '#f00757' }} />
+          </Box>
+        )}
         <Typography variant="h5" gutterBottom>
           Additional Information
         </Typography>

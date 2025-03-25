@@ -24,6 +24,7 @@ import latestMatchBG from 'assets/images/latestMatches/latestMatchBG.png';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { useEffect, useState } from 'react';
+import { postUserStage } from 'apiServices/user';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface ResponseData {
   status: string;
@@ -243,6 +244,43 @@ export default function LatestMatches() {
   };
   useEffect(() => {
     getMatchResultsAPI();
+  }, []);
+  const postUserStageAPI = async () => {
+    //navigate('/upload-photos');
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 5
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  useEffect(() => {
+    postUserStageAPI();
   }, []);
   return (
     <>

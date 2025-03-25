@@ -35,10 +35,20 @@ export const uploadBiodata = async <T>(data: any, config?: AxiosRequestConfig): 
   }
 };
 
-// Upload Biodata
+// Send Profile Details
 export const profileDetails = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.post<T>('/profile-details', data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
+// Edit Profile Details
+export const editProfileDetails = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.patch<T>('/profile-details', data, config);
     return response;
   } catch (error) {
     // Handle error (e.g., log it, show notification, etc.)
@@ -57,10 +67,30 @@ export const uploadPhoto = async <T>(data: any, config?: AxiosRequestConfig): Pr
   }
 };
 
+// Make Profile Photo
+export const makeProfilePhoto = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>('/profile/make-profile', data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
+// Delete Photo
+export const deletePhoto = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>('/profile/delete-profile', data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
 // Get User Stage
 export const getUserStage = async <T>(userId: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
-    const response = await apiClient.post<T>(`/get-stage?userId=${userId}`, config);
+    const response = await apiClient.get<T>(`/get-stage?userId=${userId}`, config);
     return response;
   } catch (error) {
     // Handle error (e.g., log it, show notification, etc.)

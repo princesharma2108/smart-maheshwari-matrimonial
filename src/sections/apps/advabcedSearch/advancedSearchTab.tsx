@@ -234,7 +234,7 @@ export default function AdvancedSearchTab() {
 
       <Grid item xs={12}>
         <Stack direction="row" justifyContent="flex-end" spacing={2}>
-          <Button variant="outlined" color="secondary" onClick={() => navigate('/upload-biodata')}>
+          <Button variant="outlined" color="secondary" onClick={() => {}}>
             Previous
           </Button>
           <Button variant="contained" className="buttonStyle">

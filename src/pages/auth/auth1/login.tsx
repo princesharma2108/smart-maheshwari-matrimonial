@@ -85,10 +85,10 @@ export default function Login() {
       password: '12345'
     };
     const registerData = {
-      phoneNumber: null,
+      phoneNumber: '',
       emailAddress: userEmail,
       googleToken: userId,
-      appVersion: '1.0.4'
+      appVersion: '1.0.0'
     };
     try {
       const response = await login(registerData);

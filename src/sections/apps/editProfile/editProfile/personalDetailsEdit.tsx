@@ -19,7 +19,7 @@ import TabEditStep6 from './TabEditStep6';
 import TabEditStep7 from './TabEditStep7';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
-import { profileDetails } from 'apiServices/user';
+import { editProfileDetails, profileDetails } from 'apiServices/user';
 import { getGeneralData } from 'apiServices/data';
 import dayjs, { Dayjs } from 'dayjs';
 // ==============================|| PROFILE - ACCOUNT ||============================== //
@@ -30,6 +30,11 @@ interface TabPanelProps {
   value: number;
 }
 interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  status: string;
+  message: string;
   response: any;
 }
 interface ResponseGeneralData {
@@ -174,6 +179,32 @@ export default function PersonalDetailsEdit() {
       preference: null,
       matrimonial: matrimonialData
     };
+    try {
+      const response = await editProfileDetails(profileDetailsData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
   };
   const handleNext = () => {
     // navigate('/preferences');

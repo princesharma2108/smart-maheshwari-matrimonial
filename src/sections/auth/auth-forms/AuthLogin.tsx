@@ -46,6 +46,7 @@ import { openSnackbar } from 'api/snackbar';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { KeyedObject } from 'types/root';
+import { getUserStage } from 'apiServices/user';
 interface ErrorData {
   response: any;
 }
@@ -58,6 +59,11 @@ interface ResponseData {
   token: string;
   userId: string;
   username: string;
+}
+interface ResponseStageData {
+  registrationStage: number;
+  message: string;
+  status: string;
 }
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -135,21 +141,15 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
     };
     const registerData = {
       phoneNumber: phoneNumber,
-      emailAddress: null,
-      googleToken: null,
-      appVersion: '1.0.4'
+      emailAddress: '',
+      googleToken: '',
+      appVersion: '1.0.0'
     };
     try {
       await login(registerData);
-      // const responseData = response.data as ResponseData;
-      // const { token, matrimonialId, username, userId, message } = response.data;
-      // localStorage.setItem('userData', JSON.stringify(response.data));
-      // localStorage.setItem('token', token);
-      // localStorage.setItem('userId', userId);
-      // localStorage.setItem('matrimonialId', matrimonialId);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
+      const storedData = localStorage.getItem('userData');
+      const userData = storedData ? JSON.parse(storedData) : {};
+      console.log('userData', userData);
       openSnackbar({
         open: true,
         message: 'Login Successfully',
@@ -158,8 +158,55 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
           color: 'success'
         }
       } as SnackbarProps);
-      window.location.href = '/upload-biodata';
-      //navigate('/widget/statistics');
+      if (userData.created == false) {
+        getUserStageAPI();
+      } else {
+        window.location.href = '/upload-biodata';
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  const getUserStageAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserStage(userId);
+      const responseData = response.data as ResponseStageData;
+      if (responseData.status === 'success') {
+        switch (responseData.registrationStage) {
+          case 1:
+            navigate('/upload-biodata');
+            break;
+          case 2:
+            navigate('/personal-details');
+            break;
+          case 3:
+            navigate('/preferences');
+            break;
+          case 4:
+            navigate('/upload-photos');
+            break;
+          case 5:
+            navigate('/widget/statistics');
+            break;
+          default:
+            console.log('Unknown registration stage:', responseData.registrationStage);
+            navigate('/upload-biodata');
+            break;
+        }
+      } else {
+        console.log("API call unsuccessful or status is not 'success'");
+        navigate('/upload-biodata');
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Typography, Grid, IconButton, Link } from '@mui/material';
+import { Box, Button, Typography, Grid, IconButton, Link, Menu, MenuItem } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
@@ -8,9 +8,10 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 import MainCard from 'components/MainCard';
-import { uploadBiodata, uploadPhoto } from 'apiServices/user';
+import { makeProfilePhoto, uploadBiodata, uploadPhoto } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 interface ErrorData {
   response: any;
 }
@@ -24,6 +25,7 @@ export default function EditPhotos() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]); // Store old photos
+  const [menuAnchor, setMenuAnchor] = useState<(null | HTMLElement)[]>(Array(10).fill(null));
 
   const navigate = useNavigate();
   const onSubmit = (data: any) => {
@@ -51,9 +53,101 @@ export default function EditPhotos() {
     setPreviews((prev) => [...prev, ...files.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
     setSelectedFiles(files);
   };
-  const handleRemoveFile = (index: number) => {
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
+    setMenuAnchor((prev) => {
+      const newAnchors = [...prev];
+      newAnchors[index] = event.currentTarget;
+      return newAnchors;
+    });
+  };
+
+  const handleMenuClose = (index: number) => {
+    setMenuAnchor((prev) => {
+      const newAnchors = [...prev];
+      newAnchors[index] = null;
+      return newAnchors;
+    });
+  };
+
+  const handleSetAsProfilePhoto = (index: number, preview: string) => {
+    console.log('preview', preview);
+    if (index !== 0) {
+      const updatedPreviews = [previews[index], ...previews.filter((_, i) => i !== index)];
+      setPreviews(updatedPreviews);
+    }
+    makeProfilePhotoAPI(preview);
+    handleMenuClose(index);
+  };
+  const makeProfilePhotoAPI = async (preview: string) => {
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const profileData = {
+      matrimonialId: matrimonialId,
+      profileUrl: preview
+    };
+    try {
+      const response = await makeProfilePhoto(profileData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  const handleRemoveFile = (index: number, preview: string) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
+    deletePhotoAPI(preview);
+  };
+  const deletePhotoAPI = async (preview: string) => {
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const deleteData = {
+      matrimonialId: matrimonialId,
+      profileUrl: preview
+    };
+    try {
+      const response = await makeProfilePhoto(deleteData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
   };
   const uploadPhotosAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
@@ -144,7 +238,6 @@ export default function EditPhotos() {
                 You must upload at least 2 photos and a maximum of 10 photos.
               </Typography>
             </Grid>
-
             {/* Divider */}
             <Grid item xs={12}>
               <AuthDivider>
@@ -175,15 +268,34 @@ export default function EditPhotos() {
                 </Typography>
                 <Grid container spacing={2} justifyContent="center">
                   {previews.map((preview, index) => (
-                    <Grid item key={index}>
-                      <Box sx={{ position: 'relative', width: 100, height: 100 }}>
+                    <Grid item xs={6} sm={4} md={2.4} key={index}>
+                      <Box sx={{ position: 'relative', width: 120, height: 120 }}>
                         <img src={preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 5 }} />
+                        {/* Three-Dot Menu */}
                         <IconButton
-                          onClick={() => handleRemoveFile(index)}
-                          sx={{ position: 'absolute', top: -10, right: -10, color: 'red', background: 'white' }}
+                          onClick={(event) => handleMenuClick(event, index)}
+                          sx={{
+                            height: '25px',
+                            width: '25px',
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            color: 'white',
+                            background: 'rgba(0,0,0,0.5)',
+                            borderRadius: '8px',
+                            borderTopRightRadius: '5px',
+                            borderTopLeftRadius: '0',
+                            borderBottomRightRadius: '0'
+                          }}
                         >
-                          <DeleteIcon />
+                          <MoreVertIcon sx={{ height: '15px', width: '15px' }} />
                         </IconButton>
+
+                        {/* Menu Options */}
+                        <Menu anchorEl={menuAnchor[index]} open={Boolean(menuAnchor[index])} onClose={() => handleMenuClose(index)}>
+                          <MenuItem onClick={() => handleSetAsProfilePhoto(index, preview)}>Set as Profile Picture</MenuItem>
+                          <MenuItem onClick={() => handleRemoveFile(index, preview)}>Remove Photo</MenuItem>
+                        </Menu>
                       </Box>
                     </Grid>
                   ))}

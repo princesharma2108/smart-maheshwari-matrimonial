@@ -29,17 +29,44 @@ const MenuProps = {
 };
 
 // ==============================|| ACCOUNT PROFILE - PERSONAL ||============================== //
-
-export default function BasicSearchTab() {
+interface BasicSearchTabProps {
+  maritalStatus: string;
+  setMaritalStatus: (value: string) => void;
+  minAge: string;
+  setMinAge: (value: string) => void;
+  maxAge: string;
+  setMaxAge: (value: string) => void;
+  minHeight: string;
+  setMinHeight: (value: string) => void;
+  maxHeight: string;
+  setMaxHeight: (value: string) => void;
+  location: string;
+  setLocation: (value: string) => void;
+  ageOptions: string[];
+  heightData: string[];
+  locationData: string[];
+  maritalOptionsData: string[];
+}
+export default function BasicSearchTab({
+  maritalStatus,
+  setMaritalStatus,
+  minAge,
+  setMinAge,
+  maxAge,
+  setMaxAge,
+  minHeight,
+  setMinHeight,
+  maxHeight,
+  setMaxHeight,
+  location,
+  setLocation,
+  ageOptions,
+  heightData,
+  locationData,
+  maritalOptionsData
+}: BasicSearchTabProps) {
   const navigate = useNavigate();
   const theme = useTheme();
-
-  const [maritalStatus, setMaritalStatus] = useState('');
-  const [minAge, setMinAge] = useState('');
-  const [maxAge, setMaxAge] = useState('');
-  const [minHeight, setMinHeight] = useState('');
-  const [maxHeight, setMaxHeight] = useState('');
-  const [location, setLocation] = useState('');
 
   // Handlers for select inputs
   const handleMaritalStatusChange = (event: SelectChangeEvent) => setMaritalStatus(event.target.value);
@@ -54,6 +81,7 @@ export default function BasicSearchTab() {
       <Grid item xs={12} sm={12}>
         <MainCard title="">
           <Grid container spacing={3}>
+            {/* Marital Status Selection */}
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="marital-status">Marital Status</InputLabel>
@@ -61,10 +89,11 @@ export default function BasicSearchTab() {
                   <MenuItem value="" disabled>
                     Select Marital Status
                   </MenuItem>
-                  <MenuItem value="Single">Single</MenuItem>
-                  <MenuItem value="Married">Married</MenuItem>
-                  <MenuItem value="Divorced">Divorced</MenuItem>
-                  <MenuItem value="Widowed">Widowed</MenuItem>
+                  {maritalOptionsData.map((status, index) => (
+                    <MenuItem key={index} value={status}>
+                      {status}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -79,10 +108,11 @@ export default function BasicSearchTab() {
                       <MenuItem value="" disabled>
                         Select Min Age
                       </MenuItem>
-                      <MenuItem value="18">18</MenuItem>
-                      <MenuItem value="25">25</MenuItem>
-                      <MenuItem value="30">30</MenuItem>
-                      <MenuItem value="40">40</MenuItem>
+                      {ageOptions.map((age) => (
+                        <MenuItem key={age} value={age.toString()}>
+                          {age}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -93,10 +123,11 @@ export default function BasicSearchTab() {
                       <MenuItem value="" disabled>
                         Select Max Age
                       </MenuItem>
-                      <MenuItem value="30">30</MenuItem>
-                      <MenuItem value="40">40</MenuItem>
-                      <MenuItem value="50">50</MenuItem>
-                      <MenuItem value="60">60</MenuItem>
+                      {ageOptions.map((age) => (
+                        <MenuItem key={age} value={age.toString()}>
+                          {age}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -113,11 +144,11 @@ export default function BasicSearchTab() {
                       <MenuItem value="" disabled>
                         Select Min Height
                       </MenuItem>
-                      <MenuItem value="140">140 cm</MenuItem>
-                      <MenuItem value="150">150 cm</MenuItem>
-                      <MenuItem value="160">160 cm</MenuItem>
-                      <MenuItem value="170">170 cm</MenuItem>
-                      <MenuItem value="180">180 cm</MenuItem>
+                      {heightData.map((height, index) => (
+                        <MenuItem key={index} value={height}>
+                          {height} cm
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -128,11 +159,11 @@ export default function BasicSearchTab() {
                       <MenuItem value="" disabled>
                         Select Max Height
                       </MenuItem>
-                      <MenuItem value="160">160 cm</MenuItem>
-                      <MenuItem value="170">170 cm</MenuItem>
-                      <MenuItem value="180">180 cm</MenuItem>
-                      <MenuItem value="190">190 cm</MenuItem>
-                      <MenuItem value="200">200 cm</MenuItem>
+                      {heightData.map((height, index) => (
+                        <MenuItem key={index} value={height}>
+                          {height} cm
+                        </MenuItem>
+                      ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -147,11 +178,11 @@ export default function BasicSearchTab() {
                   <MenuItem value="" disabled>
                     Select Location
                   </MenuItem>
-                  <MenuItem value="New York">New York</MenuItem>
-                  <MenuItem value="Los Angeles">Los Angeles</MenuItem>
-                  <MenuItem value="Chicago">Chicago</MenuItem>
-                  <MenuItem value="Houston">Houston</MenuItem>
-                  <MenuItem value="Miami">Miami</MenuItem>
+                  {locationData.map((loc, index) => (
+                    <MenuItem key={index} value={loc}>
+                      {loc}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>

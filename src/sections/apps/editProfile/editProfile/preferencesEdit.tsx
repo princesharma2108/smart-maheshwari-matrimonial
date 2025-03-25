@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Tabs, Tab, Box, Typography, Paper } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Paper, Grid, Stack, Button } from '@mui/material';
 import 'assets/styles/styles.scss';
 import LifestylePreferencesEdit from 'sections/apps/preferencesEdit/lifestylePreferencesEdit';
 import PersonalPreferencesEdit from 'sections/apps/preferencesEdit/personalPreferencesEdit';
 import AdditionalPreferencesEdit from 'sections/apps/preferencesEdit/additionalPreferencesEdit';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
-import { profileDetails } from 'apiServices/user';
+import { editProfileDetails, profileDetails } from 'apiServices/user';
 import { getGeneralData } from 'apiServices/data';
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -14,6 +14,11 @@ interface TabPanelProps {
   value: number;
 }
 interface ErrorData {
+  response: any;
+}
+interface ResponseData {
+  status: string;
+  message: string;
   response: any;
 }
 interface ResponseGeneralData {
@@ -148,54 +153,6 @@ const PreferencesEdit: React.FC = () => {
         nonNegotiables.push(value);
       }
     });
-    const matrimonialData = {
-      matrimonialId: matrimonialId,
-      firstName: matrimonialStoredData.firstName,
-      lastName: 'lastName', // If you have lastName, replace this with the actual variable
-      birthTime: matrimonialStoredData.birthTime || '', // Ensuring a fallback in case of null
-      dateOfBirth: matrimonialStoredData.dateOfBirth || '', // Ensuring a fallback in case of null
-      birthPlace: matrimonialStoredData.birthPlace,
-      gender: matrimonialStoredData.gender,
-      disabilityStatus: matrimonialStoredData.disabilityStatus,
-      heightCM: matrimonialStoredData.heightCM,
-      weightKG: matrimonialStoredData.weightKG,
-      bloodGroup: matrimonialStoredData.bloodGroup,
-      complexion: matrimonialStoredData.complexion,
-      maritalStatus: matrimonialStoredData.maritalStatus,
-      fatherName: matrimonialStoredData.fatherName,
-      motherName: matrimonialStoredData.motherName,
-      nativePlace: matrimonialStoredData.nativePlace,
-      siblingCount: matrimonialStoredData.siblingCount,
-      familyIncomeINR: matrimonialStoredData.familyIncomeINR,
-      familyType: matrimonialStoredData.familyType,
-      qualification: matrimonialStoredData.qualification,
-      additionalQualification: matrimonialStoredData.additionalQualification,
-      occupation: matrimonialStoredData.occupation,
-      occupationCompany: matrimonialStoredData.occupationCompany,
-      occupationLocation: matrimonialStoredData.occupationLocation, // Assuming occupation location is a state
-      minAnnualIncome: matrimonialStoredData.minAnnualIncome, // If you have separate min/max income, modify accordingly
-      maxAnnualIncome: matrimonialStoredData.maxAnnualIncome,
-      gotra: matrimonialStoredData.gotra,
-      hobbies: matrimonialStoredData.hobbies, // Converting hobbies string to an array
-      address: matrimonialStoredData.address,
-      phone: matrimonialStoredData.phone,
-      email: matrimonialStoredData.email,
-      alternateContact: matrimonialStoredData.alternateContact,
-      languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
-      aboutMe:
-        'I am Kirti Mintri, a Senior Data Engineer working at Visa. With a B.Tech. degree in IT, I have honed my skills in data analysis and management. My goal is to utilize my expertise in data engineering to drive innovation and efficiency in the industry. Besides my professional commitments, I am passionate about reading, writing, dancing, and singing, which help me express my creativity and unwind after a long day.',
-      countryCode: 'IN', // If this is dynamic, you may need a variable for it
-      city: matrimonialStoredData.city,
-      state: matrimonialStoredData.state,
-      country: matrimonialStoredData.country,
-      isGunnMatchingImportant: matrimonialStoredData.isGunnMatchingImportant,
-      isManglik: matrimonialStoredData.isManglik, // Assuming manglik is a string and needs conversion
-      dietary: matrimonialStoredData.dietary,
-      drinking: matrimonialStoredData.drinking,
-      smoking: matrimonialStoredData.smoking,
-      locationType: matrimonialStoredData.locationType, // If different from birthPlace, change it accordingly
-      manglik: matrimonialStoredData.manglik
-    };
     const preferenceData = {
       userId: userId,
       maritalStatus: maritalStatus,
@@ -220,8 +177,34 @@ const PreferencesEdit: React.FC = () => {
     localStorage.setItem('preferenceData', JSON.stringify(preferenceData));
     const profileDetailsData = {
       preference: preferenceData,
-      matrimonial: matrimonialData
+      matrimonial: null
     };
+    try {
+      const response = await editProfileDetails(profileDetailsData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
   };
   useEffect(() => {
     const storedPreferenceData = localStorage.getItem('preferenceDetails');
@@ -381,6 +364,16 @@ const PreferencesEdit: React.FC = () => {
           workingWithOptionsData={workingWithOptionsData || []}
         />
       </TabPanel>
+      <Grid item xs={12}>
+        <Stack direction="row" justifyContent="flex-end" spacing={2}>
+          <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
+            Previous
+          </Button>
+          <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
+            Continue
+          </Button>
+        </Stack>
+      </Grid>
     </Paper>
     // </BackgroundWrapper>
   );

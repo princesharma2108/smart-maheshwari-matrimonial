@@ -34,6 +34,7 @@ export const getGeneralData = async <T>(config?: AxiosRequestConfig): Promise<Ap
     throw error;
   }
 };
+// About Me
 export const getAboutMe = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.post<T>('/get-about-me-samples', data, config);
@@ -43,6 +44,7 @@ export const getAboutMe = async <T>(data: any, config?: AxiosRequestConfig): Pro
     throw error;
   }
 };
+// Get Latest Match Results
 export const getMatchResults = async <T>(userId: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.get<T>(`/matchmaking-results?userId=${userId}`, config);
@@ -52,6 +54,7 @@ export const getMatchResults = async <T>(userId: any, config?: AxiosRequestConfi
     throw error;
   }
 };
+// Get Subscription Plan
 export const getSubscriptionPlan = async <T>(config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.get<T>(`/subscriptions`, config);
@@ -61,6 +64,7 @@ export const getSubscriptionPlan = async <T>(config?: AxiosRequestConfig): Promi
     throw error;
   }
 };
+//Get User Details
 export const getUserDetails = async <T>(userId: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.get<T>(`/user-details?userId=${userId}&profile=true&preference=true`, config);
@@ -70,6 +74,7 @@ export const getUserDetails = async <T>(userId: any, config?: AxiosRequestConfig
     throw error;
   }
 };
+// Get Questions
 export const getQuestionDetails = async <T>(config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.get<T>(`/questions`, config);
@@ -79,9 +84,30 @@ export const getQuestionDetails = async <T>(config?: AxiosRequestConfig): Promis
     throw error;
   }
 };
+//Send Answers
 export const sendQuestionAnswers = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {
     const response = await apiClient.post<T>(`/add-answer`, data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
+//Get Advanced Search Data
+export const getAdvancedSearchData = async <T>(config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.get<T>(`/get-search-data`, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
+//Post Advanced Search Data
+export const postAdvancedSearchData = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>(`/search`, data, config);
     return response;
   } catch (error) {
     // Handle error (e.g., log it, show notification, etc.)
