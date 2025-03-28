@@ -47,6 +47,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { KeyedObject } from 'types/root';
 import { getUserStage } from 'apiServices/user';
+import { APP_VERSION } from 'config';
 interface ErrorData {
   response: any;
 }
@@ -143,7 +144,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       phoneNumber: phoneNumber,
       emailAddress: '',
       googleToken: '',
-      appVersion: '1.0.0'
+      appVersion: APP_VERSION
     };
     try {
       await login(registerData);

@@ -121,8 +121,18 @@ export default function PersonalDetailsEdit() {
   const [siblingOptionsData, setSiblingOptionsData] = useState([]);
   const [smokingOptionsData, setSmokingOptionsData] = useState([]);
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
+  const [isStepValid, setIsStepValid] = useState(true); // Track validation status
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    setTabIndex(newIndex);
+    // Allow moving back anytime
+    if (newIndex < tabIndex) {
+      setTabIndex(newIndex);
+      return;
+    }
+
+    // Allow moving forward only if isStepValid is true
+    if (isStepValid) {
+      setTabIndex(newIndex);
+    }
   };
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
@@ -208,6 +218,7 @@ export default function PersonalDetailsEdit() {
   };
   const handleNext = () => {
     // navigate('/preferences');
+    if (!isStepValid) return;
     if (tabIndex >= 0 && tabIndex < 6) {
       setTabIndex((prevIndex) => prevIndex + 1);
     } else if (tabIndex === 6) {
@@ -318,12 +329,11 @@ export default function PersonalDetailsEdit() {
       </Typography>
       <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
         {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
-          <Tab key={index} label={label} className="tabStyle" />
+          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex && !isStepValid} />
         ))}
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
         <TabEditStep1
-          //onDataChange={handleTab1DataChange}
           fullName={fullName}
           setFullName={setFullName}
           timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
@@ -332,11 +342,11 @@ export default function PersonalDetailsEdit() {
           setDateOfBirth={(value) => setDateOfBirth(value ? dayjs(value.format('DD-MM-YYYY')) : null)}
           placeOfBirth={placeOfBirth}
           setPlaceOfBirth={setPlaceOfBirth}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={1}>
         <TabEditStep2
-          //onDataChange={handleTab2DataChange}
           weight={weight}
           setWeight={setWeight}
           height={height}
@@ -359,11 +369,11 @@ export default function PersonalDetailsEdit() {
           bloodGroupOptions={bloodGroupsData || []}
           complexionOptions={complexionData || []}
           maritalOptions={maritalOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={2}>
         <TabEditStep3
-          //onDataChange={handleTab3DataChange}
           drinking={drinking}
           setDrinking={setDrinking}
           smoking={smoking}
@@ -373,11 +383,11 @@ export default function PersonalDetailsEdit() {
           drinkingOptions={drinkingOptionsData || []}
           smokingOptions={smokingOptionsData || []}
           dietaryOptions={dietaryOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={3}>
         <TabEditStep4
-          // onDataChange={handleTab4DataChange}
           fatherName={fatherName}
           setFatherName={setFatherName}
           motherName={motherName}
@@ -393,11 +403,11 @@ export default function PersonalDetailsEdit() {
           familyTypeOptions={familyTypeData || []}
           siblingOptions={siblingOptionsData || []}
           incomeOptions={incomeOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={4}>
         <TabEditStep5
-          // onDataChange={handleTab5DataChange}
           highestQualification={highestQualification}
           setHighestQualification={setHighestQualification}
           additionalQualification={additionalQualification}
@@ -419,11 +429,11 @@ export default function PersonalDetailsEdit() {
           workingWithOptions={workingWithOptionsData || []}
           incomeOptions={incomeOptionsData || []}
           languageOptions={languageData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={5}>
         <TabEditStep6
-          //onDataChange={handleTab6DataChange}
           gotra={gotra}
           setGotra={setGotra}
           manglik={manglik}
@@ -434,6 +444,7 @@ export default function PersonalDetailsEdit() {
           setIncludeUnknownManglik={setIncludeUnknownManglik}
           gotraOptions={gotraData || []}
           manglikOptions={manglikOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={6}>
@@ -452,7 +463,7 @@ export default function PersonalDetailsEdit() {
           setState={setState}
           city={city}
           setCity={setCity}
-          //onDataChange={handleTab7DataChange}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       {/* Buttons */}
@@ -461,7 +472,7 @@ export default function PersonalDetailsEdit() {
           <Button variant="outlined" color="secondary" onClick={handlePrevious}>
             Previous
           </Button>
-          <Button variant="contained" className="buttonStyle" onClick={handleNext}>
+          <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
             Continue
           </Button>
         </Stack>

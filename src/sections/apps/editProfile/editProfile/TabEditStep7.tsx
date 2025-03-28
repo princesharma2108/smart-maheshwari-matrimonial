@@ -28,6 +28,7 @@ interface TabEditStep7Props {
   setState: (value: string) => void;
   city: string;
   setCity: (value: string) => void;
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabEditStep7({
   residentialAddress,
@@ -43,19 +44,65 @@ export default function TabEditStep7({
   state,
   setState,
   city,
-  setCity
+  setCity,
+  setIsStepValid
 }: TabEditStep7Props) {
   const theme = useTheme();
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({
+    residentialAddress: '',
+    phoneNumber: '',
+    emailAddress: '',
+    country: '',
+    state: '',
+    city: ''
+  });
   // Handlers
   const handleResidentialAddressChange = (event: ChangeEvent<HTMLInputElement>) => setResidentialAddress(event.target.value);
-  const handlePhoneNumberChange = (event: ChangeEvent<HTMLInputElement>) => setPhoneNumber(event.target.value);
-  const handleEmailAddressChange = (event: ChangeEvent<HTMLInputElement>) => setEmailAddress(event.target.value);
-  const handleAlternateContactChange = (event: ChangeEvent<HTMLInputElement>) => setAlternateContact(event.target.value);
   const handleCountryChange = (event: SelectChangeEvent) => setCountry(event.target.value);
   const handleStateChange = (event: SelectChangeEvent) => setState(event.target.value);
   const handleCityChange = (event: SelectChangeEvent) => setCity(event.target.value);
+  const validateStep = () => {
+    let newErrors = {
+      residentialAddress: '',
+      phoneNumber: '',
+      emailAddress: '',
+      country: '',
+      state: '',
+      city: ''
+    };
+
+    if (!residentialAddress) newErrors.residentialAddress = 'This field is required.';
+    if (!country) newErrors.country = 'This field is required.';
+    if (!state) newErrors.state = 'This field is required.';
+    if (!city) newErrors.city = 'This field is required.';
+
+    // Validate Email
+    if (!emailAddress) {
+      newErrors.emailAddress = 'This field is required.';
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailAddress)) {
+      newErrors.emailAddress = 'Please enter a valid email address.';
+    }
+
+    // ✅ Validate Phone Number (Only 10 Digits Allowed)
+    if (!phoneNumber) {
+      newErrors.phoneNumber = 'This field is required.';
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+      newErrors.phoneNumber = 'Phone number must be exactly 10 digits.';
+    }
+
+    setErrors(newErrors);
+
+    // ✅ `validateStep` will return `false` if any error exists
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid);
+
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -65,7 +112,9 @@ export default function TabEditStep7({
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="residential-address">Residential Address</InputLabel>
+                    <InputLabel htmlFor="residential-address">
+                      Residential Address<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <TextField
                       fullWidth
                       id="residential-address"
@@ -74,32 +123,63 @@ export default function TabEditStep7({
                       onChange={handleResidentialAddressChange}
                       autoFocus
                       className="inputField"
+                      onBlur={validateStep}
+                      error={!!errors.residentialAddress}
+                      helperText={errors.residentialAddress}
                     />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="phone-number">Phone Number</InputLabel>
+                    <InputLabel htmlFor="phone-number">
+                      Phone Number<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <TextField
                       fullWidth
                       id="phone-number"
                       placeholder="Enter Phone Number"
                       value={phoneNumber}
-                      onChange={handlePhoneNumberChange}
+                      onChange={(e) => {
+                        let value = e.target.value;
+
+                        // Allow only digits and limit to 10 characters
+                        value = value.replace(/\D/g, '').slice(0, 10);
+
+                        setPhoneNumber(value);
+                      }}
+                      onBlur={() => {
+                        if (phoneNumber.length !== 10) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            phoneNumber: 'Phone number must be exactly 10 digits.'
+                          }));
+                        } else {
+                          setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+                        }
+                      }}
                       className="inputField"
+                      error={!!errors.phoneNumber}
+                      helperText={errors.phoneNumber}
                     />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="email-address">Email Address</InputLabel>
+                    <InputLabel htmlFor="email-address">
+                      Email Address<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <TextField
                       fullWidth
                       id="email-address"
                       placeholder="Enter Email Address"
                       value={emailAddress}
-                      onChange={handleEmailAddressChange}
+                      onChange={(e) => {
+                        setEmailAddress(e.target.value);
+                      }}
+                      onBlur={validateStep} // ✅ Validate on blur
                       className="inputField"
+                      error={!!errors.emailAddress}
+                      helperText={errors.emailAddress}
                     />
                   </Stack>
                 </Grid>
@@ -111,7 +191,24 @@ export default function TabEditStep7({
                       id="alternate-contact"
                       placeholder="Enter Alternate Contact Number"
                       value={alternateContact}
-                      onChange={handleAlternateContactChange}
+                      onChange={(e) => {
+                        let value = e.target.value;
+
+                        // Allow only digits and limit to 10 characters
+                        value = value.replace(/\D/g, '').slice(0, 10);
+
+                        setAlternateContact(value);
+                      }}
+                      onBlur={() => {
+                        if (alternateContact && alternateContact.length !== 10) {
+                          setErrors((prev) => ({
+                            ...prev,
+                            alternateContact: 'Alternate contact must be exactly 10 digits.'
+                          }));
+                        } else {
+                          setErrors((prev) => ({ ...prev, alternateContact: '' }));
+                        }
+                      }}
                       className="inputField"
                     />
                   </Stack>
@@ -122,8 +219,19 @@ export default function TabEditStep7({
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="country">Country</InputLabel>
-                    <Select fullWidth id="country" value={country} onChange={handleCountryChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="country">
+                      Country<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      id="country"
+                      value={country}
+                      onChange={handleCountryChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.country}
+                    >
                       <MenuItem value="" disabled>
                         Select Country
                       </MenuItem>
@@ -137,8 +245,19 @@ export default function TabEditStep7({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="state">State</InputLabel>
-                    <Select fullWidth id="state" value={state} onChange={handleStateChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="state">
+                      State<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      id="state"
+                      value={state}
+                      onChange={handleStateChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.state}
+                    >
                       <MenuItem value="" disabled>
                         Select State
                       </MenuItem>
@@ -152,8 +271,19 @@ export default function TabEditStep7({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="city">City</InputLabel>
-                    <Select fullWidth id="city" value={city} onChange={handleCityChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="city">
+                      City<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      id="city"
+                      value={city}
+                      onChange={handleCityChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.city}
+                    >
                       <MenuItem value="" disabled>
                         Select City
                       </MenuItem>

@@ -39,6 +39,7 @@ interface TabStep2Props {
   bloodGroupOptions: string[];
   complexionOptions: any;
   maritalOptions: any;
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabStep2({
   weight,
@@ -62,32 +63,65 @@ export default function TabStep2({
   disabilities = [],
   bloodGroupOptions = [],
   complexionOptions = [],
-  maritalOptions = []
+  maritalOptions = [],
+  setIsStepValid
 }: TabStep2Props) {
   const theme = useTheme();
-
-  // Handlers
-  // const handleHeightChange = (event: SelectChangeEvent) => setHeight(event.target.value);
-  // const handleWeightChange = (event: ChangeEvent<HTMLInputElement>) => setWeight(event.target.value);
-  // const handleGenderChange = (event: SelectChangeEvent) => setGender(event.target.value);
-  // const handleHobbiesChange = (event: SelectChangeEvent) => setHobbies(event.target.value);
-  // const handleDisabilityChange = (event: SelectChangeEvent) => setDisability(event.target.value);
-  // const handleBloodGroupChange = (event: SelectChangeEvent) => setBloodGroup(event.target.value);
-  // const handleComplexionChange = (event: SelectChangeEvent) => setComplexion(event.target.value);
-  // const handleMaritalStatusChange = (event: SelectChangeEvent) => setMaritalStatus(event.target.value);
+  const [errors, setErrors] = useState<{
+    weight: string;
+    height: string;
+    gender: string;
+    hobbies: string[];
+    complexion: string;
+    maritalStatus: string;
+  }>({
+    weight: '',
+    height: '',
+    gender: '',
+    hobbies: [],
+    complexion: '',
+    maritalStatus: ''
+  });
   const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
   const handleWeightChange = (event: ChangeEvent<HTMLInputElement>) => setWeight(event.target.value);
+  const validateStep = () => {
+    let newErrors = {
+      weight: '',
+      height: '',
+      gender: '',
+      hobbies: [] as string[], // Ensure hobbies is an array
+      complexion: '',
+      maritalStatus: ''
+    };
 
+    if (!weight) newErrors.weight = 'This field is required.';
+    if (!height) newErrors.height = 'This field is required.';
+    if (!gender) newErrors.gender = 'This field is required.';
+    if (!Array.isArray(hobbies) || hobbies.length === 0) newErrors.hobbies = ['This field is required.'];
+    if (!complexion) newErrors.complexion = 'This field is required.';
+    if (!maritalStatus) newErrors.maritalStatus = 'This field Status is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [weight, height, gender, hobbies, complexion, maritalStatus]);
   return (
     <Grid container spacing={3}>
-      {/* Left Side */}
+      {/* {/ Left Side /} */}
       <Grid item xs={12} sm={6}>
         <MainCard title="">
           <Grid container spacing={3}>
-            {/* Weight */}
+            {/* {/ Weight /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="weight">Weight (kg)</InputLabel>
+                <InputLabel htmlFor="weight">
+                  Weight (kg)<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <TextField
                   fullWidth
                   id="weight"
@@ -95,14 +129,27 @@ export default function TabStep2({
                   onChange={handleWeightChange}
                   placeholder="Enter weight"
                   className="inputField"
+                  onBlur={validateStep}
+                  error={!!errors.weight}
+                  helperText={errors.weight}
                 />
               </Stack>
             </Grid>
-            {/* Height */}
+            {/* {/ Height /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="height">Height</InputLabel>
-                <Select fullWidth value={height} onChange={handleSelectChange(setHeight)} displayEmpty className="inputFieldLogin">
+                <InputLabel htmlFor="height">
+                  Height<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Select
+                  fullWidth
+                  value={height}
+                  onChange={handleSelectChange(setHeight)}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.height}
+                >
                   <MenuItem value="" disabled>
                     Select Height
                   </MenuItem>
@@ -115,11 +162,21 @@ export default function TabStep2({
               </Stack>
             </Grid>
 
-            {/* Gender */}
+            {/* {/ Gender /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="gender">Gender</InputLabel>
-                <Select fullWidth value={gender} onChange={handleSelectChange(setGender)} displayEmpty className="inputFieldLogin">
+                <InputLabel htmlFor="gender">
+                  Gender<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Select
+                  fullWidth
+                  value={gender}
+                  onChange={handleSelectChange(setGender)}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.gender}
+                >
                   <MenuItem value="" disabled>
                     Select Gender
                   </MenuItem>
@@ -132,7 +189,7 @@ export default function TabStep2({
               </Stack>
             </Grid>
 
-            {/* Hobbies */}
+            {/* {/ Hobbies /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
@@ -146,6 +203,8 @@ export default function TabStep2({
                   displayEmpty
                   className="inputFieldLogin"
                   renderValue={(selected) => (Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Hobby')}
+                  onBlur={validateStep}
+                  error={!!errors.hobbies}
                 >
                   <MenuItem value="" disabled>
                     Select Hobby
@@ -163,11 +222,11 @@ export default function TabStep2({
         </MainCard>
       </Grid>
 
-      {/* Right Side */}
+      {/* {/ Right Side /} */}
       <Grid item xs={12} sm={6}>
         <MainCard>
           <Grid container spacing={3}>
-            {/* Disability */}
+            {/* {/ Disability /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="disability">Disability</InputLabel>
@@ -184,7 +243,7 @@ export default function TabStep2({
               </Stack>
             </Grid>
 
-            {/* Blood Group */}
+            {/* {/ Blood Group /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="blood-group">Blood Group</InputLabel>
@@ -201,11 +260,21 @@ export default function TabStep2({
               </Stack>
             </Grid>
 
-            {/* Complexion */}
+            {/* {/ Complexion /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="complexion">Complexion</InputLabel>
-                <Select fullWidth value={complexion} onChange={handleSelectChange(setComplexion)} displayEmpty className="inputFieldLogin">
+                <InputLabel htmlFor="complexion">
+                  Complexion<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Select
+                  fullWidth
+                  value={complexion}
+                  onChange={handleSelectChange(setComplexion)}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.complexion}
+                >
                   <MenuItem value="" disabled>
                     Select Complexion
                   </MenuItem>
@@ -218,16 +287,20 @@ export default function TabStep2({
               </Stack>
             </Grid>
 
-            {/* Marital Status */}
+            {/* {/ Marital Status /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="marital-status">Marital Status</InputLabel>
+                <InputLabel htmlFor="marital-status">
+                  Marital Status<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <Select
                   fullWidth
                   value={maritalStatus}
                   onChange={handleSelectChange(setMaritalStatus)}
                   displayEmpty
                   className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.maritalStatus}
                 >
                   <MenuItem value="" disabled>
                     Select Marital Status

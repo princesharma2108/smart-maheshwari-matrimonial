@@ -17,7 +17,9 @@ import { fi } from 'date-fns/locale';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { postUserStage, profileDetails } from 'apiServices/user';
-import { getGeneralData } from 'apiServices/data';
+import { extractPDFData, getGeneralData } from 'apiServices/data';
+import { APP_VERSION } from 'config';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -35,6 +37,11 @@ interface ResponseGeneralData {
   status: string;
   message: string;
   generalData: any;
+}
+interface ResponsePDFData {
+  status: string;
+  message: string;
+  data: any;
 }
 const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   return (
@@ -57,6 +64,7 @@ const PersonalDetails: React.FC = () => {
   const [height, setHeight] = useState('');
   const [gender, setGender] = useState('');
   const [hobbies, setHobbies] = useState<string[]>([]);
+  //const [hobbies, setHobbies] = useState('');
   const [disability, setDisability] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [complexion, setComplexion] = useState('');
@@ -94,6 +102,60 @@ const PersonalDetails: React.FC = () => {
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
+  //BioData PDF Variables
+  //Tab 1
+  const [fullNamePDF, setFullNamePDF] = useState('');
+  const [timeOfBirthPDF, setTimeOfBirthPDF] = useState<string | null>(null);
+  const [dateOfBirthPDF, setDateOfBirthPDF] = useState<string | null>(null);
+  const [placeOfBirthPDF, setPlaceOfBirthPDF] = useState('');
+
+  //Tab 2
+  const [weightPDF, setWeightPDF] = useState('');
+  const [heightPDF, setHeightPDF] = useState('');
+  const [genderPDF, setGenderPDF] = useState('');
+  const [hobbiesPDF, setHobbiesPDF] = useState<string[]>([]);
+  const [disabilityPDF, setDisabilityPDF] = useState('');
+  const [bloodGroupPDF, setBloodGroupPDF] = useState('');
+  const [complexionPDF, setComplexionPDF] = useState('');
+  const [maritalStatusPDF, setMaritalStatusPDF] = useState('');
+
+  //Tab 3
+  const [drinkingPDF, setDrinkingPDF] = useState('');
+  const [smokingPDF, setSmokingPDF] = useState('');
+  const [dietaryHabitsPDF, setDietaryHabitsPDF] = useState('');
+
+  //Tab 4
+  const [fatherNamePDF, setFatherNamePDF] = useState('');
+  const [motherNamePDF, setMotherNamePDF] = useState('');
+  const [hometownPDF, setHometownPDF] = useState('');
+  const [siblingsPDF, setSiblingsPDF] = useState('');
+  const [familyIncomePDF, setFamilyIncomePDF] = useState('');
+  const [familyTypePDF, setFamilyTypePDF] = useState('');
+
+  //Tab 5
+  const [highestQualificationPDF, setHighestQualificationPDF] = useState('');
+  const [additionalQualificationPDF, setAdditionalQualificationPDF] = useState('');
+  const [occupationPDF, setOccupationPDF] = useState('');
+  const [companyNamePDF, setCompanyNamePDF] = useState('');
+  const [workingWithPDF, setWorkingWithPDF] = useState('');
+  const [minAnnualIncomePDF, setMinAnnualIncomePDF] = useState('');
+  const [maxAnnualIncomePDF, setMaxAnnualIncomePDF] = useState('');
+  const [languagesKnownPDF, setLanguagesKnownPDF] = useState<string[]>([]);
+
+  //Tab 6
+  const [gotraPDF, setGotraPDF] = useState('');
+  const [manglikPDF, setManglikPDF] = useState('');
+  const [gunnMatchingImportantPDF, setGunnMatchingImportantPDF] = useState(false);
+  const [includeUnknownManglikPDF, setIncludeUnknownManglikPDF] = useState(false);
+
+  //Tab 7
+  const [residentialAddressPDF, setResidentialAddressPDF] = useState('');
+  const [phoneNumberPDF, setPhoneNumberPDF] = useState('');
+  const [emailAddressPDF, setEmailAddressPDF] = useState('');
+  const [alternateContactPDF, setAlternateContactPDF] = useState('');
+  const [countryPDF, setCountryPDF] = useState('');
+  const [statePDF, setStatePDF] = useState('');
+  const [cityPDF, setCityPDF] = useState('');
 
   //General Data
   const [subCasteData, setSubCasteData] = useState([]);
@@ -116,8 +178,20 @@ const PersonalDetails: React.FC = () => {
   const [siblingOptionsData, setSiblingOptionsData] = useState([]);
   const [smokingOptionsData, setSmokingOptionsData] = useState([]);
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
+  //Error State
+  const [isStepValid, setIsStepValid] = useState(true); // Track validation status
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    setTabIndex(newIndex);
+    // Allow moving back anytime
+    if (newIndex < tabIndex) {
+      setTabIndex(newIndex);
+      return;
+    }
+
+    // Allow moving forward only if isStepValid is true
+    if (isStepValid) {
+      setTabIndex(newIndex);
+    }
   };
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
@@ -178,6 +252,7 @@ const PersonalDetails: React.FC = () => {
   };
   const handleNext = () => {
     // navigate('/preferences');
+    if (!isStepValid) return;
     if (tabIndex >= 0 && tabIndex < 6) {
       setTabIndex((prevIndex) => prevIndex + 1);
     } else if (tabIndex === 6) {
@@ -229,7 +304,114 @@ const PersonalDetails: React.FC = () => {
       } as SnackbarProps);
     }
   };
+  const extractPDFDataAPI = async () => {
+    setIsLoading(true);
+    const matrimonialId = localStorage.getItem('matrimonialId');
+    const pdfLink = localStorage.getItem('pdfLink');
+    const formdata = new FormData();
+    if (matrimonialId) {
+      formdata.append('matrimonialId', matrimonialId);
+    }
+    if (pdfLink) {
+      formdata.append('pdfLink', pdfLink);
+    }
+    formdata.append('appVersion', APP_VERSION);
+    try {
+      const response = await extractPDFData(formdata);
+      const responseData = response.data as ResponsePDFData;
+      console.log('responseData', responseData.data);
+      const pdfData = responseData.data;
+      setFullName(pdfData.name || '');
+      setTimeOfBirth(pdfData.timeOfBirth || '');
+      setDateOfBirth(pdfData.dateOfBirth || '');
+      setPlaceOfBirth(pdfData.placeOfBirth || '');
+      setGender(pdfData.gender || '');
+      setDisability(pdfData.disability || '');
+      setHeight(pdfData.heightCM || '');
+      setWeight(pdfData.weightKG || '');
+      setBloodGroup(pdfData.bloodGroup || '');
+      setComplexion(pdfData.complexion || '');
+      setMaritalStatus(pdfData.maritalStatus || '');
+      setFatherName(pdfData.fatherName || '');
+      setMotherName(pdfData.motherName || '');
+      setHometown(pdfData.nativePlace || '');
+      setSiblings(pdfData.siblingCount || '');
+      setFamilyIncome(pdfData.maxAnnualIncomeFamily || '');
+      setFamilyType(pdfData.familyType || '');
+      setHighestQualification(pdfData.highestDegree || '');
+      setAdditionalQualification(pdfData.additionalQualification || '');
+      setOccupation(pdfData.occupation || '');
+      setCompanyName(pdfData.occupationCompany || '');
+      setWorkingWith(pdfData.workingWith || '');
+      setMinAnnualIncome(pdfData.minAnnualIncomeIndividual || '');
+      setMaxAnnualIncome(pdfData.maxAnnualIncomeIndividual || '');
+      setGotra(pdfData.gotra || '');
+      setHobbies(pdfData.hobbies || []);
+      setResidentialAddress(pdfData.address || '');
+      setPhoneNumber(pdfData.phoneNumber || '');
+      setEmailAddress(pdfData.email || '');
+      setAlternateContact(pdfData.alternateMobileNumber || '');
+      setLanguagesKnown(pdfData.languagesKnown || []);
+      setCity(pdfData.city || '');
+      setState(pdfData.state || '');
+      setCountry(pdfData.country || '');
+      setGunnMatchingImportant(pdfData.isGunnMatching || false);
+      setManglik(pdfData.manglik || '');
+      setDietaryHabits(pdfData.dietary || '');
+      setDrinking(pdfData.drinking || '');
+      setSmoking(pdfData.smoking || '');
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
+    }
+  };
+  const postUserStageAPI = async () => {
+    //navigate('/upload-photos');
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 2
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1000);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   useEffect(() => {
+    extractPDFDataAPI();
+    postUserStageAPI();
     getGeneralDataAPI();
   }, []);
   useEffect(() => {
@@ -279,202 +461,216 @@ const PersonalDetails: React.FC = () => {
       }
     }
   }, []);
-  const postUserStageAPI = async () => {
-    //navigate('/upload-photos');
-    const userId = localStorage.getItem('userId');
-    const stageData = {
-      userId: userId,
-      registrationStage: 2
-    };
-    try {
-      const response = await postUserStage(stageData);
-      const responseData = response.data as ResponseData;
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
-      openSnackbar({
-        open: true,
-        message: responseData.message,
-        variant: 'alert',
-        alert: {
-          color: 'success'
-        }
-      } as SnackbarProps);
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      const errorData = error as ErrorData;
-      openSnackbar({
-        open: true,
-        message: errorData.response.data.message,
-        variant: 'alert',
-        alert: {
-          color: 'error'
-        }
-      } as SnackbarProps);
-    }
-  };
-  useEffect(() => {
-    postUserStageAPI();
-  }, []);
+
   return (
     <BackgroundWrapper>
       <>
-        <Typography variant="h5" gutterBottom>
-          Personal Details
-        </Typography>
-        <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-          {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
-            <Tab key={index} label={label} className="tabStyle" />
-          ))}
-        </Tabs>
-        <TabPanel value={tabIndex} index={0}>
-          <TabStep1
-            //onDataChange={handleTab1DataChange}
-            fullName={fullName}
-            setFullName={setFullName}
-            timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
-            setTimeOfBirth={(value) => setTimeOfBirth(value ? value.format('HH:mm') : null)}
-            dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
-            setDateOfBirth={(value) => setDateOfBirth(value ? value.format('YYYY-MM-DD') : null)}
-            placeOfBirth={placeOfBirth}
-            setPlaceOfBirth={setPlaceOfBirth}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={1}>
-          <TabStep2
-            //onDataChange={handleTab2DataChange}
-            weight={weight}
-            setWeight={setWeight}
-            height={height}
-            setHeight={setHeight}
-            gender={gender}
-            setGender={setGender}
-            hobbies={hobbies}
-            setHobbies={setHobbies}
-            disability={disability}
-            setDisability={setDisability}
-            bloodGroup={bloodGroup}
-            setBloodGroup={setBloodGroup}
-            complexion={complexion}
-            setComplexion={setComplexion}
-            maritalStatus={maritalStatus}
-            setMaritalStatus={setMaritalStatus}
-            heightOptions={heightData || []}
-            hobbiesOptions={hobbiesData || []}
-            disabilities={disabilitiesData || []}
-            bloodGroupOptions={bloodGroupsData || []}
-            complexionOptions={complexionData || []}
-            maritalOptions={maritalOptionsData || []}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={2}>
-          <TabStep3
-            //onDataChange={handleTab3DataChange}
-            drinking={drinking}
-            setDrinking={setDrinking}
-            smoking={smoking}
-            setSmoking={setSmoking}
-            dietaryHabits={dietaryHabits}
-            setDietaryHabits={setDietaryHabits}
-            drinkingOptions={drinkingOptionsData || []}
-            smokingOptions={smokingOptionsData || []}
-            dietaryOptions={dietaryOptionsData || []}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={3}>
-          <TabStep4
-            // onDataChange={handleTab4DataChange}
-            fatherName={fatherName}
-            setFatherName={setFatherName}
-            motherName={motherName}
-            setMotherName={setMotherName}
-            hometown={hometown}
-            setHometown={setHometown}
-            siblings={siblings}
-            setSiblings={setSiblings}
-            familyIncome={familyIncome}
-            setFamilyIncome={setFamilyIncome}
-            familyType={familyType}
-            setFamilyType={setFamilyType}
-            familyTypeOptions={familyTypeData || []}
-            siblingOptions={siblingOptionsData || []}
-            incomeOptions={incomeOptionsData || []}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={4}>
-          <TabStep5
-            // onDataChange={handleTab5DataChange}
-            highestQualification={highestQualification}
-            setHighestQualification={setHighestQualification}
-            additionalQualification={additionalQualification}
-            setAdditionalQualification={setAdditionalQualification}
-            occupation={occupation}
-            setOccupation={setOccupation}
-            companyName={companyName}
-            setCompanyName={setCompanyName}
-            workingWith={workingWith}
-            setWorkingWith={setWorkingWith}
-            minAnnualIncome={minAnnualIncome}
-            setMinAnnualIncome={setMinAnnualIncome}
-            maxAnnualIncome={maxAnnualIncome}
-            setMaxAnnualIncome={setMaxAnnualIncome}
-            languagesKnown={languagesKnown}
-            setLanguagesKnown={setLanguagesKnown}
-            qualificationOptions={qualificationData || []}
-            occupationOptions={occupationData || []}
-            workingWithOptions={workingWithOptionsData || []}
-            incomeOptions={incomeOptionsData || []}
-            languageOptions={languageData || []}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={5}>
-          <TabStep6
-            //onDataChange={handleTab6DataChange}
-            gotra={gotra}
-            setGotra={setGotra}
-            manglik={manglik}
-            setManglik={setManglik}
-            gunnMatchingImportant={gunnMatchingImportant}
-            setGunnMatchingImportant={setGunnMatchingImportant}
-            includeUnknownManglik={includeUnknownManglik}
-            setIncludeUnknownManglik={setIncludeUnknownManglik}
-            gotraOptions={gotraData || []}
-            manglikOptions={manglikOptionsData || []}
-          />
-        </TabPanel>
-        <TabPanel value={tabIndex} index={6}>
-          <TabStep7
-            residentialAddress={residentialAddress}
-            setResidentialAddress={setResidentialAddress}
-            phoneNumber={phoneNumber}
-            setPhoneNumber={setPhoneNumber}
-            emailAddress={emailAddress}
-            setEmailAddress={setEmailAddress}
-            alternateContact={alternateContact}
-            setAlternateContact={setAlternateContact}
-            country={country}
-            setCountry={setCountry}
-            state={state}
-            setState={setState}
-            city={city}
-            setCity={setCity}
-            //onDataChange={handleTab7DataChange}
-          />
-        </TabPanel>
-        {/* Buttons */}
-        <Grid item xs={12}>
-          <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-            <Button variant="outlined" color="secondary" onClick={handlePrevious}>
-              Previous
-            </Button>
-            <Button variant="contained" className="buttonStyle" onClick={handleNext}>
-              Continue
-            </Button>
-          </Stack>
-        </Grid>
+        {isLoading && ( // Show Loader When API is in Progress
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              height: '100vh',
+              position: 'absolute',
+              width: '100%',
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              zIndex: 9999
+            }}
+          >
+            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#f00757"
+              ariaLabel="ball-triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+              <Typography variant="h3" color={'#f00757'}>
+                Extracting PDF Data
+              </Typography>
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="#f00757"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ marginBottom: '5px' }}
+                wrapperClass=""
+              />
+            </Stack>
+          </Box>
+        )}
+        <>
+          <Typography variant="h5" gutterBottom>
+            Personal Details
+          </Typography>
+          <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
+            {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
+              <Tab
+                key={index}
+                label={label}
+                className="tabStyle"
+                disabled={index > tabIndex && !isStepValid} // Disable future tabs if isStepValid is false
+              />
+            ))}
+          </Tabs>
+          <TabPanel value={tabIndex} index={0}>
+            <TabStep1
+              fullName={fullName}
+              setFullName={setFullName}
+              timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
+              setTimeOfBirth={(value) => setTimeOfBirth(value ? value.format('HH:mm') : null)}
+              dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
+              setDateOfBirth={(value) => setDateOfBirth(value ? value.format('YYYY-MM-DD') : null)}
+              placeOfBirth={placeOfBirth}
+              setPlaceOfBirth={setPlaceOfBirth}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={1}>
+            <TabStep2
+              weight={weight}
+              setWeight={setWeight}
+              height={height}
+              setHeight={setHeight}
+              gender={gender}
+              setGender={setGender}
+              hobbies={hobbies}
+              setHobbies={setHobbies}
+              disability={disability}
+              setDisability={setDisability}
+              bloodGroup={bloodGroup}
+              setBloodGroup={setBloodGroup}
+              complexion={complexion}
+              setComplexion={setComplexion}
+              maritalStatus={maritalStatus}
+              setMaritalStatus={setMaritalStatus}
+              heightOptions={heightData || []}
+              hobbiesOptions={hobbiesData || []}
+              disabilities={disabilitiesData || []}
+              bloodGroupOptions={bloodGroupsData || []}
+              complexionOptions={complexionData || []}
+              maritalOptions={maritalOptionsData || []}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={2}>
+            <TabStep3
+              drinking={drinking}
+              setDrinking={setDrinking}
+              smoking={smoking}
+              setSmoking={setSmoking}
+              dietaryHabits={dietaryHabits}
+              setDietaryHabits={setDietaryHabits}
+              drinkingOptions={drinkingOptionsData || []}
+              smokingOptions={smokingOptionsData || []}
+              dietaryOptions={dietaryOptionsData || []}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={3}>
+            <TabStep4
+              fatherName={fatherName}
+              setFatherName={setFatherName}
+              motherName={motherName}
+              setMotherName={setMotherName}
+              hometown={hometown}
+              setHometown={setHometown}
+              siblings={siblings}
+              setSiblings={setSiblings}
+              familyIncome={familyIncome}
+              setFamilyIncome={setFamilyIncome}
+              familyType={familyType}
+              setFamilyType={setFamilyType}
+              familyTypeOptions={familyTypeData || []}
+              siblingOptions={siblingOptionsData || []}
+              incomeOptions={incomeOptionsData || []}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={4}>
+            <TabStep5
+              highestQualification={highestQualification}
+              setHighestQualification={setHighestQualification}
+              additionalQualification={additionalQualification}
+              setAdditionalQualification={setAdditionalQualification}
+              occupation={occupation}
+              setOccupation={setOccupation}
+              companyName={companyName}
+              setCompanyName={setCompanyName}
+              workingWith={workingWith}
+              setWorkingWith={setWorkingWith}
+              minAnnualIncome={minAnnualIncome}
+              setMinAnnualIncome={setMinAnnualIncome}
+              maxAnnualIncome={maxAnnualIncome}
+              setMaxAnnualIncome={setMaxAnnualIncome}
+              languagesKnown={languagesKnown}
+              setLanguagesKnown={setLanguagesKnown}
+              qualificationOptions={qualificationData || []}
+              occupationOptions={occupationData || []}
+              workingWithOptions={workingWithOptionsData || []}
+              incomeOptions={incomeOptionsData || []}
+              languageOptions={languageData || []}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={5}>
+            <TabStep6
+              gotra={gotra}
+              setGotra={setGotra}
+              manglik={manglik}
+              setManglik={setManglik}
+              gunnMatchingImportant={gunnMatchingImportant}
+              setGunnMatchingImportant={setGunnMatchingImportant}
+              includeUnknownManglik={includeUnknownManglik}
+              setIncludeUnknownManglik={setIncludeUnknownManglik}
+              gotraOptions={gotraData || []}
+              manglikOptions={manglikOptionsData || []}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+          <TabPanel value={tabIndex} index={6}>
+            <TabStep7
+              residentialAddress={residentialAddress}
+              setResidentialAddress={setResidentialAddress}
+              phoneNumber={phoneNumber}
+              setPhoneNumber={setPhoneNumber}
+              emailAddress={emailAddress}
+              setEmailAddress={setEmailAddress}
+              alternateContact={alternateContact}
+              setAlternateContact={setAlternateContact}
+              country={country}
+              setCountry={setCountry}
+              state={state}
+              setState={setState}
+              city={city}
+              setCity={setCity}
+              setIsStepValid={setIsStepValid}
+            />
+          </TabPanel>
+
+          {/* Buttons */}
+          <Grid item xs={12}>
+            <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+              <Button variant="outlined" color="secondary" onClick={handlePrevious}>
+                Previous
+              </Button>
+              <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+                Continue
+              </Button>
+            </Stack>
+          </Grid>
+        </>
       </>
     </BackgroundWrapper>
   );
 };
-
 export default PersonalDetails;

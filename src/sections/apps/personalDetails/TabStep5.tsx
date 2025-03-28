@@ -35,6 +35,7 @@ interface TabStep5Props {
   workingWithOptions: any;
   incomeOptions: any;
   languageOptions: any;
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabStep5({
   highestQualification,
@@ -57,9 +58,17 @@ export default function TabStep5({
   occupationOptions = [],
   workingWithOptions = [],
   //incomeOptions = [],
-  languageOptions = []
+  languageOptions = [],
+  setIsStepValid
 }: TabStep5Props) {
   const theme = useTheme();
+  const [errors, setErrors] = useState({
+    highestQualification: '',
+    occupation: '',
+    familyType: '',
+    annualIncome: '',
+    languagesKnown: ''
+  });
   const [annualIncome, setAnnualIncome] = useState('');
   // Handlers
   const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
@@ -76,7 +85,28 @@ export default function TabStep5({
     setLanguagesKnown(event.target.value as string[]);
   };
   const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
+  const validateStep = () => {
+    let newErrors = {
+      highestQualification: '',
+      occupation: '',
+      familyType: '', // Add the missing familyType property
+      annualIncome: '',
+      languagesKnown: ''
+    };
 
+    if (!highestQualification) newErrors.highestQualification = 'This field is required.';
+    if (!occupation) newErrors.occupation = 'This field is required.';
+    if (!annualIncome) newErrors.annualIncome = 'This field is required.';
+    if (!languagesKnown) newErrors.languagesKnown = 'This field is required.';
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [highestQualification, occupation, annualIncome, languagesKnown]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -87,7 +117,9 @@ export default function TabStep5({
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="highest-qualification">Highest Qualification</InputLabel>
+                    <InputLabel htmlFor="highest-qualification">
+                      Highest Qualification<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <TextField
                       fullWidth
                       id="highest-qualification"
@@ -96,6 +128,9 @@ export default function TabStep5({
                       onChange={(e) => setHighestQualification(e.target.value)}
                       autoFocus
                       className="inputField"
+                      onBlur={validateStep}
+                      error={!!errors.highestQualification}
+                      helperText={errors.highestQualification}
                     />
                   </Stack>
                 </Grid>
@@ -114,7 +149,9 @@ export default function TabStep5({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="occupation">Occupation</InputLabel>
+                    <InputLabel htmlFor="occupation">
+                      Occupation<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <Select
                       fullWidth
                       id="occupation"
@@ -122,6 +159,8 @@ export default function TabStep5({
                       onChange={handleOccupationChange}
                       displayEmpty
                       className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.occupation}
                     >
                       <MenuItem value="" disabled>
                         Select Occupation
@@ -177,7 +216,9 @@ export default function TabStep5({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="annual-income">Annual Income</InputLabel>
+                    <InputLabel htmlFor="annual-income">
+                      Annual Income<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <Select
                       fullWidth
                       id="annual-income"
@@ -185,6 +226,8 @@ export default function TabStep5({
                       onChange={handleAnnualIncomeChange}
                       displayEmpty
                       className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.annualIncome}
                     >
                       <MenuItem value="" disabled>
                         Select Annual Income
@@ -199,7 +242,9 @@ export default function TabStep5({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="languages-known">Languages Known</InputLabel>
+                    <InputLabel htmlFor="languages-known">
+                      Languages Known<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <Select
                       multiple // Enable multiple selections
                       fullWidth
@@ -211,6 +256,8 @@ export default function TabStep5({
                       renderValue={(selected) =>
                         Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Languages Known'
                       }
+                      onBlur={validateStep}
+                      error={!!errors.languagesKnown}
                     >
                       <MenuItem value="" disabled>
                         Select Languages Known

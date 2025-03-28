@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress, Stack } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
@@ -11,16 +12,24 @@ import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 import { getUserStage, postUserStage, uploadBiodata } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
+import { APP_VERSION } from 'config';
 interface ErrorData {
   response: any;
 }
 interface ResponseData {
   message: string;
   status: string;
+  filename: string;
+}
+interface ResponseStageData {
+  registrationStage: number;
+  message: string;
+  status: string;
 }
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
   const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [pdfLink, setPDFLink] = useState<string>('');
   const [fileName, setFileName] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
@@ -58,7 +67,7 @@ export default function UploadBiodata() {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const uploadData = {
       matrimonialId: matrimonialId,
-      appVersion: '1.0.4'
+      appVersion: APP_VERSION
     };
     // Create a FormData object
     const formData = new FormData();
@@ -79,6 +88,8 @@ export default function UploadBiodata() {
     try {
       const response = await uploadBiodata(formData);
       const responseData = response.data as ResponseData;
+      setPDFLink(responseData.filename);
+      localStorage.setItem('pdfLink', responseData.filename);
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1000);
@@ -143,8 +154,53 @@ export default function UploadBiodata() {
     }
   };
   useEffect(() => {
-    postUserStageAPI();
+    //postUserStageAPI();
+    getUserStageAPI();
   }, []);
+  const getUserStageAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserStage(userId);
+      const responseData = response.data as ResponseStageData;
+      if (responseData.status === 'success') {
+        // switch (responseData.registrationStage) {
+        //   case 1:
+        //     navigate('/upload-biodata');
+        //     break;
+        //   case 2:
+        //     navigate('/personal-details');
+        //     break;
+        //   case 3:
+        //     navigate('/preferences');
+        //     break;
+        //   case 4:
+        //     navigate('/upload-photos');
+        //     break;
+        //   case 5:
+        //     navigate('/widget/statistics');
+        //     break;
+        //   default:
+        //     console.log('Unknown registration stage:', responseData.registrationStage);
+        //     navigate('/upload-biodata');
+        //     break;
+        // }
+      } else {
+        console.log("API call unsuccessful or status is not 'success'");
+        navigate('/upload-biodata');
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
 
   return (
     <BackgroundWrapper>
@@ -154,7 +210,9 @@ export default function UploadBiodata() {
             sx={{
               display: 'flex',
               justifyContent: 'center',
+              flexDirection: 'column',
               alignItems: 'center',
+              gap: '4px',
               height: '100vh',
               position: 'absolute',
               width: '100%',
@@ -162,7 +220,32 @@ export default function UploadBiodata() {
               zIndex: 9999
             }}
           >
-            <CircularProgress size={60} sx={{ color: '#f00757' }} />
+            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#f00757"
+              ariaLabel="ball-triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+              <Typography variant="h3" color={'#f00757'}>
+                Uploading Biodata
+              </Typography>
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="#f00757"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ marginBottom: '5px' }}
+                wrapperClass=""
+              />
+            </Stack>
           </Box>
         )}
         <Grid container spacing={3} justifyContent="center">

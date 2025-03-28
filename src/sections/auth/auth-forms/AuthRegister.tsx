@@ -13,6 +13,7 @@ import { StringColorProps } from 'types/password';
 import { Eye, EyeSlash } from 'iconsax-react';
 import { registerUser } from 'apiServices/authentication';
 import { Grid } from '@mui/material';
+import { APP_VERSION } from 'config';
 
 // ============================|| JWT - REGISTER ||============================ //
 interface ResponseData {
@@ -99,7 +100,7 @@ export default function AuthRegister() {
       phoneNumber: phoneNumber,
       emailAddress: null,
       googleToken: null,
-      appVersion: '1.0.4'
+      appVersion: APP_VERSION
     };
     try {
       const response = await registerUser(registerData);

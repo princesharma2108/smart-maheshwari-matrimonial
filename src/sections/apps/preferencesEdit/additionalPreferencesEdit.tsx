@@ -140,6 +140,7 @@ export default function AdditionalPreferencesEdit({
                           checked={!!nonNegotiable}
                           onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
                           className="inputFieldCheckbox"
+                          disabled={!value}
                         />
                       }
                       label="Non-negotiable"
@@ -169,6 +170,7 @@ export default function AdditionalPreferencesEdit({
                         checked={!!nonNegotiableHobbies}
                         onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
                         className="inputFieldCheckbox"
+                        disabled={!Array.isArray(hobbies) || hobbies.length === 0}
                       />
                     }
                     label="Non-negotiable"

@@ -9,7 +9,7 @@ import { getGeneralData } from 'apiServices/data';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { useNavigate } from 'react-router-dom';
-import { postUserStage, profileDetails } from 'apiServices/user';
+import { getUserStage, postUserStage, profileDetails } from 'apiServices/user';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -27,6 +27,11 @@ interface ResponseGeneralData {
   status: string;
   message: string;
   generalData: any;
+}
+interface ResponseStageData {
+  registrationStage: number;
+  message: string;
+  status: string;
 }
 const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   return (
@@ -127,9 +132,6 @@ const Preferences: React.FC = () => {
       } as SnackbarProps);
     }
   };
-  useEffect(() => {
-    getGeneralDataAPI();
-  }, []);
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
@@ -325,8 +327,54 @@ const Preferences: React.FC = () => {
     }
   };
   useEffect(() => {
-    postUserStageAPI();
+    //postUserStageAPI();
+    getGeneralDataAPI();
+    getUserStageAPI();
   }, []);
+  const getUserStageAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserStage(userId);
+      const responseData = response.data as ResponseStageData;
+      if (responseData.status === 'success') {
+        // switch (responseData.registrationStage) {
+        //   case 1:
+        //     navigate('/upload-biodata');
+        //     break;
+        //   case 2:
+        //     navigate('/personal-details');
+        //     break;
+        //   case 3:
+        //     navigate('/preferences');
+        //     break;
+        //   case 4:
+        //     navigate('/upload-photos');
+        //     break;
+        //   case 5:
+        //     navigate('/widget/statistics');
+        //     break;
+        //   default:
+        //     console.log('Unknown registration stage:', responseData.registrationStage);
+        //     navigate('/upload-biodata');
+        //     break;
+        // }
+      } else {
+        console.log("API call unsuccessful or status is not 'success'");
+        navigate('/upload-biodata');
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <BackgroundWrapper>
       <>

@@ -30,6 +30,7 @@ interface TabEditStep4Props {
   familyTypeOptions: any;
   siblingOptions: any;
   incomeOptions: any;
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabEditStep4({
   fatherName,
@@ -45,11 +46,17 @@ export default function TabEditStep4({
   familyType,
   setFamilyType,
   familyTypeOptions = [],
-  siblingOptions = []
+  siblingOptions = [],
   //incomeOptions = []
+  setIsStepValid
 }: TabEditStep4Props) {
   const theme = useTheme();
   const [selectedIncomeRange, setSelectedIncomRange] = useState('');
+  const [errors, setErrors] = useState({
+    hometown: '',
+    familyIncome: '',
+    familyType: ''
+  });
   // Handlers
   const handleSiblingsChange = (event: SelectChangeEvent) => setSiblings(event.target.value);
   const handleFamilyIncomeChange = (event: SelectChangeEvent) => {
@@ -62,7 +69,26 @@ export default function TabEditStep4({
 
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
   const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
+  const validateStep = () => {
+    let newErrors = {
+      hometown: '',
+      familyIncome: '',
+      familyType: ''
+    };
 
+    if (!hometown) newErrors.hometown = 'This field is required.';
+    if (!familyIncome) newErrors.familyIncome = 'This field is required.';
+    if (!familyType) newErrors.familyType = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [hometown, familyIncome, familyType]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -99,7 +125,9 @@ export default function TabEditStep4({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="hometown">Hometown</InputLabel>
+                    <InputLabel htmlFor="hometown">
+                      Hometown<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <TextField
                       fullWidth
                       id="hometown"
@@ -107,6 +135,9 @@ export default function TabEditStep4({
                       value={hometown}
                       onChange={(e) => setHometown(e.target.value)}
                       className="inputField"
+                      onBlur={validateStep}
+                      error={!!errors.hometown}
+                      helperText={errors.hometown}
                     />
                   </Stack>
                 </Grid>
@@ -131,13 +162,17 @@ export default function TabEditStep4({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="family-income">Family Income</InputLabel>
+                    <InputLabel htmlFor="family-income">
+                      Family Income<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <Select
                       fullWidth
                       value={selectedIncomeRange}
                       onChange={handleFamilyIncomeChange}
                       displayEmpty
                       className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.familyIncome}
                     >
                       <MenuItem value="" disabled>
                         Select Family Income Range
@@ -152,8 +187,18 @@ export default function TabEditStep4({
                 </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="family-type">Family Type</InputLabel>
-                    <Select fullWidth value={familyType} onChange={handleFamilyTypeChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="family-type">
+                      Family Type<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      value={familyType}
+                      onChange={handleFamilyTypeChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.familyType}
+                    >
                       <MenuItem value="" disabled>
                         Select Family Type
                       </MenuItem>

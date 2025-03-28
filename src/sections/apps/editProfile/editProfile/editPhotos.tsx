@@ -12,6 +12,7 @@ import { makeProfilePhoto, uploadBiodata, uploadPhoto } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { APP_VERSION } from 'config';
 interface ErrorData {
   response: any;
 }
@@ -153,7 +154,7 @@ export default function EditPhotos() {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const uploadData = {
       matrimonialId: matrimonialId,
-      appVersion: '1.0.4'
+      appVersion: APP_VERSION
     };
     let fileData = [];
     // Create a FormData object

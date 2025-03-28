@@ -141,6 +141,7 @@ export default function AdditionalPreferences({
                           checked={!!nonNegotiable}
                           onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
                           className="inputFieldCheckbox"
+                          disabled={!value}
                         />
                       }
                       label="Non-negotiable"
@@ -170,6 +171,7 @@ export default function AdditionalPreferences({
                         checked={!!nonNegotiableHobbies}
                         onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
                         className="inputFieldCheckbox"
+                        disabled={!Array.isArray(hobbies) || hobbies.length === 0}
                       />
                     }
                     label="Non-negotiable"
@@ -178,7 +180,7 @@ export default function AdditionalPreferences({
                 <Select
                   multiple
                   fullWidth
-                  value={Array.isArray(hobbies) ? hobbies : []} // Ensuring value is always an array
+                  value={Array.isArray(hobbies) ? hobbies : []}
                   onChange={(event) => {
                     setHobbies(event.target.value as string[]);
                   }}

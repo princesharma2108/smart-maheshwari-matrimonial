@@ -132,6 +132,11 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
 
   const logout = () => {
     setSession(null);
+    localStorage.clear(); // Clears everything from localStorage
+    // localStorage.removeItem('userData');
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('userId');
+    // localStorage.removeItem('matrimonialId');
     dispatch({ type: LOGOUT });
   };
 

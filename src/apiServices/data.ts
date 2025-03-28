@@ -114,3 +114,13 @@ export const postAdvancedSearchData = async <T>(data: any, config?: AxiosRequest
     throw error;
   }
 };
+//Biodata PDF Extract Data
+export const extractPDFData = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await formApiClient.post<T>(`/bio-data-pdf-extract`, data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};

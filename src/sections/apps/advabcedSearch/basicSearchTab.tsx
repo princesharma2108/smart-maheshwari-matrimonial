@@ -101,6 +101,7 @@ export default function BasicSearchTab({
             {/* Age Selection */}
             <Grid item xs={12}>
               <Grid container spacing={3}>
+                {/* Min Age Dropdown */}
                 <Grid item xs={6}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="min-age">Min Age</InputLabel>
@@ -116,6 +117,8 @@ export default function BasicSearchTab({
                     </Select>
                   </Stack>
                 </Grid>
+
+                {/* Max Age Dropdown */}
                 <Grid item xs={6}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="max-age">Max Age</InputLabel>
@@ -123,11 +126,13 @@ export default function BasicSearchTab({
                       <MenuItem value="" disabled>
                         Select Max Age
                       </MenuItem>
-                      {ageOptions.map((age) => (
-                        <MenuItem key={age} value={age.toString()}>
-                          {age}
-                        </MenuItem>
-                      ))}
+                      {ageOptions
+                        .filter((age) => minAge === '' || Number(age) >= Number(minAge)) // Filter max age options
+                        .map((age) => (
+                          <MenuItem key={age} value={age.toString()}>
+                            {age}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -137,6 +142,7 @@ export default function BasicSearchTab({
             {/* Height Selection */}
             <Grid item xs={12}>
               <Grid container spacing={3}>
+                {/* Min Height Dropdown */}
                 <Grid item xs={6}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="min-height">Min Height (cm)</InputLabel>
@@ -152,6 +158,8 @@ export default function BasicSearchTab({
                     </Select>
                   </Stack>
                 </Grid>
+
+                {/* Max Height Dropdown */}
                 <Grid item xs={6}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="max-height">Max Height (cm)</InputLabel>
@@ -159,11 +167,13 @@ export default function BasicSearchTab({
                       <MenuItem value="" disabled>
                         Select Max Height
                       </MenuItem>
-                      {heightData.map((height, index) => (
-                        <MenuItem key={index} value={height}>
-                          {height} cm
-                        </MenuItem>
-                      ))}
+                      {heightData
+                        .filter((height) => minHeight === '' || height >= minHeight) // Filter max height options
+                        .map((height, index) => (
+                          <MenuItem key={index} value={height}>
+                            {height} cm
+                          </MenuItem>
+                        ))}
                     </Select>
                   </Stack>
                 </Grid>
@@ -188,18 +198,6 @@ export default function BasicSearchTab({
             </Grid>
           </Grid>
         </MainCard>
-      </Grid>
-
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary" onClick={() => navigate('/upload-biodata')}>
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
       </Grid>
     </Grid>
   );

@@ -94,6 +94,7 @@ export default function PersonalPreferences({
                         checked={!!nonNegotiableAge}
                         onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'Age', nonNegotiableAge)}
                         className="inputFieldCheckbox"
+                        disabled={!age[0] && !age[1]}
                       />
                     }
                     label="Non-negotiable"
@@ -163,6 +164,7 @@ export default function PersonalPreferences({
                           checked={!!nonNegotiable}
                           onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
                           className="inputFieldCheckbox"
+                          disabled={!value}
                         />
                       }
                       label="Non-negotiable"

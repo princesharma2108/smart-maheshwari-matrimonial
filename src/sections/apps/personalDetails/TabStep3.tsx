@@ -24,6 +24,7 @@ interface TabStep3Props {
   drinkingOptions: any;
   smokingOptions: string[];
   dietaryOptions: string[];
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabStep3({
   drinking,
@@ -34,14 +35,35 @@ export default function TabStep3({
   setDietaryHabits,
   dietaryOptions = [],
   smokingOptions = [],
-  drinkingOptions = []
+  drinkingOptions = [],
+  setIsStepValid
 }: TabStep3Props) {
   const theme = useTheme();
-
+  const [errors, setErrors] = useState({
+    drinking: '',
+    smoking: '',
+    dietaryHabits: ''
+  });
   // Handlers
   const handleDrinkingChange = (event: SelectChangeEvent) => setDrinking(event.target.value);
   const handleSmokingChange = (event: SelectChangeEvent) => setSmoking(event.target.value);
   const handleDietaryHabitsChange = (event: SelectChangeEvent) => setDietaryHabits(event.target.value);
+  const validateStep = () => {
+    let newErrors = { drinking: '', smoking: '', dietaryHabits: '' };
+
+    if (!drinking) newErrors.drinking = 'This field is required.';
+    if (!smoking) newErrors.smoking = 'This field is required.';
+    if (!dietaryHabits) newErrors.dietaryHabits = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [drinking, smoking, dietaryHabits]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -50,10 +72,20 @@ export default function TabStep3({
             {/* Drinking Habits */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="drinking-habits">Drinking Habits</InputLabel>
-                <Select fullWidth value={drinking} onChange={handleDrinkingChange} displayEmpty className="inputFieldLogin">
+                <InputLabel htmlFor="drinking-habits">
+                  Drinking Habits<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Select
+                  fullWidth
+                  value={drinking}
+                  onChange={handleDrinkingChange}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.drinking}
+                >
                   <MenuItem value="" disabled>
-                    Select Drinking Habits
+                    Select Drinking Habits<span style={{ color: 'red' }}>*</span>
                   </MenuItem>
                   {drinkingOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
@@ -68,9 +100,17 @@ export default function TabStep3({
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="smoking-habits">Smoking Habits</InputLabel>
-                <Select fullWidth value={smoking} onChange={handleSmokingChange} displayEmpty className="inputFieldLogin">
+                <Select
+                  fullWidth
+                  value={smoking}
+                  onChange={handleSmokingChange}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.drinking}
+                >
                   <MenuItem value="" disabled>
-                    Select Smoking Habits
+                    Select Smoking Habits<span style={{ color: 'red' }}>*</span>
                   </MenuItem>
                   {smokingOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
@@ -84,8 +124,18 @@ export default function TabStep3({
             {/* Dietary Habits */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="dietary-habits">Dietary Habits</InputLabel>
-                <Select fullWidth value={dietaryHabits} onChange={handleDietaryHabitsChange} displayEmpty className="inputFieldLogin">
+                <InputLabel htmlFor="dietary-habits">
+                  Dietary Habits <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Select
+                  fullWidth
+                  value={dietaryHabits}
+                  onChange={handleDietaryHabitsChange}
+                  displayEmpty
+                  className="inputFieldLogin"
+                  onBlur={validateStep}
+                  error={!!errors.drinking}
+                >
                   <MenuItem value="" disabled>
                     Select Dietary Habits
                   </MenuItem>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 // material-ui
 import Grid from '@mui/material/Grid';
@@ -29,6 +29,8 @@ import { AuthProps, JWTContextType } from 'types/auth';
 import { loginUser } from 'apiServices/authentication';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
+import { APP_VERSION } from 'config';
+import { getUserStage } from 'apiServices/user';
 // ================================|| LOGIN ||================================ //
 interface ErrorData {
   response: any;
@@ -55,8 +57,14 @@ interface UserDetails {
   photo: string;
   lastName: string;
 }
+interface ResponseStageData {
+  registrationStage: number;
+  message: string;
+  status: string;
+}
 export default function Login() {
   const { isLoggedIn, login } = useAuth();
+  const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
@@ -88,20 +96,20 @@ export default function Login() {
       phoneNumber: '',
       emailAddress: userEmail,
       googleToken: userId,
-      appVersion: '1.0.0'
+      appVersion: APP_VERSION
     };
     try {
-      const response = await login(registerData);
-      console.log('response', response);
+      await login(registerData);
       //const responseData = response.data as ResponseData;
       // const { token, matrimonialId, username, userId, message } = responseData;
       // localStorage.setItem('userData', JSON.stringify(responseData));
       // localStorage.setItem('token', token);
       // localStorage.setItem('userId', userId);
       // localStorage.setItem('matrimonialId', matrimonialId);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
+      const storedData = localStorage.getItem('userData');
+      const userData = storedData ? JSON.parse(storedData) : {};
+      localStorage.setItem('userCreated', userData.created);
+      console.log('userData', userData);
       openSnackbar({
         open: true,
         message: 'User logged in successfully',
@@ -110,7 +118,56 @@ export default function Login() {
           color: 'success'
         }
       } as SnackbarProps);
-      window.location.href = '/upload-biodata';
+      // window.location.href = '/upload-biodata';
+      if (userData.created == false) {
+        getUserStageAPI();
+      } else {
+        window.location.href = '/upload-biodata';
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
+  const getUserStageAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserStage(userId);
+      const responseData = response.data as ResponseStageData;
+      if (responseData.status === 'success') {
+        switch (responseData.registrationStage) {
+          case 1:
+            navigate('/upload-biodata');
+            break;
+          case 2:
+            navigate('/personal-details');
+            break;
+          case 3:
+            navigate('/preferences');
+            break;
+          case 4:
+            navigate('/upload-photos');
+            break;
+          case 5:
+            navigate('/widget/statistics');
+            break;
+          default:
+            console.log('Unknown registration stage:', responseData.registrationStage);
+            navigate('/upload-biodata');
+            break;
+        }
+      } else {
+        console.log("API call unsuccessful or status is not 'success'");
+        navigate('/upload-biodata');
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

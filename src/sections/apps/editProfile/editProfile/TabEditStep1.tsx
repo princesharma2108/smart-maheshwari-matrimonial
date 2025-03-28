@@ -53,6 +53,7 @@ interface TabEditStep1Props {
   setDateOfBirth: (value: Dayjs | null) => void;
   placeOfBirth: string;
   setPlaceOfBirth: (value: string) => void;
+  setIsStepValid: (value: boolean) => void;
 }
 
 export default function TabEditStep1({
@@ -63,13 +64,18 @@ export default function TabEditStep1({
   dateOfBirth,
   setDateOfBirth,
   placeOfBirth,
-  setPlaceOfBirth
+  setPlaceOfBirth,
+  setIsStepValid
 }: TabEditStep1Props) {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
   const [placeOptions, setPlaceOptions] = useState<string[]>([]);
-
+  const [errors, setErrors] = useState({
+    fullName: '',
+    timeOfBirth: '',
+    dateOfBirth: '',
+    placeOfBirth: ''
+  });
   // Fetch place suggestions
   const fetchPlaces = async (query: string) => {
     if (!query) return;
@@ -79,7 +85,23 @@ export default function TabEditStep1({
 
     setPlaceOptions(data.map((place: any) => place.display_name));
   };
-  console.log('dateOfBirth', dateOfBirth);
+  const validateStep = () => {
+    let newErrors = { fullName: '', timeOfBirth: '', dateOfBirth: '', placeOfBirth: '' };
+
+    if (!fullName.trim()) newErrors.fullName = 'This field is required.';
+    if (!timeOfBirth) newErrors.timeOfBirth = 'This field is required.';
+    if (!dateOfBirth) newErrors.dateOfBirth = 'This field is required.';
+    if (!placeOfBirth.trim()) newErrors.placeOfBirth = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [fullName, timeOfBirth, dateOfBirth, placeOfBirth]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -88,26 +110,64 @@ export default function TabEditStep1({
             {/* First Name */}
             <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="personal-full-name">Full Name</InputLabel>
+                <InputLabel htmlFor="personal-full-name">
+                  Full Name <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <TextField
                   fullWidth
                   id="personal-full-name"
                   placeholder="Full Name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  autoFocus
                   className="inputField"
+                  value={fullName}
+                  onChange={(e) => {
+                    let value = e.target.value;
+
+                    // Allow only letters and spaces
+                    value = value.replace(/[^A-Za-z ]/g, '');
+
+                    // Trim spaces at the start and end
+                    value = value.trim();
+
+                    // Replace multiple spaces with a single space
+                    value = value.replace(/\s+/g, ' ');
+
+                    setFullName(value);
+                  }}
+                  onBlur={() => {
+                    // Regex: Exactly three words with a single space between them
+                    const regex = /^[A-Za-z]+ [A-Za-z]+ [A-Za-z]+$/;
+
+                    if (!regex.test(fullName)) {
+                      setErrors((prev) => ({
+                        ...prev,
+                        fullName: 'Enter exactly three words separated by single spaces.'
+                      }));
+                    } else {
+                      setErrors((prev) => ({ ...prev, fullName: '' }));
+                    }
+                  }}
+                  error={!!errors.fullName}
+                  helperText={errors.fullName}
                 />
               </Stack>
             </Grid>
             <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="personal-time-of-birth">Time of Birth</InputLabel>
+                <InputLabel htmlFor="personal-time-of-birth">
+                  Time of Birth <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
                     value={timeOfBirth}
                     onChange={(newValue) => setTimeOfBirth(newValue)}
-                    slotProps={{ textField: { fullWidth: true } }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!errors.timeOfBirth, // ✅ Show error
+                        helperText: errors.timeOfBirth, // ✅ Display error message
+                        onBlur: validateStep // ✅ Moved inside slotProps.textField
+                      }
+                    }}
                     className="inputField" // ✅ Correct way to pass props
                   />
                 </LocalizationProvider>
@@ -115,13 +175,21 @@ export default function TabEditStep1({
             </Grid>
             <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="personal-date-of-birth">Date of Birth</InputLabel>
+                <InputLabel htmlFor="personal-date-of-birth">
+                  Date of Birth <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     value={dateOfBirth}
                     onChange={(newValue) => setDateOfBirth(newValue)}
-                    format="DD-MM-YYYY"
-                    slotProps={{ textField: { fullWidth: true } }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!errors.dateOfBirth, // ✅ Show error if validation fails
+                        helperText: errors.dateOfBirth,
+                        onBlur: validateStep // ✅ Display error message
+                      }
+                    }}
                     className="inputField" // ✅ Correct prop usage
                   />
                 </LocalizationProvider>
@@ -130,7 +198,9 @@ export default function TabEditStep1({
             {/* Place of Birth Autocomplete */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="personal-place-of-birth">Place of Birth</InputLabel>
+                <InputLabel htmlFor="personal-place-of-birth">
+                  Place of Birth <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <Autocomplete
                   freeSolo
                   options={placeOptions}
@@ -139,7 +209,16 @@ export default function TabEditStep1({
                     setPlaceOfBirth(newInputValue);
                     fetchPlaces(newInputValue);
                   }}
-                  renderInput={(params) => <TextField {...params} placeholder="Enter place of birth" fullWidth />}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Enter place of birth"
+                      fullWidth
+                      onBlur={validateStep}
+                      error={!!errors.placeOfBirth}
+                      helperText={errors.placeOfBirth}
+                    />
+                  )}
                   className="inputField"
                 />
               </Stack>

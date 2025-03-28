@@ -25,6 +25,7 @@ interface TabStep6Props {
   setIncludeUnknownManglik: (value: boolean) => void;
   gotraOptions: any;
   manglikOptions: any;
+  setIsStepValid: (value: boolean) => void;
 }
 export default function TabStep6({
   gotra,
@@ -36,16 +37,36 @@ export default function TabStep6({
   includeUnknownManglik,
   setIncludeUnknownManglik,
   gotraOptions = [],
-  manglikOptions = []
+  manglikOptions = [],
+  setIsStepValid
 }: TabStep6Props) {
   const theme = useTheme();
-
+  const [errors, setErrors] = useState({
+    gotra: '',
+    manglik: ''
+  });
   // Handlers
   const handleGotraChange = (event: SelectChangeEvent) => setGotra(event.target.value);
   const handleManglikChange = (event: SelectChangeEvent) => setManglik(event.target.value);
   const handleGunnMatchingChange = (event: ChangeEvent<HTMLInputElement>) => setGunnMatchingImportant(event.target.checked);
   const handleIncludeUnknownManglikChange = (event: ChangeEvent<HTMLInputElement>) => setIncludeUnknownManglik(event.target.checked);
+  const validateStep = () => {
+    let newErrors = {
+      gotra: '',
+      manglik: ''
+    };
 
+    if (!gotra) newErrors.gotra = 'This field is required.';
+    if (!manglik) newErrors.manglik = 'This field is required.';
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [gotra, manglik]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -56,8 +77,19 @@ export default function TabStep6({
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="gotra">Gotra</InputLabel>
-                    <Select fullWidth id="gotra" value={gotra} onChange={handleGotraChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="gotra">
+                      Gotra<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      id="gotra"
+                      value={gotra}
+                      onChange={handleGotraChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.gotra}
+                    >
                       <MenuItem value="" disabled>
                         Select Gotra
                       </MenuItem>
@@ -87,8 +119,19 @@ export default function TabStep6({
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <InputLabel htmlFor="manglik">Manglik</InputLabel>
-                    <Select fullWidth id="manglik" value={manglik} onChange={handleManglikChange} displayEmpty className="inputFieldLogin">
+                    <InputLabel htmlFor="manglik">
+                      Manglik<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      id="manglik"
+                      value={manglik}
+                      onChange={handleManglikChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.manglik}
+                    >
                       <MenuItem value="" disabled>
                         Select Manglik Status
                       </MenuItem>

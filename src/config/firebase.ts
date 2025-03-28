@@ -28,7 +28,8 @@ const firebaseConfigMatrimonial = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfigMatrimonial);
 const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

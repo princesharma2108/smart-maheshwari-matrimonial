@@ -91,6 +91,7 @@ export default function LifestylePreferencesEdit({
                           checked={!!nonNegotiable}
                           onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
                           className="inputFieldCheckbox"
+                          disabled={!value}
                         />
                       }
                       label="Non-negotiable"

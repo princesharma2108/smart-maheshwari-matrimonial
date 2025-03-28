@@ -2,7 +2,7 @@
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
-import { Tabs, Tab, Box, Typography, Paper } from '@mui/material';
+import { Tabs, Tab, Box, Typography, Paper, Stack, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import BasicSearchTab from 'sections/apps/advabcedSearch/basicSearchTab';
 import AdvancedSearchTab from 'sections/apps/advabcedSearch/advancedSearchTab';
@@ -10,6 +10,7 @@ import MainCard from 'components/MainCard';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { getAdvancedSearchData, getGeneralData, postAdvancedSearchData } from 'apiServices/data';
+import { useNavigate } from 'react-router';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -123,19 +124,24 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 export default function AdvancedSearch() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [tabIndex, setTabIndex] = useState(0);
+  //Basic Search
   const [maritalStatus, setMaritalStatus] = useState('');
   const [minAge, setMinAge] = useState('');
   const [maxAge, setMaxAge] = useState('');
   const [minHeight, setMinHeight] = useState('');
   const [maxHeight, setMaxHeight] = useState('');
   const [location, setLocation] = useState('');
+  //Advance Search
+  const [tagCategories, setTagCategories] = useState<{ name: string; tags: string[] }[]>([]);
   //General Data
   const [ageOptions, setAgeOptions] = useState([]);
   const [heightData, setHeightData] = useState([]);
   const [locationData, setLocationData] = useState([]);
   const [maritalOptionsData, setMaritalOptionsData] = useState([]);
   const [tagsData, setTagsData] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
     setTabIndex(newIndex);
   };
@@ -148,7 +154,7 @@ export default function AdvancedSearch() {
       setLocationData(responseData.data.locationOptions);
       setMaritalOptionsData(responseData.data.maritalOptions);
       setAgeOptions(responseData.data.ageOptions);
-      setTagsData(responseData.data.tagsData);
+      setTagsData(responseData.data.tags);
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -167,96 +173,29 @@ export default function AdvancedSearch() {
     const searchData = {
       matrimonialId: matrimonialId,
       basicSearch: {
-        maritalStatusOptions: ['Single', 'Divorced', 'Widowed'],
-        ageOptions: [
-          '18',
-          '20',
-          '22',
-          '24',
-          '26',
-          '28',
-          '30',
-          '32',
-          '34',
-          '36',
-          '38',
-          '40',
-          '42',
-          '44',
-          '46',
-          '48',
-          '50',
-          '52',
-          '54',
-          '56',
-          '58',
-          '60'
-        ],
-        heightOptions: [
-          '4ft 6in - 137cm',
-          '4ft 7in - 140cm',
-          '4ft 8in - 142cm',
-          '4ft 9in - 145cm',
-          '4ft 10in - 147cm',
-          '4ft 11in - 150cm',
-          '5ft 0in - 152cm',
-          '5ft 1in - 155cm',
-          '5ft 2in - 157cm',
-          '5ft 3in - 160cm',
-          '5ft 4in - 163cm',
-          '5ft 5in - 165cm',
-          '5ft 6in - 168cm',
-          '5ft 7in - 170cm',
-          '5ft 8in - 173cm',
-          '5ft 9in - 175cm',
-          '5ft 10in - 178cm',
-          '5ft 11in - 180cm',
-          '6ft 0in - 183cm',
-          '6ft 1in - 185cm',
-          '6ft 2in - 188cm',
-          '6ft 3in - 191cm',
-          '6ft 4in - 193cm',
-          '6ft 5in - 196cm'
-        ],
-        locationOptions: [
-          'New York',
-          'Los Angeles',
-          'Ahmedabad',
-          'Jaipur',
-          'Phoenix',
-          'Philadelphia',
-          'San Antonio',
-          'San Diego',
-          'Dallas',
-          'San Jose'
-        ]
+        maritalStatusOptions: [maritalStatus],
+        ageOptions: [minAge, maxAge],
+        heightOptions: [minHeight, maxHeight],
+        locationOptions: [location]
       },
       advancedSearch: {
-        tagCategories: [
-          {
-            name: 'Education and Profession',
-            tags: ["Bachelor's Degree", "Master's Degree", 'PhD', 'Engineer', 'Doctor', 'Teacher', 'Lawyer', 'Artist']
-          },
-          {
-            name: 'Lifestyle',
-            tags: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Fitness Enthusiast', 'Yoga Practitioner', 'Travel Lover', 'Book Reader']
-          },
-          {
-            name: 'Family Background',
-            tags: ['Joint Family', 'Nuclear Family', 'Business Family', 'Service Family', 'Agricultural Family']
-          }
-        ]
+        tagCategories: tagCategories
       }
     };
     try {
       const response = await postAdvancedSearchData(searchData);
       const responseData = response.data as ResponseSearchData;
       console.log('responseData', responseData.data);
-      setHeightData(responseData.data.heightOptions);
-      setLocationData(responseData.data.locationOptions);
-      setMaritalOptionsData(responseData.data.maritalOptions);
-      setAgeOptions(responseData.data.ageOptions);
-      setTagsData(responseData.data.tagsData);
+      setSearchResults(responseData.data);
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+      navigate('/widget/statistics', { state: { searchResults: responseData.data } });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -303,8 +242,19 @@ export default function AdvancedSearch() {
             />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <AdvancedSearchTab />
+            <AdvancedSearchTab tagsData={tagsData || []} tagCategories={tagCategories} setTagCategories={setTagCategories} />
           </TabPanel>
+          {/* Buttons */}
+          <Grid item xs={12}>
+            <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+              <Button variant="outlined" color="secondary" onClick={() => {}}>
+                Reset
+              </Button>
+              <Button variant="contained" className="buttonStyle" onClick={sendAdvancedSearchDataAPI}>
+                Apply Filters
+              </Button>
+            </Stack>
+          </Grid>
         </MainCard>
       </Grid>
     </>

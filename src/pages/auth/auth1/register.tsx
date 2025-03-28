@@ -25,6 +25,7 @@ import { useEffect, useState } from 'react';
 import { registerUser } from 'apiServices/authentication';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
+import { APP_VERSION } from 'config';
 // ================================|| REGISTER ||================================ //
 
 export default function Register() {
@@ -84,7 +85,7 @@ export default function Register() {
       phoneNumber: null,
       emailAddress: userEmail,
       googleToken: userId,
-      appVersion: '1.0.4'
+      appVersion: APP_VERSION
     };
     try {
       const response = await registerUser(registerData);

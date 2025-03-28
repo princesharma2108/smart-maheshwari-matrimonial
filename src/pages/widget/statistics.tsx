@@ -25,6 +25,7 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { useEffect, useState } from 'react';
 import { postUserStage } from 'apiServices/user';
+import { useLocation } from 'react-router';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface ResponseData {
   status: string;
@@ -221,6 +222,9 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
 
 export default function LatestMatches() {
   const theme = useTheme();
+  const location = useLocation();
+  const searchResults = location.state?.searchResults;
+  console.log('searchResults', searchResults);
   const userId = localStorage.getItem('userId');
   const [matchProfilesData, setMatchProfiles] = useState([]);
   const getMatchResultsAPI = async () => {
@@ -316,7 +320,8 @@ export default function LatestMatches() {
       </Grid>
       {/* Display two profiles per row */}
       <Grid container spacing={3}>
-        {matchProfiles.data.map((profile, index) => (
+        {/* {matchProfiles.data.map((profile, index) => ( */}
+        {(matchProfilesData || searchResults || []).map((profile: any, index: any) => (
           <Grid item xs={12} md={6} key={index}>
             <MatchProfile profile={profile} />
           </Grid>
