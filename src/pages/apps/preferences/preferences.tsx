@@ -85,8 +85,18 @@ const Preferences: React.FC = () => {
   const [qualificationData, setQualificationData] = useState([]);
   const [smokingOptionsData, setSmokingOptionsData] = useState([]);
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
+  const [isStepValid, setIsStepValid] = useState(true); // Track validation status
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    setTabIndex(newIndex);
+    // Allow moving back anytime
+    if (newIndex < tabIndex) {
+      setTabIndex(newIndex);
+      return;
+    }
+
+    // Allow moving forward only to the next step if isStepValid is true
+    if (newIndex === tabIndex + 1 && isStepValid) {
+      setTabIndex(newIndex);
+    }
   };
   const handleNext = () => {
     // navigate('/preferences');
@@ -327,9 +337,9 @@ const Preferences: React.FC = () => {
     }
   };
   useEffect(() => {
-    //postUserStageAPI();
+    postUserStageAPI();
     getGeneralDataAPI();
-    getUserStageAPI();
+    //getUserStageAPI();
   }, []);
   const getUserStageAPI = async () => {
     const userId = localStorage.getItem('userId');
@@ -381,13 +391,16 @@ const Preferences: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Preferences
         </Typography>
-
         <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
           {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
-            <Tab key={index} label={label} className="tabStyle" />
+            <Tab
+              key={index}
+              label={label}
+              className="tabStyle"
+              disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+            />
           ))}
         </Tabs>
-
         <TabPanel value={tabIndex} index={0}>
           <LifestylePreferences
             drinking={drinking}
@@ -405,6 +418,7 @@ const Preferences: React.FC = () => {
             drinkingOptions={drinkingOptionsData || []}
             smokingOptions={smokingOptionsData || []}
             dietaryOptions={dietaryOptionsData || []}
+            setIsStepValid={setIsStepValid}
           />
         </TabPanel>
         <TabPanel value={tabIndex} index={1}>
@@ -433,6 +447,7 @@ const Preferences: React.FC = () => {
             familyTypeData={familyTypeData || []}
             familyBackgroundData={familyBackgroundData || []}
             maritalOptionsData={maritalOptionsData || []}
+            setIsStepValid={setIsStepValid}
           />
         </TabPanel>
         <TabPanel value={tabIndex} index={2}>
@@ -462,6 +477,7 @@ const Preferences: React.FC = () => {
             hobbiesData={hobbiesData || []}
             locationData={locationData || []}
             workingWithOptionsData={workingWithOptionsData || []}
+            setIsStepValid={setIsStepValid}
           />
         </TabPanel>
         <Grid item xs={12}>
@@ -469,7 +485,7 @@ const Preferences: React.FC = () => {
             <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
               Previous
             </Button>
-            <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
+            <Button variant="contained" onClick={() => handleNext()} className="buttonStyle" disabled={!isStepValid}>
               Continue
             </Button>
           </Stack>

@@ -32,6 +32,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import 'assets/styles/styles.scss';
 import { useNavigate } from 'react-router-dom';
 import { boolean } from 'yup';
+import Address from 'pages/apps/address/address';
 // styles & constant
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -54,7 +55,9 @@ interface TabStep1Props {
   setDateOfBirth: (value: Dayjs | null) => void;
   placeOfBirth: string;
   setPlaceOfBirth: (value: string) => void;
+  //isStepValid: boolean;
   setIsStepValid: (value: boolean) => void;
+  //handleStepValidation: (index: number, value: boolean) => void;
 }
 
 export default function TabStep1({
@@ -66,11 +69,17 @@ export default function TabStep1({
   setDateOfBirth,
   placeOfBirth,
   setPlaceOfBirth,
+  // isStepValid,
   setIsStepValid
+  // handleStepValidation
 }: TabStep1Props) {
   const navigate = useNavigate();
   const theme = useTheme();
   const [placeOptions, setPlaceOptions] = useState<string[]>([]);
+  const [homeAddress, setSelectedHomeAddress] = useState('');
+  const [city, setSelectedCity] = useState('');
+  const [state, setSelectedState] = useState('');
+  const [zipCode, setSelectedZipCode] = useState('');
   const [errors, setErrors] = useState({
     fullName: '',
     timeOfBirth: '',
@@ -97,13 +106,29 @@ export default function TabStep1({
     setErrors(newErrors);
     const isValid = Object.values(newErrors).every((err) => err === '');
     setIsStepValid(isValid); // Update parent state
+    // handleStepValidation(1, isValid);
     return isValid;
   };
 
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [fullName, timeOfBirth, dateOfBirth, placeOfBirth]);
-
+  const handleHomeAddressChange = (homeAddress: any) => {
+    console.log('homeAddressBirth1', homeAddress);
+    setPlaceOfBirth(homeAddress);
+  };
+  const handleCityAddressChange = (city: any) => {
+    setSelectedCity(city);
+  };
+  const handleStateAddressChange = (state: any) => {
+    setSelectedState(state);
+  };
+  const handleZipAddressChange = (zip: any) => {
+    setSelectedZipCode(zip);
+  };
+  // useEffect(() => {
+  //   handleStepValidation(stepIndex, isValid); // Mark step as valid if all fields are filled
+  // }, [isValid]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -167,7 +192,8 @@ export default function TabStep1({
                         fullWidth: true,
                         error: !!errors.timeOfBirth, // ✅ Show error
                         helperText: errors.timeOfBirth, // ✅ Display error message
-                        onBlur: validateStep // ✅ Moved inside slotProps.textField
+                        onBlur: validateStep, // ✅ Moved inside slotProps.textField
+                        inputProps: { readOnly: true }
                       }
                     }}
                     className="inputField" // ✅ Correct way to pass props
@@ -189,7 +215,8 @@ export default function TabStep1({
                         fullWidth: true,
                         error: !!errors.dateOfBirth, // ✅ Show error if validation fails
                         helperText: errors.dateOfBirth,
-                        onBlur: validateStep // ✅ Display error message
+                        onBlur: validateStep, // ✅ Display error message
+                        inputProps: { readOnly: true }
                       }
                     }}
                     className="inputField" // ✅ Correct prop usage
@@ -197,8 +224,9 @@ export default function TabStep1({
                 </LocalizationProvider>
               </Stack>
             </Grid>
-            {/* Place of Birth Autocomplete */}
-            <Grid item xs={12}>
+            <>
+              {/* Place of Birth Autocomplete */}
+              {/* <Grid item xs={12}>
               <Stack spacing={1}>
                 <InputLabel htmlFor="personal-place-of-birth">
                   Place of Birth <span style={{ color: 'red' }}>*</span>
@@ -222,6 +250,32 @@ export default function TabStep1({
                     />
                   )}
                   className="inputField"
+                />
+              </Stack>
+            </Grid> */}
+            </>
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="personal-place-of-birth">
+                  Place of Birth <span style={{ color: 'red' }}>*</span>
+                </InputLabel>
+                <Address
+                  fieldName={''}
+                  //addressCountryFilters={['us']}
+                  initialAddress={placeOfBirth}
+                  handleAddressChange={handleHomeAddressChange}
+                  handleCityChange={handleCityAddressChange}
+                  handleStateChange={handleStateAddressChange}
+                  handleZipChange={handleZipAddressChange}
+                  handleLatitudeChange={function (latitude: number): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                  handleLongitudeChange={function (longitude: number): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                  onBlur={validateStep}
+                  error={!!errors.placeOfBirth}
+                  helperText={errors.placeOfBirth}
                 />
               </Stack>
             </Grid>

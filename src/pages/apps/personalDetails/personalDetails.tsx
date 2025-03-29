@@ -64,7 +64,6 @@ const PersonalDetails: React.FC = () => {
   const [height, setHeight] = useState('');
   const [gender, setGender] = useState('');
   const [hobbies, setHobbies] = useState<string[]>([]);
-  //const [hobbies, setHobbies] = useState('');
   const [disability, setDisability] = useState('');
   const [bloodGroup, setBloodGroup] = useState('');
   const [complexion, setComplexion] = useState('');
@@ -102,60 +101,6 @@ const PersonalDetails: React.FC = () => {
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
-  //BioData PDF Variables
-  //Tab 1
-  const [fullNamePDF, setFullNamePDF] = useState('');
-  const [timeOfBirthPDF, setTimeOfBirthPDF] = useState<string | null>(null);
-  const [dateOfBirthPDF, setDateOfBirthPDF] = useState<string | null>(null);
-  const [placeOfBirthPDF, setPlaceOfBirthPDF] = useState('');
-
-  //Tab 2
-  const [weightPDF, setWeightPDF] = useState('');
-  const [heightPDF, setHeightPDF] = useState('');
-  const [genderPDF, setGenderPDF] = useState('');
-  const [hobbiesPDF, setHobbiesPDF] = useState<string[]>([]);
-  const [disabilityPDF, setDisabilityPDF] = useState('');
-  const [bloodGroupPDF, setBloodGroupPDF] = useState('');
-  const [complexionPDF, setComplexionPDF] = useState('');
-  const [maritalStatusPDF, setMaritalStatusPDF] = useState('');
-
-  //Tab 3
-  const [drinkingPDF, setDrinkingPDF] = useState('');
-  const [smokingPDF, setSmokingPDF] = useState('');
-  const [dietaryHabitsPDF, setDietaryHabitsPDF] = useState('');
-
-  //Tab 4
-  const [fatherNamePDF, setFatherNamePDF] = useState('');
-  const [motherNamePDF, setMotherNamePDF] = useState('');
-  const [hometownPDF, setHometownPDF] = useState('');
-  const [siblingsPDF, setSiblingsPDF] = useState('');
-  const [familyIncomePDF, setFamilyIncomePDF] = useState('');
-  const [familyTypePDF, setFamilyTypePDF] = useState('');
-
-  //Tab 5
-  const [highestQualificationPDF, setHighestQualificationPDF] = useState('');
-  const [additionalQualificationPDF, setAdditionalQualificationPDF] = useState('');
-  const [occupationPDF, setOccupationPDF] = useState('');
-  const [companyNamePDF, setCompanyNamePDF] = useState('');
-  const [workingWithPDF, setWorkingWithPDF] = useState('');
-  const [minAnnualIncomePDF, setMinAnnualIncomePDF] = useState('');
-  const [maxAnnualIncomePDF, setMaxAnnualIncomePDF] = useState('');
-  const [languagesKnownPDF, setLanguagesKnownPDF] = useState<string[]>([]);
-
-  //Tab 6
-  const [gotraPDF, setGotraPDF] = useState('');
-  const [manglikPDF, setManglikPDF] = useState('');
-  const [gunnMatchingImportantPDF, setGunnMatchingImportantPDF] = useState(false);
-  const [includeUnknownManglikPDF, setIncludeUnknownManglikPDF] = useState(false);
-
-  //Tab 7
-  const [residentialAddressPDF, setResidentialAddressPDF] = useState('');
-  const [phoneNumberPDF, setPhoneNumberPDF] = useState('');
-  const [emailAddressPDF, setEmailAddressPDF] = useState('');
-  const [alternateContactPDF, setAlternateContactPDF] = useState('');
-  const [countryPDF, setCountryPDF] = useState('');
-  const [statePDF, setStatePDF] = useState('');
-  const [cityPDF, setCityPDF] = useState('');
 
   //General Data
   const [subCasteData, setSubCasteData] = useState([]);
@@ -188,8 +133,8 @@ const PersonalDetails: React.FC = () => {
       return;
     }
 
-    // Allow moving forward only if isStepValid is true
-    if (isStepValid) {
+    // Allow moving forward only to the next step if isStepValid is true
+    if (newIndex === tabIndex + 1 && isStepValid) {
       setTabIndex(newIndex);
     }
   };
@@ -518,7 +463,7 @@ const PersonalDetails: React.FC = () => {
                 key={index}
                 label={label}
                 className="tabStyle"
-                disabled={index > tabIndex && !isStepValid} // Disable future tabs if isStepValid is false
+                disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
               />
             ))}
           </Tabs>
@@ -560,6 +505,7 @@ const PersonalDetails: React.FC = () => {
               complexionOptions={complexionData || []}
               maritalOptions={maritalOptionsData || []}
               setIsStepValid={setIsStepValid}
+              isStepValid={isStepValid}
             />
           </TabPanel>
           <TabPanel value={tabIndex} index={2}>

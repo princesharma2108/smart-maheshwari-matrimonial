@@ -30,6 +30,7 @@ interface PersonalPreferencesProps {
   familyTypeData: string[];
   familyBackgroundData: string[];
   maritalOptionsData: string[];
+  setIsStepValid: (value: boolean) => void;
 }
 
 export default function PersonalPreferences({
@@ -56,8 +57,15 @@ export default function PersonalPreferences({
   qualificationData = [],
   familyTypeData = [],
   familyBackgroundData = [],
-  maritalOptionsData = []
+  maritalOptionsData = [],
+  setIsStepValid
 }: PersonalPreferencesProps) {
+  const [errors, setErrors] = useState({
+    //age: '',
+    familyType: '',
+    familyBackground: '',
+    maritalStatus: ''
+  });
   useEffect(() => {
     if (minAge && maxAge) {
       setAge([minAge, maxAge]);
@@ -77,7 +85,27 @@ export default function PersonalPreferences({
     }
   };
   const getOptions = (options: string[]) => [...options.sort(), 'No Preference'];
-  console.log('nonNegotiableFamilyType', nonNegotiableFamilyType);
+  const validateStep = () => {
+    let newErrors = {
+      // age: '',
+      familyType: '',
+      familyBackground: '',
+      maritalStatus: ''
+    };
+    //if (!age) newErrors.age = 'This field is required.';
+    if (!familyType) newErrors.familyType = 'This field is required.';
+    if (!familyBackground) newErrors.familyBackground = 'This field is required.';
+    if (!maritalStatus) newErrors.maritalStatus = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [age, familyType, familyBackground, maritalStatus]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -86,8 +114,9 @@ export default function PersonalPreferences({
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <InputLabel>Age Range</InputLabel>
-
+                  <InputLabel>
+                    Age Range <span style={{ color: 'red' }}>*</span>
+                  </InputLabel>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -117,6 +146,8 @@ export default function PersonalPreferences({
                     { value: 60, label: '60' }
                   ]}
                   className="customSlider"
+                  // onBlur={validateStep}
+                  // error={!!age}
                 />
               </Stack>
             </Grid>
@@ -157,20 +188,30 @@ export default function PersonalPreferences({
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <InputLabel>{label}</InputLabel>
+                    <InputLabel>
+                      {label} <span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <FormControlLabel
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
                           onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
                           className="inputFieldCheckbox"
-                          disabled={!value}
+                          disabled={!value || value === 'No Preference'}
                         />
                       }
                       label="Non-negotiable"
                     />
                   </Stack>
-                  <Select fullWidth value={value} onChange={handleSelectChange(setter)} displayEmpty className="inputFieldLogin">
+                  <Select
+                    fullWidth
+                    value={value}
+                    onChange={handleSelectChange(setter)}
+                    displayEmpty
+                    className="inputFieldLogin"
+                    onBlur={validateStep}
+                    error={!!value}
+                  >
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>

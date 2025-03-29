@@ -64,6 +64,16 @@ export const getSubscriptionPlan = async <T>(config?: AxiosRequestConfig): Promi
     throw error;
   }
 };
+// Subscription Payment
+export const subscriptionPayment = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>(`/checkout`, data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};
 //Get User Details
 export const getUserDetails = async <T>(userId: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
   try {

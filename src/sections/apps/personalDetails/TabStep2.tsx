@@ -40,6 +40,7 @@ interface TabStep2Props {
   complexionOptions: any;
   maritalOptions: any;
   setIsStepValid: (value: boolean) => void;
+  isStepValid: boolean;
 }
 export default function TabStep2({
   weight,
@@ -64,21 +65,15 @@ export default function TabStep2({
   bloodGroupOptions = [],
   complexionOptions = [],
   maritalOptions = [],
-  setIsStepValid
+  setIsStepValid,
+  isStepValid
 }: TabStep2Props) {
   const theme = useTheme();
-  const [errors, setErrors] = useState<{
-    weight: string;
-    height: string;
-    gender: string;
-    hobbies: string[];
-    complexion: string;
-    maritalStatus: string;
-  }>({
+  const [errors, setErrors] = useState({
     weight: '',
     height: '',
     gender: '',
-    hobbies: [],
+    hobbies: '',
     complexion: '',
     maritalStatus: ''
   });
@@ -89,7 +84,7 @@ export default function TabStep2({
       weight: '',
       height: '',
       gender: '',
-      hobbies: [] as string[], // Ensure hobbies is an array
+      hobbies: '', // Ensure hobbies is an array
       complexion: '',
       maritalStatus: ''
     };
@@ -97,7 +92,7 @@ export default function TabStep2({
     if (!weight) newErrors.weight = 'This field is required.';
     if (!height) newErrors.height = 'This field is required.';
     if (!gender) newErrors.gender = 'This field is required.';
-    if (!Array.isArray(hobbies) || hobbies.length === 0) newErrors.hobbies = ['This field is required.'];
+    if (!hobbies) newErrors.hobbies = 'This field is required.';
     if (!complexion) newErrors.complexion = 'This field is required.';
     if (!maritalStatus) newErrors.maritalStatus = 'This field Status is required.';
 
@@ -110,6 +105,7 @@ export default function TabStep2({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [weight, height, gender, hobbies, complexion, maritalStatus]);
+
   return (
     <Grid container spacing={3}>
       {/* {/ Left Side /} */}
@@ -192,7 +188,9 @@ export default function TabStep2({
             {/* {/ Hobbies /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
+                <InputLabel htmlFor="hobbies">
+                  Hobbies<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <Select
                   multiple
                   fullWidth

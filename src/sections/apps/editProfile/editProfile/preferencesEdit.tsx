@@ -77,8 +77,18 @@ const PreferencesEdit: React.FC = () => {
   const [qualificationData, setQualificationData] = useState([]);
   const [smokingOptionsData, setSmokingOptionsData] = useState([]);
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
+  const [isStepValid, setIsStepValid] = useState(true); // Track validation status
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    setTabIndex(newIndex);
+    // Allow moving back anytime
+    if (newIndex < tabIndex) {
+      setTabIndex(newIndex);
+      return;
+    }
+
+    // Allow moving forward only to the next step if isStepValid is true
+    if (newIndex === tabIndex + 1 && isStepValid) {
+      setTabIndex(newIndex);
+    }
   };
   const handleNext = () => {
     // navigate('/preferences');
@@ -285,7 +295,7 @@ const PreferencesEdit: React.FC = () => {
 
       <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
         {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
-          <Tab key={index} label={label} className="tabStyle" />
+          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)} />
         ))}
       </Tabs>
       <TabPanel value={tabIndex} index={0}>
@@ -305,6 +315,7 @@ const PreferencesEdit: React.FC = () => {
           drinkingOptions={drinkingOptionsData || []}
           smokingOptions={smokingOptionsData || []}
           dietaryOptions={dietaryOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={1}>
@@ -333,6 +344,7 @@ const PreferencesEdit: React.FC = () => {
           familyTypeData={familyTypeData || []}
           familyBackgroundData={familyBackgroundData || []}
           maritalOptionsData={maritalOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <TabPanel value={tabIndex} index={2}>
@@ -362,6 +374,7 @@ const PreferencesEdit: React.FC = () => {
           hobbiesData={hobbiesData || []}
           locationData={locationData || []}
           workingWithOptionsData={workingWithOptionsData || []}
+          setIsStepValid={setIsStepValid}
         />
       </TabPanel>
       <Grid item xs={12}>

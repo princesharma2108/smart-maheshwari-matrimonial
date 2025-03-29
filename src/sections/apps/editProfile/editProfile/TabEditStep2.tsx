@@ -67,18 +67,11 @@ export default function TabEditStep2({
   maritalOptions = []
 }: TabEditStep2Props) {
   const theme = useTheme();
-  const [errors, setErrors] = useState<{
-    weight: string;
-    height: string;
-    gender: string;
-    hobbies: string[];
-    complexion: string;
-    maritalStatus: string;
-  }>({
+  const [errors, setErrors] = useState({
     weight: '',
     height: '',
     gender: '',
-    hobbies: [],
+    hobbies: '',
     complexion: '',
     maritalStatus: ''
   });
@@ -89,7 +82,7 @@ export default function TabEditStep2({
       weight: '',
       height: '',
       gender: '',
-      hobbies: [] as string[], // Ensure hobbies is an array
+      hobbies: '', // Ensure hobbies is an array
       complexion: '',
       maritalStatus: ''
     };
@@ -97,7 +90,7 @@ export default function TabEditStep2({
     if (!weight) newErrors.weight = 'This field is required.';
     if (!height) newErrors.height = 'This field is required.';
     if (!gender) newErrors.gender = 'This field is required.';
-    if (!Array.isArray(hobbies) || hobbies.length === 0) newErrors.hobbies = ['This field is required.'];
+    if (!hobbies) newErrors.hobbies = 'This field is required.';
     if (!complexion) newErrors.complexion = 'This field is required.';
     if (!maritalStatus) newErrors.maritalStatus = 'This field Status is required.';
 

@@ -23,6 +23,7 @@ import { getAboutMe, getGeneralData } from 'apiServices/data';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { profileDetails } from 'apiServices/user';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -48,6 +49,7 @@ const AdditionalInformation: React.FC = () => {
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
   const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingSaveDetails, setIsLoadingSaveDetails] = useState<boolean>(false);
   const navigate = useNavigate();
   const handleAboutMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAboutMe(event.target.value);
@@ -90,7 +92,7 @@ const AdditionalInformation: React.FC = () => {
     getAboutMeAPI();
   }, []);
   const handleSaveProfileDetailsAPI = async () => {
-    setIsLoading(true);
+    setIsLoadingSaveDetails(true);
     //navigate('/upload-photos');
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
@@ -199,17 +201,18 @@ const AdditionalInformation: React.FC = () => {
         }
       } as SnackbarProps);
     } finally {
-      setIsLoading(false); // Stop Loader
+      setIsLoadingSaveDetails(false); // Stop Loader
     }
   };
   return (
     <BackgroundWrapper>
       <>
-        {isLoading && ( // Show Loader When API is in Progress
+        {(isLoading || isLoadingSaveDetails) && ( // Show Loader When API is in Progress
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
+              flexDirection: 'column',
               alignItems: 'center',
               height: '100vh',
               position: 'absolute',
@@ -218,7 +221,32 @@ const AdditionalInformation: React.FC = () => {
               zIndex: 9999
             }}
           >
-            <CircularProgress size={60} sx={{ color: '#f00757' }} />
+            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#f00757"
+              ariaLabel="ball-triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+              <Typography variant="h3" color={'#f00757'}>
+                {isLoadingSaveDetails ? 'Saving Profile Details' : 'Fetching About Me Samples'}
+              </Typography>
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="#f00757"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ marginBottom: '5px' }}
+                wrapperClass=""
+              />
+            </Stack>
           </Box>
         )}
         <Typography variant="h5" gutterBottom>

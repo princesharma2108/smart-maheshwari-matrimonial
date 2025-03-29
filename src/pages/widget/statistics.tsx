@@ -18,7 +18,7 @@ import loginBG2 from 'assets/images/login/loginBG2.jpeg';
 import loginBG3 from 'assets/images/login/loginBG3.jpeg';
 import Button from '@mui/material/Button';
 import './latestMatches.scss';
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { getMatchResults } from 'apiServices/data';
 import latestMatchBG from 'assets/images/latestMatches/latestMatchBG.png';
 import { SnackbarProps } from 'types/snackbar';
@@ -26,6 +26,7 @@ import { openSnackbar } from 'api/snackbar';
 import { useEffect, useState } from 'react';
 import { postUserStage } from 'apiServices/user';
 import { useLocation } from 'react-router';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface ResponseData {
   status: string;
@@ -107,6 +108,7 @@ const matchProfiles = {
       matchedUserID: 'U491737982139',
       matrimonialId: 'MP831737982139',
       name: 'Agtaja Maheshwari',
+      aboutMe: 'djbfbakbvjkbvjkdabvoijdfbvkjfdbvfiuvbkfbvk',
       profilePic: {
         compressed: '',
         original: 'https://smartmatrimony.s3.amazonaws.com/MP831737982139_8685491086.jpg'
@@ -130,6 +132,7 @@ const matchProfiles = {
       matchedUserID: 'U781737980499',
       matrimonialId: 'MP271737980499',
       name: 'Adit Maheshw',
+      aboutMe: 'djbfbakbvjkbvjkdabvoijdfbvkjfdbvfiuvbkfbvk',
       profilePic: {
         compressed: '',
         original: 'https://smartmatrimony.s3.amazonaws.com/MP271737980499_1814267079.jpg'
@@ -203,6 +206,21 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
             <img src={incomeIconBlack} alt="Income" /> {profile?.income || 'Not Disclosed'}
           </Typography>
         </Grid>
+        <Grid>
+          <Typography
+            variant="h6"
+            sx={{
+              display: '-webkit-box',
+              WebkitLineClamp: 5,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}
+          >
+            {
+              "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating "
+            }
+          </Typography>
+        </Grid>
 
         {/* Match Request Button */}
         <Box sx={{ flexGrow: 1 }} />
@@ -223,11 +241,13 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
 export default function LatestMatches() {
   const theme = useTheme();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const searchResults = location.state?.searchResults;
   console.log('searchResults', searchResults);
   const userId = localStorage.getItem('userId');
   const [matchProfilesData, setMatchProfiles] = useState([]);
   const getMatchResultsAPI = async () => {
+    setIsLoading(true);
     try {
       const response = await getMatchResults(userId); // Pass the required userId argument
       const responseData = response.data as ResponseData;
@@ -244,6 +264,8 @@ export default function LatestMatches() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {
@@ -288,45 +310,89 @@ export default function LatestMatches() {
   }, []);
   return (
     <>
-      <Grid container marginBottom={3} display="flex" justifyContent="space-between" alignItems="center">
-        {/* Left side buttons */}
-        <Grid container spacing={2} item xs="auto">
-          <Grid item>
-            <Button variant="contained" className="topButtons">
-              New
-            </Button>
+      {isLoading && ( // Show Loader When API is in Progress
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '100vh',
+            position: 'absolute',
+            width: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999
+          }}
+        >
+          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#f00757"
+            ariaLabel="ball-triangle-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h3" color={'#f00757'}>
+              Fetching Data
+            </Typography>
+            <ThreeDots
+              visible={true}
+              height="20"
+              width="20"
+              color="#f00757"
+              radius="9"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{ marginBottom: '5px' }}
+              wrapperClass=""
+            />
+          </Stack>
+        </Box>
+      )}
+      <>
+        <Grid container marginBottom={3} display="flex" justifyContent="space-between" alignItems="center">
+          {/* Left side buttons */}
+          <Grid container spacing={2} item xs="auto">
+            <Grid item>
+              <Button variant="contained" className="topButtons">
+                New
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" className="topButtons">
+                Nearby
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" className="topButtons">
+                Top Matches
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" className="topButtons">
+                Requested Matches
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Button variant="contained" className="topButtons">
-              Nearby
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" className="topButtons">
-              Top Matches
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" className="topButtons">
-              Requested Matches
-            </Button>
-          </Grid>
-        </Grid>
 
-        {/* Right side notification icon */}
-        <Grid item xs="auto">
-          <img src={notificationIcon} alt="Notifications" />
-        </Grid>
-      </Grid>
-      {/* Display two profiles per row */}
-      <Grid container spacing={3}>
-        {/* {matchProfiles.data.map((profile, index) => ( */}
-        {(matchProfilesData || searchResults || []).map((profile: any, index: any) => (
-          <Grid item xs={12} md={6} key={index}>
-            <MatchProfile profile={profile} />
+          {/* Right side notification icon */}
+          <Grid item xs="auto">
+            <img src={notificationIcon} alt="Notifications" />
           </Grid>
-        ))}
-      </Grid>
+        </Grid>
+        {/* Display two profiles per row */}
+        <Grid container spacing={3}>
+          {/* {(matchProfilesData || searchResults || []).map((profile: any, index: any) => ( */}
+          {matchProfiles.data.map((profile, index) => (
+            <Grid item xs={12} md={6} key={index}>
+              <MatchProfile profile={profile} />
+            </Grid>
+          ))}
+        </Grid>
+      </>
     </>
   );
 }

@@ -11,6 +11,7 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { getAdvancedSearchData, getGeneralData, postAdvancedSearchData } from 'apiServices/data';
 import { useNavigate } from 'react-router';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -125,6 +126,7 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 export default function AdvancedSearch() {
   const theme = useTheme();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [tabIndex, setTabIndex] = useState(0);
   //Basic Search
   const [maritalStatus, setMaritalStatus] = useState('');
@@ -169,6 +171,7 @@ export default function AdvancedSearch() {
     }
   };
   const sendAdvancedSearchDataAPI = async () => {
+    setIsLoading(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const searchData = {
       matrimonialId: matrimonialId,
@@ -207,6 +210,8 @@ export default function AdvancedSearch() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {
@@ -214,6 +219,48 @@ export default function AdvancedSearch() {
   }, []);
   return (
     <>
+      {isLoading && ( // Show Loader When API is in Progress
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            height: '100vh',
+            position: 'absolute',
+            width: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999
+          }}
+        >
+          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#f00757"
+            ariaLabel="ball-triangle-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h3" color={'#f00757'}>
+              Searching Data
+            </Typography>
+            <ThreeDots
+              visible={true}
+              height="20"
+              width="20"
+              color="#f00757"
+              radius="9"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{ marginBottom: '5px' }}
+              wrapperClass=""
+            />
+          </Stack>
+        </Box>
+      )}
       <Grid container spacing={3}>
         <MainCard>
           <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">

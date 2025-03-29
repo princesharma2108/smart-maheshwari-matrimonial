@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Stack, Button, MenuItem, InputLabel, Select, SelectChangeEvent, Checkbox, FormControlLabel } from '@mui/material';
 import MainCard from 'components/MainCard';
@@ -21,6 +21,7 @@ interface LifestylePreferencesEditProps {
   drinkingOptions: string[];
   smokingOptions: string[];
   dietaryOptions: string[];
+  setIsStepValid: (value: boolean) => void;
 }
 
 export default function LifestylePreferencesEdit({
@@ -38,10 +39,15 @@ export default function LifestylePreferencesEdit({
   setNonNegotiableDietary,
   drinkingOptions = [],
   smokingOptions = [],
-  dietaryOptions = []
+  dietaryOptions = [],
+  setIsStepValid
 }: LifestylePreferencesEditProps) {
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({
+    drinking: '',
+    smoking: '',
+    dietaryHabits: ''
+  });
   const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
 
   const handleCheckboxToggle = (setter: (value: string) => void, value: string, currentValue: string) => {
@@ -49,7 +55,26 @@ export default function LifestylePreferencesEdit({
   };
 
   const getOptions = (options: string[]) => [...options.sort(), 'No Preference'];
-  console.log('nonNegotiableDietary', nonNegotiableDietary);
+
+  const validateStep = () => {
+    let newErrors = {
+      drinking: '',
+      smoking: '',
+      dietaryHabits: ''
+    };
+    if (!drinking) newErrors.drinking = 'This field is required.';
+    if (!smoking) newErrors.smoking = 'This field is required.';
+    if (!dietaryHabits) newErrors.dietaryHabits = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [drinking, smoking, dietaryHabits]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -84,20 +109,30 @@ export default function LifestylePreferencesEdit({
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <InputLabel>{label}</InputLabel>
+                    <InputLabel>
+                      {label} <span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <FormControlLabel
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
                           onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
                           className="inputFieldCheckbox"
-                          disabled={!value}
+                          disabled={!value || value === 'No Preference'}
                         />
                       }
                       label="Non-negotiable"
                     />
                   </Stack>
-                  <Select fullWidth value={value} onChange={handleSelectChange(setter)} displayEmpty className="inputFieldLogin">
+                  <Select
+                    fullWidth
+                    value={value}
+                    onChange={handleSelectChange(setter)}
+                    displayEmpty
+                    className="inputFieldLogin"
+                    onBlur={validateStep}
+                    error={!!value}
+                  >
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>

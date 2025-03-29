@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress, Stack } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
@@ -12,6 +12,7 @@ import { postUserStage, uploadBiodata, uploadPhoto } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { APP_VERSION } from 'config';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface ErrorData {
   response: any;
 }
@@ -166,6 +167,7 @@ export default function UploadPhotos() {
             sx={{
               display: 'flex',
               justifyContent: 'center',
+              flexDirection: 'column',
               alignItems: 'center',
               height: '100vh',
               position: 'absolute',
@@ -174,7 +176,32 @@ export default function UploadPhotos() {
               zIndex: 9999
             }}
           >
-            <CircularProgress size={60} sx={{ color: '#f00757' }} />
+            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#f00757"
+              ariaLabel="ball-triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+              <Typography variant="h3" color={'#f00757'}>
+                Uploading Photos
+              </Typography>
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="#f00757"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ marginBottom: '5px' }}
+                wrapperClass=""
+              />
+            </Stack>
           </Box>
         )}
         <Grid container spacing={3} justifyContent="center">

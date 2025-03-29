@@ -154,8 +154,8 @@ export default function UploadBiodata() {
     }
   };
   useEffect(() => {
-    //postUserStageAPI();
-    getUserStageAPI();
+    postUserStageAPI();
+    //getUserStageAPI();
   }, []);
   const getUserStageAPI = async () => {
     const userId = localStorage.getItem('userId');

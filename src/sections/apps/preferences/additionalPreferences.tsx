@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -42,6 +42,7 @@ interface AdditionalPreferencesProps {
   hobbiesData: string[];
   locationData: string[];
   workingWithOptionsData: string[];
+  setIsStepValid: (value: boolean) => void;
 }
 
 export default function AdditionalPreferences({
@@ -69,11 +70,18 @@ export default function AdditionalPreferences({
   qualificationData = [],
   hobbiesData = [],
   locationData = [],
-  workingWithOptionsData = []
+  workingWithOptionsData = [],
+  setIsStepValid
 }: AdditionalPreferencesProps) {
   const theme = useTheme();
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({
+    qualification: '',
+    profession: '',
+    workingWith: '',
+    location: '',
+    hobbies: ''
+  });
   const handleChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => {
     setter(event.target.value);
   };
@@ -83,7 +91,29 @@ export default function AdditionalPreferences({
   };
 
   const getOptionsWithNoPreference = (data: string[]) => [...data.sort(), 'No Preference'];
-  console.log('nonNegotiableWorkingWith', nonNegotiableWorkingWith);
+  const validateStep = () => {
+    let newErrors = {
+      qualification: '',
+      profession: '',
+      workingWith: '',
+      location: '',
+      hobbies: ''
+    };
+    if (!qualification) newErrors.qualification = 'This field is required.';
+    if (!profession) newErrors.profession = 'This field is required.';
+    if (!workingWith) newErrors.workingWith = 'This field is required.';
+    if (!location) newErrors.location = 'This field is required.';
+    if (!hobbies) newErrors.hobbies = 'This field is required.';
+
+    setErrors(newErrors);
+    const isValid = Object.values(newErrors).every((err) => err === '');
+    setIsStepValid(isValid); // Update parent state
+    return isValid;
+  };
+
+  useEffect(() => {
+    validateStep(); // Validate on component mount/update
+  }, [qualification, profession, workingWith, location, hobbies]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -134,20 +164,30 @@ export default function AdditionalPreferences({
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
-                    <InputLabel htmlFor={label.toLowerCase()}>{label}</InputLabel>
+                    <InputLabel htmlFor={label.toLowerCase()}>
+                      {label} <span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
                     <FormControlLabel
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
                           onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
                           className="inputFieldCheckbox"
-                          disabled={!value}
+                          disabled={!value || value === 'No Preference'}
                         />
                       }
                       label="Non-negotiable"
                     />
                   </Stack>
-                  <Select fullWidth value={value} onChange={handleChange(setValue)} displayEmpty className="inputFieldLogin">
+                  <Select
+                    fullWidth
+                    value={value}
+                    onChange={handleChange(setValue)}
+                    displayEmpty
+                    className="inputFieldLogin"
+                    onBlur={validateStep}
+                    error={!!value}
+                  >
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
@@ -164,7 +204,9 @@ export default function AdditionalPreferences({
             <Grid item xs={12}>
               <Stack spacing={1}>
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
+                  <InputLabel htmlFor="hobbies">
+                    Hobbies <span style={{ color: 'red' }}>*</span>
+                  </InputLabel>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -187,6 +229,8 @@ export default function AdditionalPreferences({
                   displayEmpty
                   className="inputFieldLogin"
                   renderValue={(selected) => (Array.isArray(selected) && selected.length > 0 ? selected.join(', ') : 'Select Hobby')}
+                  onBlur={validateStep}
+                  error={!!hobbies}
                 >
                   <MenuItem value="" disabled>
                     Select Hobby

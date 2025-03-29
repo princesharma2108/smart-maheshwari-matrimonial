@@ -129,8 +129,8 @@ export default function PersonalDetailsEdit() {
       return;
     }
 
-    // Allow moving forward only if isStepValid is true
-    if (isStepValid) {
+    // Allow moving forward only to the next step if isStepValid is true
+    if (newIndex === tabIndex + 1 && isStepValid) {
       setTabIndex(newIndex);
     }
   };
@@ -329,7 +329,7 @@ export default function PersonalDetailsEdit() {
       </Typography>
       <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
         {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
-          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex && !isStepValid} />
+          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)} />
         ))}
       </Tabs>
       <TabPanel value={tabIndex} index={0}>

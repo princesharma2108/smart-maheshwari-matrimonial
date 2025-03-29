@@ -216,9 +216,8 @@ export default function Login() {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={12} sx={{ pt: '14px !important' }}>
+        {/* <Grid item xs={12} sx={{ pt: '14px !important' }}>
           <Stack direction="row" justifyContent="center" alignItems="baseline" spacing={0.5} sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
-            {/* <Typography variant="h3">Login</Typography> */}
             <Typography variant="body1" sx={{ textDecoration: 'none', color: '#40444C' }}>
               Don&apos;t have an account?
             </Typography>
@@ -234,7 +233,7 @@ export default function Login() {
               here
             </Typography>
           </Stack>
-        </Grid>
+        </Grid> */}
       </Grid>
     </AuthWrapper>
   );

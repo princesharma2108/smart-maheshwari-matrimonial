@@ -3,7 +3,7 @@ import { Grid, Typography, Button, Stack } from '@mui/material';
 import MainCard from 'components/MainCard';
 import checkPlan from 'assets/images/subscription/checkPlan.svg';
 import uncheckPlan from 'assets/images/subscription/uncheckPlan.svg';
-import { getSubscriptionPlan } from 'apiServices/data';
+import { getSubscriptionPlan, subscriptionPayment } from 'apiServices/data';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 
@@ -83,7 +83,30 @@ export default function SubscriptionPlan() {
   useEffect(() => {
     getSubscriptionPlanAPI();
   }, []);
+  const subscriptionPaymentAPI = async (planId: any) => {
+    const userId = localStorage.getItem('userId');
+    var paymentData = {
+      userId: userId,
+      planId: planId
+    };
+    try {
+      const response = await subscriptionPayment(paymentData);
+      const responseData = response.data as ResponseData;
+    } catch (error) {
+      console.error('Error fetching subscriptions:', error);
 
+      const errorMessage = (error as ErrorData)?.response?.data?.message || 'Failed to load subscription plans';
+
+      openSnackbar({
+        open: true,
+        message: errorMessage,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   return (
     <Grid container justifyContent="center">
       <MainCard xs={12} md={12} sx={{ width: '100%' }}>
@@ -144,7 +167,10 @@ export default function SubscriptionPlan() {
                 {/* Choose Plan Button */}
                 <Button
                   variant="contained"
-                  onClick={() => setSelectedPlan(plan.planId)}
+                  onClick={() => {
+                    setSelectedPlan(plan.planId);
+                    subscriptionPaymentAPI(plan.planId);
+                  }}
                   sx={{
                     backgroundColor: selectedPlan === plan.planId ? '#f00757' : 'transparent',
                     color: selectedPlan === plan.planId ? '#fff' : '#f00757',
