@@ -12,7 +12,11 @@ interface ResponseData {
   message: string;
   subcriptions: any[] | null;
 }
-
+interface ResponseDataPayment {
+  status: string;
+  message: string;
+  url: string;
+}
 interface ErrorData {
   response: any;
 }
@@ -91,7 +95,12 @@ export default function SubscriptionPlan() {
     };
     try {
       const response = await subscriptionPayment(paymentData);
-      const responseData = response.data as ResponseData;
+      const responseData = response.data as ResponseDataPayment;
+      const paymentUrl = responseData.url;
+      // Open payment URL in a new tab
+      if (paymentUrl) {
+        window.open(paymentUrl, '_blank');
+      }
     } catch (error) {
       console.error('Error fetching subscriptions:', error);
 

@@ -13,6 +13,7 @@ import { getUserStage, postUserStage, uploadBiodata } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { APP_VERSION } from 'config';
+
 interface ErrorData {
   response: any;
 }
@@ -37,7 +38,6 @@ export default function UploadBiodata() {
 
   // Handle form submission
   const onSubmit = (data: any) => {
-    console.log('Uploaded Biodata:', data.biodata?.[0]);
     uploadBiodataAPI();
   };
 
@@ -79,7 +79,6 @@ export default function UploadBiodata() {
     }
     // Only append the file if it's selected
     if (selectedFile) {
-      console.log('uploadBiodataPDF', selectedFile);
       formData.append('file', selectedFile);
     } else {
       console.log('No file selected, proceeding without image');
@@ -101,7 +100,8 @@ export default function UploadBiodata() {
           color: 'success'
         }
       } as SnackbarProps);
-      navigate('/personal-details');
+      sessionStorage.setItem('allowedRoute', '/personal-details');
+      navigate('/personal-details', { replace: true });
       reset();
       handleRemoveFile();
     } catch (error) {
@@ -155,52 +155,7 @@ export default function UploadBiodata() {
   };
   useEffect(() => {
     postUserStageAPI();
-    //getUserStageAPI();
   }, []);
-  const getUserStageAPI = async () => {
-    const userId = localStorage.getItem('userId');
-    try {
-      const response = await getUserStage(userId);
-      const responseData = response.data as ResponseStageData;
-      if (responseData.status === 'success') {
-        // switch (responseData.registrationStage) {
-        //   case 1:
-        //     navigate('/upload-biodata');
-        //     break;
-        //   case 2:
-        //     navigate('/personal-details');
-        //     break;
-        //   case 3:
-        //     navigate('/preferences');
-        //     break;
-        //   case 4:
-        //     navigate('/upload-photos');
-        //     break;
-        //   case 5:
-        //     navigate('/widget/statistics');
-        //     break;
-        //   default:
-        //     console.log('Unknown registration stage:', responseData.registrationStage);
-        //     navigate('/upload-biodata');
-        //     break;
-        // }
-      } else {
-        console.log("API call unsuccessful or status is not 'success'");
-        navigate('/upload-biodata');
-      }
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      const errorData = error as ErrorData;
-      openSnackbar({
-        open: true,
-        message: errorData.response.data.message,
-        variant: 'alert',
-        alert: {
-          color: 'error'
-        }
-      } as SnackbarProps);
-    }
-  };
 
   return (
     <BackgroundWrapper>
@@ -249,6 +204,21 @@ export default function UploadBiodata() {
           </Box>
         )}
         <Grid container spacing={3} justifyContent="center">
+          {/* Back Button */}
+          <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                sessionStorage.setItem('allowedRoute', '/login');
+                navigate('/login', { replace: true });
+              }}
+              className="buttonStyleOutlined"
+            >
+              &lt; Back
+            </Button>
+          </Grid>
+
           {/* Title */}
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <Typography variant="h3">Upload Biodata</Typography>
@@ -309,6 +279,8 @@ export default function UploadBiodata() {
               <Link
                 component={RouterLink}
                 to="/personal-details"
+                replace={true}
+                onClick={() => sessionStorage.setItem('allowedRoute', '/personal-details')}
                 sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
               >
                 Skip

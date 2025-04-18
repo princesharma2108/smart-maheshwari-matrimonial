@@ -40,7 +40,6 @@ export default function Navigation() {
   const { menuLoading } = useGetMenu();
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
-  // console.log('menuItemList', menuItem);
   const [selectedID, setSelectedID] = useState<string | undefined>('');
   const [selectedItems, setSelectedItems] = useState<string | undefined>('');
   const [selectedLevel, setSelectedLevel] = useState<number>(0);
@@ -81,7 +80,6 @@ export default function Navigation() {
   }
 
   const navGroups = menuItems.items.slice(1, lastItemIndex + 1).map((item) => {
-    console.log('ItemList', item);
     switch (item.type) {
       case 'group':
         if (item.url && item.id !== lastItemId) {

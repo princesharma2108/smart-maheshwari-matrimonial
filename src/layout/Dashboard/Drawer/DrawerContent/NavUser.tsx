@@ -22,7 +22,7 @@ import { useGetMenuMaster } from 'api/menu';
 import { ArrowRight2 } from 'iconsax-react';
 
 import avatar1 from 'assets/images/users/avatar-6.png';
-
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 interface ExpandMoreProps extends IconButtonProps {
   theme: Theme;
   expand: boolean;
@@ -44,21 +44,24 @@ const ExpandMore = styled(IconButton, { shouldForwardProp: (prop) => prop !== 't
     })
   })
 );
-
+interface UserListProps {
+  userName: string;
+  profileUrl: string;
+}
 // ==============================|| LIST - USER ||============================== //
 
-export default function UserList() {
+export default function UserList({ userName, profileUrl }: UserListProps) {
   const theme = useTheme();
   const navigate = useNavigate();
 
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
-
+  // const userName = localStorage.getItem('userName');
   const { logout, user } = useAuth();
   const handleLogout = async () => {
     try {
       await logout();
-      navigate(`/`, {
+      navigate(`/login`, {
         state: {
           from: ''
         }
@@ -86,7 +89,7 @@ export default function UserList() {
           secondaryAction={
             <ExpandMore
               theme={theme}
-              expand={open}
+              expand={false}
               drawerOpen={drawerOpen}
               id="basic-button"
               aria-controls={open ? 'basic-menu' : undefined}
@@ -95,7 +98,8 @@ export default function UserList() {
               onClick={handleClick}
               aria-label="show more"
             >
-              <ArrowRight2 style={{ fontSize: '0.625rem' }} />
+              {/* <ArrowRight2 style={{ fontSize: '0.625rem' }} /> */}
+              <LogoutOutlinedIcon style={{}} />
             </ExpandMore>
           }
           sx={{
@@ -104,9 +108,9 @@ export default function UserList() {
           }}
         >
           <ListItemAvatar>
-            <Avatar alt="Avatar" src={avatar1} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />
+            <Avatar alt="Avatar" src={profileUrl} sx={{ ...(drawerOpen && { width: 46, height: 46 }) }} />
           </ListItemAvatar>
-          <ListItemText primary={user?.name} sx={{ ...(!drawerOpen && { display: 'none' }) }} secondary="UI/UX Designer" />
+          <ListItemText primary={userName} sx={{ ...(!drawerOpen && { display: 'none' }) }} secondary={''} />
         </ListItem>
       </List>
       <Menu

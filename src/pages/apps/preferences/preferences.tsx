@@ -117,7 +117,6 @@ const Preferences: React.FC = () => {
     try {
       const response = await getGeneralData();
       const responseData = response.data as ResponseGeneralData;
-      console.log('responseData', responseData.generalData);
       setProfessionData(responseData.generalData.profession);
       setHobbiesData(responseData.generalData.hobbies);
       setDietaryOptionsData(responseData.generalData.dietaryOptions);
@@ -147,7 +146,6 @@ const Preferences: React.FC = () => {
     const userId = localStorage.getItem('userId');
     const storedData = localStorage.getItem('matrimonialDetails');
     const matrimonialStoredData = storedData ? JSON.parse(storedData) : {};
-    console.log('matrimonialDataJSON2', matrimonialStoredData);
     // Collect only non-null and non-empty nonNegotiable values
     const nonNegotiables: string[] = [];
     const nonNegotiableValues = [
@@ -243,7 +241,8 @@ const Preferences: React.FC = () => {
       preference: preferenceData,
       matrimonial: matrimonialData
     };
-    navigate('/additional-information');
+    sessionStorage.setItem('allowedRoute', '/additional-information');
+    navigate('/additional-information', { replace: true });
   };
   useEffect(() => {
     const storedPreferenceData = localStorage.getItem('preferenceData');
@@ -262,7 +261,6 @@ const Preferences: React.FC = () => {
       setSmoking(preferenceData.smoking || '');
       setDietaryHabits(preferenceData.dietaryHabits || '');
       setWorkingWith(preferenceData.workingWith || '');
-      console.log('nonNegotiables:', preferenceData.nonNegotiables);
       // Update non-negotiable state variables based on stored nonNegotiables
       if (preferenceData.nonNegotiables.includes('Drinking')) {
         setNonNegotiableDrinking('Drinking');
@@ -339,55 +337,24 @@ const Preferences: React.FC = () => {
   useEffect(() => {
     postUserStageAPI();
     getGeneralDataAPI();
-    //getUserStageAPI();
   }, []);
-  const getUserStageAPI = async () => {
-    const userId = localStorage.getItem('userId');
-    try {
-      const response = await getUserStage(userId);
-      const responseData = response.data as ResponseStageData;
-      if (responseData.status === 'success') {
-        // switch (responseData.registrationStage) {
-        //   case 1:
-        //     navigate('/upload-biodata');
-        //     break;
-        //   case 2:
-        //     navigate('/personal-details');
-        //     break;
-        //   case 3:
-        //     navigate('/preferences');
-        //     break;
-        //   case 4:
-        //     navigate('/upload-photos');
-        //     break;
-        //   case 5:
-        //     navigate('/widget/statistics');
-        //     break;
-        //   default:
-        //     console.log('Unknown registration stage:', responseData.registrationStage);
-        //     navigate('/upload-biodata');
-        //     break;
-        // }
-      } else {
-        console.log("API call unsuccessful or status is not 'success'");
-        navigate('/upload-biodata');
-      }
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      const errorData = error as ErrorData;
-      openSnackbar({
-        open: true,
-        message: errorData.response.data.message,
-        variant: 'alert',
-        alert: {
-          color: 'error'
-        }
-      } as SnackbarProps);
-    }
-  };
   return (
     <BackgroundWrapper>
       <>
+        {/* Back Button */}
+        <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              sessionStorage.setItem('allowedRoute', '/personal-details');
+              navigate('/personal-details', { replace: true });
+            }}
+            className="buttonStyleOutlined"
+          >
+            &lt; Back
+          </Button>
+        </Grid>
         <Typography variant="h5" gutterBottom>
           Preferences
         </Typography>

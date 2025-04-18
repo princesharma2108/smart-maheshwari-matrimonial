@@ -14,7 +14,8 @@ import {
   Grid,
   Stack,
   Button,
-  CircularProgress
+  CircularProgress,
+  TextField
 } from '@mui/material';
 import loginBG from 'assets/images/login/loginBG.jpeg';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,7 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { profileDetails } from 'apiServices/user';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import EditIcon from '@mui/icons-material/Edit';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -48,6 +50,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 const AdditionalInformation: React.FC = () => {
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
   const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
+  const [isEditing, setIsEditing] = useState<number | null>(null);
+  const [editedText, setEditedText] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingSaveDetails, setIsLoadingSaveDetails] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -69,7 +73,6 @@ const AdditionalInformation: React.FC = () => {
     try {
       const response = await getAboutMe(data);
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
       // Extract descriptions and update state
       const descriptions = responseData.response.map((item: any) => item.description);
       setAboutMeDescriptions(descriptions);
@@ -100,7 +103,6 @@ const AdditionalInformation: React.FC = () => {
     const matrimonialStoredData = storedData ? JSON.parse(storedData) : {};
     const storedPreferenceData = localStorage.getItem('preferenceData');
     const preferenceStoredData = storedPreferenceData ? JSON.parse(storedPreferenceData) : null;
-    console.log('matrimonialDataJSON2', matrimonialStoredData);
     const matrimonialData = {
       matrimonialId: matrimonialId,
       firstName: matrimonialStoredData.firstName,
@@ -177,9 +179,6 @@ const AdditionalInformation: React.FC = () => {
     try {
       const response = await profileDetails(profileDetailsData);
       const responseData = response.data as ResponseData;
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
       openSnackbar({
         open: true,
         message: responseData.message,
@@ -188,7 +187,8 @@ const AdditionalInformation: React.FC = () => {
           color: 'success'
         }
       } as SnackbarProps);
-      navigate('/upload-photos');
+      sessionStorage.setItem('allowedRoute', '/upload-photos');
+      navigate('/upload-photos', { replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -203,6 +203,17 @@ const AdditionalInformation: React.FC = () => {
     } finally {
       setIsLoadingSaveDetails(false); // Stop Loader
     }
+  };
+  const handleEditClick = (index: number) => {
+    setIsEditing(index);
+    setEditedText(aboutMeDescriptions[index]);
+  };
+
+  const handleSaveEdit = (index: number) => {
+    const updatedDescriptions = [...aboutMeDescriptions];
+    updatedDescriptions[index] = editedText;
+    setAboutMeDescriptions(updatedDescriptions);
+    setIsEditing(null);
   };
   return (
     <BackgroundWrapper>
@@ -249,6 +260,20 @@ const AdditionalInformation: React.FC = () => {
             </Stack>
           </Box>
         )}
+        {/* Back Button */}
+        <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              sessionStorage.setItem('allowedRoute', '/preferences');
+              navigate('/preferences', { replace: true });
+            }}
+            className="buttonStyleOutlined"
+          >
+            &lt; Back
+          </Button>
+        </Grid>
         <Typography variant="h5" gutterBottom>
           Additional Information
         </Typography>
@@ -261,37 +286,69 @@ const AdditionalInformation: React.FC = () => {
                 <Typography variant="h6" gutterBottom>
                   About Me
                 </Typography>
-                <FormControl component="fieldset">
-                  <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
-                    {aboutMeDescriptions.map((text, index) => (
-                      <FormControlLabel
-                        key={index}
-                        value={text}
-                        control={
-                          <Radio
-                            sx={{
-                              color: '#FF4081', // Default (unchecked) color
-                              '&.Mui-checked': {
-                                color: '#D81B60' // Outer ring color when checked
-                              },
-                              '&.Mui-checked .MuiSvgIcon-root': {
-                                fill: '#D81B60' // Changes the inner ball color when checked
-                              },
-                              '& .MuiSvgIcon-root': {
-                                fontSize: 28 // Optional: Adjust radio button size
-                              }
-                            }}
+                <Grid item container xs={12}>
+                  <FormControl component="fieldset" sx={{ display: 'flex', width: '100%' }}>
+                    <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
+                      {aboutMeDescriptions.map((text, index) => (
+                        <Stack key={index} direction="row" alignItems="center" spacing={2} sx={{ mt: 1 }}>
+                          <FormControlLabel
+                            sx={{ flex: 1, display: 'flex', alignItems: 'center' }} // Ensures full width
+                            value={text}
+                            control={
+                              <Radio
+                                sx={{
+                                  color: '#FF4081',
+                                  '&.Mui-checked': { color: '#D81B60' },
+                                  '& .MuiSvgIcon-root': { fontSize: 28 },
+                                  flex: 0
+                                }}
+                              />
+                            }
+                            label={
+                              // isEditing === index ? (
+                              //   <Box sx={{ maxWidth: '100%', display: 'flex', flex: 4, alignSelf: 'stretch!important' }}>
+                              //     <TextField
+                              //       value={editedText}
+                              //       onChange={(e) => setEditedText(e.target.value)}
+                              //       size="small"
+                              //       variant="outlined"
+                              //       className="inputField"
+                              //       multiline
+                              //       minRows={1}
+                              //       maxRows={5}
+                              //       fullWidth
+                              //       sx={{ maxWidth: '100%' }} // Ensure it fully stretches
+                              //     />
+                              //   </Box>
+                              // ) : (
+                              <Typography variant="body2" sx={{ width: '100%' }}>
+                                {text}
+                              </Typography>
+                              // )
+                            }
                           />
-                        }
-                        label={
-                          <Typography variant="body2" sx={{ mt: 2 }}>
-                            {text}
-                          </Typography>
-                        }
-                      />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
+                          {/* <Stack direction="row" spacing={1} sx={{ marginLeft: 'auto' }}>
+                            {isEditing === index ? (
+                              <Button variant="contained" size="small" onClick={() => handleSaveEdit(index)} className="buttonStyle">
+                                Save
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => handleEditClick(index)}
+                                startIcon={<EditIcon />}
+                                className="buttonStyleOutlined"
+                              >
+                                Edit
+                              </Button>
+                            )}
+                          </Stack> */}
+                        </Stack>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
               </CardContent>
             </Card>
           </Grid>

@@ -71,7 +71,9 @@ export default function Login() {
   function googleLogin() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
-      console.log(result);
+      // Clear local and session storage BEFORE proceeding
+      // localStorage.clear();
+      // sessionStorage.clear();
       const user = result.user;
       setUserId(user.uid);
       setUserEmail(user.email);
@@ -85,9 +87,7 @@ export default function Login() {
       }
     });
   }
-  console.log('userDetailsLogin', userDetails);
   const loginUserAPI = async (userEmail: string, userId: string) => {
-    console.log('inLoginUserAPI');
     const loginData = {
       user: userEmail,
       password: '12345'
@@ -109,7 +109,6 @@ export default function Login() {
       const storedData = localStorage.getItem('userData');
       const userData = storedData ? JSON.parse(storedData) : {};
       localStorage.setItem('userCreated', userData.created);
-      console.log('userData', userData);
       openSnackbar({
         open: true,
         message: 'User logged in successfully',
@@ -122,7 +121,8 @@ export default function Login() {
       if (userData.created == false) {
         getUserStageAPI();
       } else {
-        window.location.href = '/upload-biodata';
+        sessionStorage.setItem('allowedRoute', '/upload-biodata');
+        navigate('/upload-biodata', { replace: true });
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -145,27 +145,36 @@ export default function Login() {
       if (responseData.status === 'success') {
         switch (responseData.registrationStage) {
           case 1:
-            navigate('/upload-biodata');
+            sessionStorage.setItem('allowedRoute', '/upload-biodata');
+            navigate('/upload-biodata', { replace: true });
             break;
           case 2:
-            navigate('/personal-details');
+            sessionStorage.setItem('allowedRoute', '/personal-details');
+            navigate('/personal-details', { replace: true });
             break;
           case 3:
-            navigate('/preferences');
+            sessionStorage.setItem('allowedRoute', '/preferences');
+            navigate('/preferences', { replace: true });
             break;
           case 4:
-            navigate('/upload-photos');
+            sessionStorage.setItem('allowedRoute', '/upload-photos');
+            navigate('/upload-photos', { replace: true });
             break;
           case 5:
-            navigate('/widget/statistics');
+            /*For Complete APP*/
+            sessionStorage.setItem('allowedRoute', '/widget/statistics');
+            navigate('/widget/statistics', { replace: true });
+            /*For Coming Soon*/
+            // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
+            // navigate('/maintenance/coming-soon2', { replace: true });
             break;
           default:
-            console.log('Unknown registration stage:', responseData.registrationStage);
+            sessionStorage.setItem('allowedRoute', '/upload-biodata');
             navigate('/upload-biodata');
             break;
         }
       } else {
-        console.log("API call unsuccessful or status is not 'success'");
+        sessionStorage.setItem('allowedRoute', '/upload-biodata');
         navigate('/upload-biodata');
       }
     } catch (error) {

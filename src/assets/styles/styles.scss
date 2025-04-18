@@ -4,6 +4,13 @@
     background-color: #f00757;
   }
 }
+.buttonStyleOutlined {
+  color:#f00757;
+  border-color: #f00757; // Your custom color
+  &:hover {
+    border-color: #f00757;
+  }
+}
 // .pe_signin_button {
 //   display: block;
 //   position: relative; /* Ensure it stays within the normal document flow */

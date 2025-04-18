@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Box, Button, Typography, Grid, IconButton, Link, Menu, MenuItem } from '@mui/material';
+import { Box, Button, Typography, Grid, IconButton, Link, Menu, MenuItem, Stack } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AuthWrapper from 'sections/auth/AuthWrapper';
@@ -13,6 +13,7 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { APP_VERSION } from 'config';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface ErrorData {
   response: any;
 }
@@ -21,6 +22,9 @@ interface ResponseData {
   status: string;
 }
 export default function EditPhotos() {
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
+  const [isLoadingMakeProfile, setIsLoadingMakeProfile] = useState<boolean>(false); // Loader State
+  const [isLoadingDeletePhoto, setIsLoadingDeletePhoto] = useState<boolean>(false); // Loader State
   const { register, handleSubmit, reset } = useForm();
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -31,12 +35,10 @@ export default function EditPhotos() {
   const navigate = useNavigate();
   const onSubmit = (data: any) => {
     uploadPhotosAPI();
-    console.log('Uploaded Photos:', selectedImages);
     //navigate('/widget/statistics');
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    console.log('FilesInput', files);
     if (selectedImages.length + files.length > 10) {
       alert('You can upload a maximum of 10 photos.');
       return;
@@ -71,7 +73,6 @@ export default function EditPhotos() {
   };
 
   const handleSetAsProfilePhoto = (index: number, preview: string) => {
-    console.log('preview', preview);
     if (index !== 0) {
       const updatedPreviews = [previews[index], ...previews.filter((_, i) => i !== index)];
       setPreviews(updatedPreviews);
@@ -80,6 +81,7 @@ export default function EditPhotos() {
     handleMenuClose(index);
   };
   const makeProfilePhotoAPI = async (preview: string) => {
+    setIsLoadingMakeProfile(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const profileData = {
       matrimonialId: matrimonialId,
@@ -110,14 +112,18 @@ export default function EditPhotos() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoadingMakeProfile(false); // Stop Loader
     }
   };
   const handleRemoveFile = (index: number, preview: string) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
     deletePhotoAPI(preview);
+    handleMenuClose(index);
   };
   const deletePhotoAPI = async (preview: string) => {
+    setIsLoadingDeletePhoto(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const deleteData = {
       matrimonialId: matrimonialId,
@@ -148,9 +154,12 @@ export default function EditPhotos() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoadingDeletePhoto(false); // Stop Loader
     }
   };
   const uploadPhotosAPI = async () => {
+    setIsLoading(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const uploadData = {
       matrimonialId: matrimonialId,
@@ -167,12 +176,6 @@ export default function EditPhotos() {
     }
     // Only append the file if it's selected
     if (selectedImages) {
-      console.log('uploadPhotos', selectedImages);
-      console.log('uploadPhotos2', selectedFiles);
-      console.log(
-        'Selected files:',
-        selectedFiles.map((file) => file.name)
-      );
       fileData = selectedFiles.map((file) => file.name);
       selectedFiles.forEach((file) => {
         formData.append('photos', file);
@@ -216,6 +219,8 @@ export default function EditPhotos() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {
@@ -228,99 +233,144 @@ export default function EditPhotos() {
     }
   }, []);
   return (
-    <Grid container justifyContent="center" sx={{ mt: 4 }}>
-      <Grid item xs={12}>
-        <MainCard>
-          <Grid container spacing={3} justifyContent="center">
-            {/* Title */}
-            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-              <Typography variant="h3">Upload Photos</Typography>
-              <Typography variant="body1" sx={{ mt: 1, color: 'gray' }}>
-                You must upload at least 2 photos and a maximum of 10 photos.
-              </Typography>
-            </Grid>
-            {/* Divider */}
-            <Grid item xs={12}>
-              <AuthDivider>
-                <Typography variant="body1">Select Your Photos</Typography>
-              </AuthDivider>
-            </Grid>
-
-            {/* Upload Button */}
-            <Grid item xs={12} sx={{ textAlign: 'center' }}>
-              <Button
-                variant="contained"
-                component="label"
-                startIcon={<CloudUploadIcon />}
-                sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-                disabled={selectedImages.length >= 10}
-                className="buttonStyle"
-              >
-                Choose Files
-                <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
-              </Button>
-            </Grid>
-
-            {/* Selected Photos */}
-            {previews.length > 0 && (
-              <Grid item xs={12}>
-                <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
-                  Selected Photos ({selectedImages.length}/10)
+    <>
+      {(isLoading || isLoadingMakeProfile || isLoadingDeletePhoto) && ( // Show Loader When API is in Progress
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'left',
+            gap: '4px',
+            height: '100vh',
+            position: 'absolute',
+            width: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999
+          }}
+        >
+          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#f00757"
+            ariaLabel="ball-triangle-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h3" color={'#f00757'}>
+              {isLoading ? 'Updating Photos' : isLoadingMakeProfile ? 'Updating Profile Photo' : 'Deleting Photo'}
+            </Typography>
+            <ThreeDots
+              visible={true}
+              height="20"
+              width="20"
+              color="#f00757"
+              radius="9"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{ marginBottom: '5px' }}
+              wrapperClass=""
+            />
+          </Stack>
+        </Box>
+      )}
+      <Grid container justifyContent="center" sx={{ mt: 4 }}>
+        <Grid item xs={12}>
+          <MainCard>
+            <Grid container spacing={3} justifyContent="center">
+              {/* Title */}
+              <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                <Typography variant="h3">Upload Photos</Typography>
+                <Typography variant="body1" sx={{ mt: 1, color: 'gray' }}>
+                  You must upload at least 2 photos and a maximum of 10 photos.
                 </Typography>
-                <Grid container spacing={2} justifyContent="center">
-                  {previews.map((preview, index) => (
-                    <Grid item xs={6} sm={4} md={2.4} key={index}>
-                      <Box sx={{ position: 'relative', width: 120, height: 120 }}>
-                        <img src={preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 5 }} />
-                        {/* Three-Dot Menu */}
-                        <IconButton
-                          onClick={(event) => handleMenuClick(event, index)}
-                          sx={{
-                            height: '25px',
-                            width: '25px',
-                            position: 'absolute',
-                            top: 0,
-                            right: 0,
-                            color: 'white',
-                            background: 'rgba(0,0,0,0.5)',
-                            borderRadius: '8px',
-                            borderTopRightRadius: '5px',
-                            borderTopLeftRadius: '0',
-                            borderBottomRightRadius: '0'
-                          }}
-                        >
-                          <MoreVertIcon sx={{ height: '15px', width: '15px' }} />
-                        </IconButton>
-
-                        {/* Menu Options */}
-                        <Menu anchorEl={menuAnchor[index]} open={Boolean(menuAnchor[index])} onClose={() => handleMenuClose(index)}>
-                          <MenuItem onClick={() => handleSetAsProfilePhoto(index, preview)}>Set as Profile Picture</MenuItem>
-                          <MenuItem onClick={() => handleRemoveFile(index, preview)}>Remove Photo</MenuItem>
-                        </Menu>
-                      </Box>
-                    </Grid>
-                  ))}
-                </Grid>
               </Grid>
-            )}
+              {/* Divider */}
+              <Grid item xs={12}>
+                <AuthDivider>
+                  <Typography variant="body1">Select Your Photos</Typography>
+                </AuthDivider>
+              </Grid>
 
-            {/* Upload Button */}
-            <Grid item xs={12} sm={6}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleSubmit(onSubmit)}
-                disabled={selectedImages.length < 2}
-                className="buttonStyle"
-              >
-                Upload
-              </Button>
+              {/* Upload Button */}
+              <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                <Button
+                  variant="contained"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+                  disabled={selectedImages.length >= 10}
+                  className="buttonStyle"
+                >
+                  Choose Files
+                  <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
+                </Button>
+              </Grid>
+
+              {/* Selected Photos */}
+              {previews.length > 0 && (
+                <Grid item xs={12}>
+                  <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
+                    Selected Photos ({selectedImages.length}/10)
+                  </Typography>
+                  <Grid container spacing={2} justifyContent="center">
+                    {previews.map((preview, index) => (
+                      <Grid item xs={6} sm={4} md={2.4} key={index}>
+                        <Box sx={{ position: 'relative', width: 120, height: 120 }}>
+                          <img src={preview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 5 }} />
+                          {/* Three-Dot Menu */}
+                          <IconButton
+                            onClick={(event) => handleMenuClick(event, index)}
+                            sx={{
+                              height: '25px',
+                              width: '25px',
+                              position: 'absolute',
+                              top: 0,
+                              right: 0,
+                              color: 'white',
+                              background: 'rgba(0,0,0,0.5)',
+                              borderRadius: '8px',
+                              borderTopRightRadius: '5px',
+                              borderTopLeftRadius: '0',
+                              borderBottomRightRadius: '0'
+                            }}
+                          >
+                            <MoreVertIcon sx={{ height: '15px', width: '15px' }} />
+                          </IconButton>
+
+                          {/* Menu Options */}
+                          <Menu anchorEl={menuAnchor[index]} open={Boolean(menuAnchor[index])} onClose={() => handleMenuClose(index)}>
+                            <MenuItem onClick={() => handleSetAsProfilePhoto(index, preview)}>Set as Profile Picture</MenuItem>
+                            <MenuItem onClick={() => handleRemoveFile(index, preview)}>Remove Photo</MenuItem>
+                          </Menu>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              )}
+
+              {/* Upload Button */}
+              <Grid item xs={12} sm={6}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading || (selectedImages.length === 0 && existingPhotos.length === 0)} // Fix here
+                  className="buttonStyle"
+                >
+                  Upload
+                </Button>
+              </Grid>
             </Grid>
-          </Grid>
-        </MainCard>
+          </MainCard>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 }

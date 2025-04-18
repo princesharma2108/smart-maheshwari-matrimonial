@@ -71,7 +71,6 @@ export function handlerComponentDrawer(isComponentDrawerOpened: boolean) {
 
 export function handlerDrawerOpen(isDashboardDrawerOpened: boolean) {
   // to update local state based on key
-
   mutate(
     endpoints.key + endpoints.master,
     (currentMenuMaster: any) => {

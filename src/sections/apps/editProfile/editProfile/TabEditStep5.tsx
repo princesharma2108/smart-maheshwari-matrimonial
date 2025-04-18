@@ -62,7 +62,12 @@ export default function TabEditStep5({
   setIsStepValid
 }: TabEditStep5Props) {
   const theme = useTheme();
-  const [annualIncome, setAnnualIncome] = useState('');
+  // Convert existing values back to range format
+  const formatIncomeRange = (min: string, max: string) => {
+    if (!min || !max) return '';
+    return `${parseInt(min) / 100000} - ${parseInt(max) / 100000} Lakhs`;
+  };
+  const [annualIncome, setAnnualIncome] = useState(formatIncomeRange(minAnnualIncome, maxAnnualIncome));
   const [errors, setErrors] = useState({
     highestQualification: '',
     occupation: '',
@@ -71,6 +76,8 @@ export default function TabEditStep5({
     languagesKnown: ''
   });
   // Handlers
+  const handleHighestQualificationChange = (event: SelectChangeEvent) => setHighestQualification(event.target.value);
+  const handleAdditionalQualificationChange = (event: SelectChangeEvent) => setAdditionalQualification(event.target.value);
   const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
   const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
   const handleAnnualIncomeChange = (event: SelectChangeEvent) => {
@@ -120,7 +127,7 @@ export default function TabEditStep5({
                     <InputLabel htmlFor="highest-qualification">
                       Highest Qualification<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <TextField
+                    {/* <TextField
                       fullWidth
                       id="highest-qualification"
                       placeholder="Enter Highest Qualification"
@@ -131,7 +138,29 @@ export default function TabEditStep5({
                       onBlur={validateStep}
                       error={!!errors.highestQualification}
                       helperText={errors.highestQualification}
-                    />
+                    /> */}
+                    <Select
+                      fullWidth
+                      id="highest-qualification"
+                      value={highestQualification}
+                      onChange={handleHighestQualificationChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.highestQualification}
+                    >
+                      <MenuItem value="" disabled>
+                        Select Highest Qualification
+                      </MenuItem>
+                      {!qualificationOptions.includes(highestQualification) && highestQualification && (
+                        <MenuItem value={highestQualification}>{highestQualification}</MenuItem>
+                      )}
+                      {qualificationOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -165,6 +194,7 @@ export default function TabEditStep5({
                       <MenuItem value="" disabled>
                         Select Occupation
                       </MenuItem>
+                      {!occupationOptions.includes(occupation) && occupation && <MenuItem value={occupation}>{occupation}</MenuItem>}
                       {occupationOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -181,7 +211,10 @@ export default function TabEditStep5({
                       id="company-name"
                       placeholder="Enter Company/Business Name"
                       value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      onChange={(e) => {
+                        const sanitizedValue = e.target.value.replace(/[^a-zA-Z0-9\-&,./\s]/g, '');
+                        setCompanyName(sanitizedValue);
+                      }}
                       className="inputField"
                     />
                   </Stack>
@@ -264,7 +297,7 @@ export default function TabEditStep5({
                       </MenuItem>
                       {languageOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
-                          <Checkbox checked={languagesKnown.includes(option)} />
+                          <Checkbox checked={languagesKnown.includes(option)} className="inputFieldCheckbox" />
                           {option}
                         </MenuItem>
                       ))}

@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+import Address from 'pages/apps/address/address';
 interface TabEditStep7Props {
   residentialAddress: string;
   setResidentialAddress: (value: string) => void;
@@ -57,11 +58,10 @@ export default function TabEditStep7({
     state: '',
     city: ''
   });
+  const [homeAddress, setSelectedHomeAddress] = useState('');
+  const [zipCode, setSelectedZipCode] = useState('');
   // Handlers
   const handleResidentialAddressChange = (event: ChangeEvent<HTMLInputElement>) => setResidentialAddress(event.target.value);
-  const handleCountryChange = (event: SelectChangeEvent) => setCountry(event.target.value);
-  const handleStateChange = (event: SelectChangeEvent) => setState(event.target.value);
-  const handleCityChange = (event: SelectChangeEvent) => setCity(event.target.value);
   const validateStep = () => {
     let newErrors = {
       residentialAddress: '',
@@ -103,6 +103,21 @@ export default function TabEditStep7({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
+  const handleHomeAddressChange = (homeAddress: any) => {
+    setSelectedHomeAddress(homeAddress);
+  };
+  const handleCityAddressChange = (city: any) => {
+    setCity(city);
+  };
+  const handleStateAddressChange = (state: any) => {
+    setState(state);
+  };
+  const handleCountryAddressChange = (country: any) => {
+    setCountry(country);
+  };
+  const handleZipAddressChange = (zip: any) => {
+    setSelectedZipCode(zip);
+  };
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -120,7 +135,10 @@ export default function TabEditStep7({
                       id="residential-address"
                       placeholder="Enter Residential Address"
                       value={residentialAddress}
-                      onChange={handleResidentialAddressChange}
+                      onChange={(e) => {
+                        const cleanedValue = e.target.value.replace(/[^a-zA-Z0-9\s]/g, '');
+                        setResidentialAddress(cleanedValue);
+                      }}
                       autoFocus
                       className="inputField"
                       onBlur={validateStep}
@@ -222,25 +240,25 @@ export default function TabEditStep7({
                     <InputLabel htmlFor="country">
                       Country<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <Select
-                      fullWidth
-                      id="country"
-                      value={country}
-                      onChange={handleCountryChange}
-                      displayEmpty
-                      className="inputFieldLogin"
+                    <Address
+                      fieldName={''}
+                      //addressCountryFilters={['us']}
+                      initialAddress={country}
+                      handleAddressChange={handleHomeAddressChange}
+                      handleCityChange={handleCityAddressChange}
+                      handleStateChange={handleStateAddressChange}
+                      handleCountryChange={handleCountryAddressChange}
+                      handleZipChange={handleZipAddressChange}
+                      handleLatitudeChange={function (latitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
+                      handleLongitudeChange={function (longitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
                       onBlur={validateStep}
                       error={!!errors.country}
-                    >
-                      <MenuItem value="" disabled>
-                        Select Country
-                      </MenuItem>
-                      <MenuItem value="USA">USA</MenuItem>
-                      <MenuItem value="Canada">Canada</MenuItem>
-                      <MenuItem value="India">India</MenuItem>
-                      <MenuItem value="UK">UK</MenuItem>
-                      <MenuItem value="Australia">Australia</MenuItem>
-                    </Select>
+                      helperText={errors.country}
+                    />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -248,25 +266,25 @@ export default function TabEditStep7({
                     <InputLabel htmlFor="state">
                       State<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <Select
-                      fullWidth
-                      id="state"
-                      value={state}
-                      onChange={handleStateChange}
-                      displayEmpty
-                      className="inputFieldLogin"
+                    <Address
+                      fieldName={''}
+                      //addressCountryFilters={['us']}
+                      initialAddress={state}
+                      handleAddressChange={handleHomeAddressChange}
+                      handleCityChange={handleCityAddressChange}
+                      handleStateChange={handleStateAddressChange}
+                      handleCountryChange={handleCountryAddressChange}
+                      handleZipChange={handleZipAddressChange}
+                      handleLatitudeChange={function (latitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
+                      handleLongitudeChange={function (longitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
                       onBlur={validateStep}
                       error={!!errors.state}
-                    >
-                      <MenuItem value="" disabled>
-                        Select State
-                      </MenuItem>
-                      <MenuItem value="California">California</MenuItem>
-                      <MenuItem value="Texas">Texas</MenuItem>
-                      <MenuItem value="New York">New York</MenuItem>
-                      <MenuItem value="Florida">Florida</MenuItem>
-                      <MenuItem value="Illinois">Illinois</MenuItem>
-                    </Select>
+                      helperText={errors.state}
+                    />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -274,25 +292,25 @@ export default function TabEditStep7({
                     <InputLabel htmlFor="city">
                       City<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <Select
-                      fullWidth
-                      id="city"
-                      value={city}
-                      onChange={handleCityChange}
-                      displayEmpty
-                      className="inputFieldLogin"
+                    <Address
+                      fieldName={''}
+                      //addressCountryFilters={['us']}
+                      initialAddress={city}
+                      handleAddressChange={handleHomeAddressChange}
+                      handleCityChange={handleCityAddressChange}
+                      handleStateChange={handleStateAddressChange}
+                      handleCountryChange={handleCountryAddressChange}
+                      handleZipChange={handleZipAddressChange}
+                      handleLatitudeChange={function (latitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
+                      handleLongitudeChange={function (longitude: number): void {
+                        throw new Error('Function not implemented.');
+                      }}
                       onBlur={validateStep}
                       error={!!errors.city}
-                    >
-                      <MenuItem value="" disabled>
-                        Select City
-                      </MenuItem>
-                      <MenuItem value="Los Angeles">Los Angeles</MenuItem>
-                      <MenuItem value="Houston">Houston</MenuItem>
-                      <MenuItem value="Chicago">Chicago</MenuItem>
-                      <MenuItem value="Miami">Miami</MenuItem>
-                      <MenuItem value="San Francisco">San Francisco</MenuItem>
-                    </Select>
+                      helperText={errors.city}
+                    />
                   </Stack>
                 </Grid>
               </Grid>

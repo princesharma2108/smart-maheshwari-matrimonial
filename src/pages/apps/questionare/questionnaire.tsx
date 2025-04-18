@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Typography, Grid, Paper, Link, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, Grid, Paper, Link, CircularProgress, Stack } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import AuthWrapper from 'sections/auth/AuthWrapper';
 import AnimateButton from 'components/@extended/AnimateButton';
 import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
-import { getQuestionDetails, sendQuestionAnswers } from 'apiServices/data';
+import { getQuestionDetails, getUserDetails, sendQuestionAnswers } from 'apiServices/data';
 import { postUserStage } from 'apiServices/user';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface ResponseData {
   status: string;
   message: string;
   Categories: any;
+}
+interface ResponseData {
+  status: string;
+  message: string;
+  data: any;
 }
 interface ErrorData {
   response: any;
@@ -19,6 +25,7 @@ interface ErrorData {
 
 export default function Questionnaire() {
   const [showQuestions, setShowQuestions] = useState(false);
+  const [userGender, setUserGender] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answers, setAnswers] = useState<{ [key: number]: string | number }>({});
   const [formattedAnswers, setFormattedAnswers] = useState<{ questionId: string; optionId: string }[]>([]);
@@ -30,17 +37,13 @@ export default function Questionnaire() {
   const handleAnswerChange = (questionId: number, optionId: number) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
   };
-
   const handleSubmit = () => {
-    console.log('Submitted Answers:', answers);
     sendQuestionAnswersAPI();
   };
   const getQuestionDetailsAPI = async () => {
     try {
       const response = await getQuestionDetails(); // Pass the required userId argument
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
-      console.log('responseData2', responseData.Categories);
       setQuestionsData(responseData.Categories);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -62,7 +65,6 @@ export default function Questionnaire() {
       questionId: questionId.toString(),
       optionId: optionId.toString()
     }));
-    console.log('answersformatted2', formatted);
     setFormattedAnswers(formatted);
     const answersData = {
       userId: userId,
@@ -71,8 +73,6 @@ export default function Questionnaire() {
     try {
       const response = await sendQuestionAnswers(answersData); // Pass the required userId argument
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
-      console.log('responseData2', responseData.Categories);
       setQuestionsData(responseData.Categories);
       openSnackbar({
         open: true,
@@ -82,7 +82,34 @@ export default function Questionnaire() {
           color: 'success'
         }
       } as SnackbarProps);
-      navigate('/widget/statistics');
+      /*For Complete APP*/
+      sessionStorage.setItem('allowedRoute', '/widget/statistics');
+      navigate('/widget/statistics', { replace: true });
+      /*For Coming Soon*/
+      // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
+      // navigate('/maintenance/coming-soon2', { replace: true });
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
+    }
+  };
+  const getUserDetailsAPI = async () => {
+    setIsLoading(true);
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseData;
+      setUserGender(responseData.data.profile.gender);
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -100,18 +127,27 @@ export default function Questionnaire() {
   };
   useEffect(() => {
     getQuestionDetailsAPI();
+    getUserDetailsAPI();
   }, []);
-
-  console.log('answersformatted1', answers);
+  // Filter questions based on userGender
+  const filteredQuestions = questionsData
+    .filter((category) => category.CategoryName === 'Bride-Specific Questions' || userGender === 'Male')
+    .filter((category) => category.CategoryName === 'Groom-Specific Questions' || userGender === 'Female');
+  // Get current section's questions
+  const currentSectionQuestions = filteredQuestions[section]?.Questions || [];
+  // Check if all questions in the current section are answered
+  const isSectionComplete = currentSectionQuestions.every((q) => answers[q.Id] !== undefined);
   return (
-    <BackgroundWrapper>
+    <BackgroundWrapper padding={0}>
       <>
         {isLoading && ( // Show Loader When API is in Progress
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
+              flexDirection: 'column',
               alignItems: 'center',
+              gap: '4px',
               height: '100vh',
               position: 'absolute',
               width: '100%',
@@ -119,10 +155,49 @@ export default function Questionnaire() {
               zIndex: 9999
             }}
           >
-            <CircularProgress size={60} sx={{ color: '#f00757' }} />
+            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+            <BallTriangle
+              height={100}
+              width={100}
+              radius={5}
+              color="#f00757"
+              ariaLabel="ball-triangle-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+            />
+            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+              <Typography variant="h3" color={'#f00757'}>
+                Saving Answers
+              </Typography>
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="#f00757"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{ marginBottom: '5px' }}
+                wrapperClass=""
+              />
+            </Stack>
           </Box>
         )}
         <Grid container spacing={3} justifyContent="center">
+          {/* Back Button */}
+          <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                sessionStorage.setItem('allowedRoute', '/upload-photos');
+                navigate('/upload-photos', { replace: true });
+              }}
+              className="buttonStyleOutlined"
+            >
+              &lt; Back
+            </Button>
+          </Grid>
           {!showQuestions ? (
             <>
               <Grid item xs={12} sx={{ textAlign: 'center' }}>
@@ -144,65 +219,91 @@ export default function Questionnaire() {
                   </Button>
                 </AnimateButton>
               </Grid>
-              <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
+              {/* <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
                 <Typography variant="body2">
                   Don’t want to fill it now?{' '}
-                  <Link component={RouterLink} to="/widget/statistics" sx={{ color: '#f00757' }}>
+                  <Link
+                    component={RouterLink}
+                    replace={true}
+                    to="/widget/statistics"
+                    onClick={() => sessionStorage.setItem('allowedRoute', '/widget/statistics')}
+                    // to="/maintenance/coming-soon2"
+                    // onClick={() => sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2')}
+                    sx={{ color: '#f00757' }}
+                  >
                     Skip
                   </Link>
                 </Typography>
-              </Grid>
+              </Grid> */}
             </>
           ) : (
             <>
-              {questionsData.length > 0 && questionsData[section] ? (
-                <>
-                  <Grid item xs={12} sx={{ textAlign: 'center', mt: 1 }}>
-                    <Typography variant="h4" sx={{ color: '#000', fontWeight: 'bold' }}>
-                      {questionsData[section].CategoryName}
-                    </Typography>
-                  </Grid>
-
-                  {questionsData[section].Questions.map((q, index) => (
-                    <Grid item xs={12} key={q.Id}>
-                      <Typography variant="h6" sx={{ mb: 2 }}>
-                        {index + 1}. {q.Question}
-                      </Typography>
-                      <Grid container spacing={2}>
-                        {q.Options.map((option) => (
-                          <Grid item xs={6} sm={6} key={option.OptionId}>
-                            <Paper
-                              elevation={0}
-                              onClick={() => handleAnswerChange(q.Id, option.OptionId)}
+              {questionsData
+                .filter((category) => {
+                  if (category.CategoryName === 'Bride-Specific Questions') return userGender === 'Female';
+                  if (category.CategoryName === 'Groom-Specific Questions') return userGender === 'Male';
+                  return true;
+                })
+                .map((filteredCategory, catIndex) =>
+                  section === catIndex ? (
+                    <Grid container justifyContent="center" gap={'36px'} sx={{ padding: '36px 30px' }} key={filteredCategory.CategoryName}>
+                      <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                        <Typography variant="h4" sx={{ color: '#f00757', fontWeight: 500, fontSize: '40px' }}>
+                          {filteredCategory.CategoryName}
+                        </Typography>
+                      </Grid>
+                      <Grid item container xs={12} justifyContent="center" gap={'32px'}>
+                        {filteredCategory.Questions.map((q, index) => (
+                          <Grid item container xs={12} key={q.Id} justifyContent={'center'} gap={'20px'}>
+                            <Typography
                               sx={{
-                                p: 1,
-                                textAlign: 'center',
-                                cursor: 'pointer',
-                                border: Number(answers[q.Id]) === option.OptionId ? '1px solid #f00757' : '1px solid #FFE1E7',
-                                backgroundColor: Number(answers[q.Id]) === option.OptionId ? '#f00757' : 'transparent',
-                                color: Number(answers[q.Id]) === option.OptionId ? '#fff' : '#000'
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                fontWeight: 600,
+                                fontSize: '20px'
                               }}
                             >
-                              {option.OptionText}
-                            </Paper>
+                              {q.Question}
+                            </Typography>
+                            <Grid item container display={'flex'} flexDirection={'row'} justifyContent={'center'} gap={'5px'}>
+                              {q.Options.map((option) => (
+                                <Grid item xs={6} sm={2.5} key={option.OptionId}>
+                                  <Paper
+                                    elevation={0}
+                                    onClick={() => handleAnswerChange(q.Id, option.OptionId)}
+                                    sx={{
+                                      p: 1,
+                                      textAlign: 'center',
+                                      cursor: 'pointer',
+                                      border: Number(answers[q.Id]) === option.OptionId ? '1px solid #f00757' : '1px solid #FFE1E7',
+                                      backgroundColor: Number(answers[q.Id]) === option.OptionId ? '#f00757' : 'transparent',
+                                      color: Number(answers[q.Id]) === option.OptionId ? '#fff' : '#000'
+                                    }}
+                                  >
+                                    {option.OptionText}
+                                  </Paper>
+                                </Grid>
+                              ))}
+                            </Grid>
                           </Grid>
                         ))}
                       </Grid>
                     </Grid>
-                  ))}
-                </>
-              ) : (
-                <Typography variant="h6" sx={{ textAlign: 'center', mt: 2 }}>
-                  Loading questions...
-                </Typography>
-              )}
+                  ) : null
+                )}
 
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: section === 0 ? 'flex-end' : 'space-between', mt: 2 }}>
+              <Grid
+                item
+                xs={12}
+                sx={{ display: 'flex', justifyContent: section === 0 ? 'flex-end' : 'space-between', padding: '0!important' }}
+              >
                 {section > 0 && (
                   <Button
                     onClick={() => setSection(section - 1)}
                     sx={{
                       color: '#f00757',
+                      paddingLeft: '35px!important',
                       '&:hover': { backgroundColor: '#FFE1E7', color: '#f00757' },
                       '&:focus': { outline: 'none', boxShadow: 'none' }
                     }}
@@ -211,12 +312,13 @@ export default function Questionnaire() {
                   </Button>
                 )}
 
-                {section < questionsData.length - 1 ? (
+                {section < filteredQuestions.length - 1 ? (
                   <Button
                     onClick={() => setSection(section + 1)}
+                    disabled={!isSectionComplete} // Disable if not all questions are answered
                     sx={{
-                      color: '#f00757',
-                      '&:hover': { backgroundColor: '#FFE1E7', color: '#f00757' },
+                      color: !isSectionComplete ? 'gray' : '#f00757',
+                      '&:hover': { backgroundColor: '#FFE1E7', color: !isSectionComplete ? 'gray' : '#f00757' },
                       '&:focus': { outline: 'none', boxShadow: 'none' }
                     }}
                   >
@@ -226,9 +328,10 @@ export default function Questionnaire() {
                   <Button
                     color="primary"
                     onClick={handleSubmit}
+                    disabled={!isSectionComplete} // Disable if not all questions are answered
                     sx={{
-                      color: '#f00757',
-                      '&:hover': { backgroundColor: '#FFE1E7', color: '#f00757' },
+                      color: !isSectionComplete ? 'gray' : '#f00757',
+                      '&:hover': { backgroundColor: '#FFE1E7', color: !isSectionComplete ? 'gray' : '#f00757' },
                       '&:focus': { outline: 'none', boxShadow: 'none' }
                     }}
                   >

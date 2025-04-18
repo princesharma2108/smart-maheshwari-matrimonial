@@ -233,7 +233,6 @@ export default function LatestMatches() {
     try {
       const response = await getMatchResults(userId); // Pass the required userId argument
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
       setMatchProfiles(responseData.data);
     } catch (error) {
       console.error('Error fetching customers:', error);

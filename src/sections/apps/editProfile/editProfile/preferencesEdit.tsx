@@ -7,7 +7,8 @@ import AdditionalPreferencesEdit from 'sections/apps/preferencesEdit/additionalP
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { editProfileDetails, profileDetails } from 'apiServices/user';
-import { getGeneralData } from 'apiServices/data';
+import { getGeneralData, getUserDetails } from 'apiServices/data';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -16,10 +17,15 @@ interface TabPanelProps {
 interface ErrorData {
   response: any;
 }
-interface ResponseData {
+interface ResponseEditData {
   status: string;
   message: string;
   response: any;
+}
+interface ResponseUserData {
+  status: string;
+  message: string;
+  data: any;
 }
 interface ResponseGeneralData {
   status: string;
@@ -36,6 +42,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 const PreferencesEdit: React.FC = () => {
   const [tabIndex, setTabIndex] = useState(0);
+  const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   //LifeStyle Preferences
   const [drinking, setDrinking] = useState('');
   const [smoking, setSmoking] = useState('');
@@ -108,7 +116,6 @@ const PreferencesEdit: React.FC = () => {
     try {
       const response = await getGeneralData();
       const responseData = response.data as ResponseGeneralData;
-      console.log('responseData', responseData.generalData);
       setProfessionData(responseData.generalData.profession);
       setHobbiesData(responseData.generalData.hobbies);
       setDietaryOptionsData(responseData.generalData.dietaryOptions);
@@ -133,15 +140,12 @@ const PreferencesEdit: React.FC = () => {
       } as SnackbarProps);
     }
   };
-  useEffect(() => {
-    getGeneralDataAPI();
-  }, []);
   const handleSaveProfileDetailsAPI = async () => {
+    setIsLoading(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
     const storedData = localStorage.getItem('matrimonialDetails');
     const matrimonialStoredData = storedData ? JSON.parse(storedData) : {};
-    console.log('matrimonialDataJSON2', matrimonialStoredData);
     // Collect only non-null and non-empty nonNegotiable values
     const nonNegotiables: string[] = [];
     const nonNegotiableValues = [
@@ -191,7 +195,7 @@ const PreferencesEdit: React.FC = () => {
     };
     try {
       const response = await editProfileDetails(profileDetailsData);
-      const responseData = response.data as ResponseData;
+      const responseData = response.data as ResponseEditData;
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1000);
@@ -214,12 +218,17 @@ const PreferencesEdit: React.FC = () => {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
-  useEffect(() => {
-    const storedPreferenceData = localStorage.getItem('preferenceDetails');
-    if (storedPreferenceData) {
-      const preferenceDetailsData = JSON.parse(storedPreferenceData);
+  const getUserDetailsAPI = async () => {
+    setIsLoadingGetDetails(true);
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseUserData;
+      const preferenceDetailsData = responseData.data.preferences;
       setMinAge(preferenceDetailsData.minAge || '');
       setMaxAge(preferenceDetailsData.maxAge || '');
       setMaritalStatus(preferenceDetailsData.maritalStatus || '');
@@ -233,7 +242,6 @@ const PreferencesEdit: React.FC = () => {
       setSmoking(preferenceDetailsData.smoking || '');
       setDietaryHabits(preferenceDetailsData.dietaryHabits || '');
       setWorkingWith(preferenceDetailsData.workingWith || '');
-      console.log('nonNegotiables:', preferenceDetailsData.nonNegotiables);
       if (preferenceDetailsData.nonNegotiables) {
         // Update non-negotiable state variables based on stored nonNegotiables
         if (preferenceDetailsData.nonNegotiables.includes('Drinking')) {
@@ -273,122 +281,187 @@ const PreferencesEdit: React.FC = () => {
           setNonNegotiableHobbies('Hobbies');
         }
       }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    } finally {
+      setIsLoadingGetDetails(false); // Stop Loader
     }
+  };
+  useEffect(() => {
+    getGeneralDataAPI();
+    getUserDetailsAPI();
   }, []);
   return (
-    // <BackgroundWrapper>
-    <Paper
-      elevation={3}
-      sx={{
-        p: 3,
-        width: '100%',
-        maxWidth: 800,
-        mx: 'auto',
-        bgcolor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: 2
-      }}
-    >
-      <Typography variant="h5" gutterBottom>
-        Preferences
-      </Typography>
+    <>
+      {(isLoadingGetDetails || isLoading) && ( // Show Loader When API is in Progress
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'left',
+            gap: '4px',
+            height: '100vh',
+            position: 'absolute',
+            width: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999
+          }}
+        >
+          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#f00757"
+            ariaLabel="ball-triangle-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h3" color={'#f00757'}>
+              {isLoading ? 'Updating Profile Details' : ' Fetching User Details'}
+            </Typography>
+            <ThreeDots
+              visible={true}
+              height="20"
+              width="20"
+              color="#f00757"
+              radius="9"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{ marginBottom: '5px' }}
+              wrapperClass=""
+            />
+          </Stack>
+        </Box>
+      )}
+      <Paper
+        elevation={3}
+        sx={{
+          p: 3,
+          width: '100%',
+          maxWidth: 800,
+          mx: 'auto',
+          bgcolor: 'rgba(255, 255, 255, 0.85)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: 2
+        }}
+      >
+        <Typography variant="h5" gutterBottom>
+          Preferences
+        </Typography>
 
-      <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-        {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
-          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)} />
-        ))}
-      </Tabs>
-      <TabPanel value={tabIndex} index={0}>
-        <LifestylePreferencesEdit
-          drinking={drinking}
-          setDrinking={setDrinking}
-          smoking={smoking}
-          setSmoking={setSmoking}
-          dietaryHabits={dietaryHabits}
-          setDietaryHabits={setDietaryHabits}
-          nonNegotiableDrinking={nonNegotiableDrinking || ''}
-          setNonNegotiableDrinking={setNonNegotiableDrinking}
-          nonNegotiableSmoking={nonNegotiableSmoking || ''}
-          setNonNegotiableSmoking={setNonNegotiableSmoking}
-          nonNegotiableDietary={nonNegotiableDietary || ''}
-          setNonNegotiableDietary={setNonNegotiableDietary}
-          drinkingOptions={drinkingOptionsData || []}
-          smokingOptions={smokingOptionsData || []}
-          dietaryOptions={dietaryOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={1}>
-        <PersonalPreferencesEdit
-          age={age as [number, number]}
-          setAge={setAge}
-          minAge={minAge}
-          setMinAge={setMinAge}
-          maxAge={maxAge}
-          setMaxAge={setMaxAge}
-          familyType={familyType}
-          setFamilyType={setFamilyType}
-          familyBackground={familyBackground}
-          setFamilyBackground={setFamilyBackground}
-          maritalStatus={maritalStatus}
-          setMaritalStatus={setMaritalStatus}
-          nonNegotiableAge={nonNegotiableAge || ''}
-          setNonNegotiableAge={setNonNegotiableAge}
-          nonNegotiableFamilyType={nonNegotiableFamilyType || ''}
-          setNonNegotiableFamilyType={setNonNegotiableFamilyType}
-          nonNegotiableFamilyBackground={nonNegotiableFamilyBackground || ''}
-          setNonNegotiableFamilyBackground={setNonNegotiableFamilyBackground}
-          nonNegotiableMaritalStatus={nonNegotiableMaritalStatus || ''}
-          setNonNegotiableMaritalStatus={setNonNegotiableMaritalStatus}
-          qualificationData={qualificationData || []}
-          familyTypeData={familyTypeData || []}
-          familyBackgroundData={familyBackgroundData || []}
-          maritalOptionsData={maritalOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={2}>
-        <AdditionalPreferencesEdit
-          qualification={qualification}
-          setQualification={setQualification}
-          profession={profession}
-          setProfession={setProfession}
-          workingWith={workingWith}
-          setWorkingWith={setWorkingWith}
-          location={location}
-          setLocation={setLocation}
-          hobbies={hobbies}
-          setHobbies={setHobbies}
-          nonNegotiableQualification={nonNegotiableQualification || ''}
-          setNonNegotiableQualification={setNonNegotiableQualification}
-          nonNegotiableProfession={nonNegotiableProfession || ''}
-          setNonNegotiableProfession={setNonNegotiableProfession}
-          nonNegotiableWorkingWith={nonNegotiableWorkingWith || ''}
-          setNonNegotiableWorkingWith={setNonNegotiableWorkingWith}
-          nonNegotiableLocation={nonNegotiableLocation || ''}
-          setNonNegotiableLocation={setNonNegotiableLocation}
-          nonNegotiableHobbies={nonNegotiableHobbies || ''}
-          setNonNegotiableHobbies={setNonNegotiableHobbies}
-          professionData={professionData || []}
-          qualificationData={qualificationData || []}
-          hobbiesData={hobbiesData || []}
-          locationData={locationData || []}
-          workingWithOptionsData={workingWithOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" spacing={2}>
-          <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
-            Previous
-          </Button>
-          <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
-            Continue
-          </Button>
-        </Stack>
-      </Grid>
-    </Paper>
-    // </BackgroundWrapper>
+        <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
+          {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
+            <Tab
+              key={index}
+              label={label}
+              className="tabStyle"
+              disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+            />
+          ))}
+        </Tabs>
+        <TabPanel value={tabIndex} index={0}>
+          <LifestylePreferencesEdit
+            drinking={drinking}
+            setDrinking={setDrinking}
+            smoking={smoking}
+            setSmoking={setSmoking}
+            dietaryHabits={dietaryHabits}
+            setDietaryHabits={setDietaryHabits}
+            nonNegotiableDrinking={nonNegotiableDrinking || ''}
+            setNonNegotiableDrinking={setNonNegotiableDrinking}
+            nonNegotiableSmoking={nonNegotiableSmoking || ''}
+            setNonNegotiableSmoking={setNonNegotiableSmoking}
+            nonNegotiableDietary={nonNegotiableDietary || ''}
+            setNonNegotiableDietary={setNonNegotiableDietary}
+            drinkingOptions={drinkingOptionsData || []}
+            smokingOptions={smokingOptionsData || []}
+            dietaryOptions={dietaryOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={1}>
+          <PersonalPreferencesEdit
+            age={age as [number, number]}
+            setAge={setAge}
+            minAge={minAge}
+            setMinAge={setMinAge}
+            maxAge={maxAge}
+            setMaxAge={setMaxAge}
+            familyType={familyType}
+            setFamilyType={setFamilyType}
+            familyBackground={familyBackground}
+            setFamilyBackground={setFamilyBackground}
+            maritalStatus={maritalStatus}
+            setMaritalStatus={setMaritalStatus}
+            nonNegotiableAge={nonNegotiableAge || ''}
+            setNonNegotiableAge={setNonNegotiableAge}
+            nonNegotiableFamilyType={nonNegotiableFamilyType || ''}
+            setNonNegotiableFamilyType={setNonNegotiableFamilyType}
+            nonNegotiableFamilyBackground={nonNegotiableFamilyBackground || ''}
+            setNonNegotiableFamilyBackground={setNonNegotiableFamilyBackground}
+            nonNegotiableMaritalStatus={nonNegotiableMaritalStatus || ''}
+            setNonNegotiableMaritalStatus={setNonNegotiableMaritalStatus}
+            qualificationData={qualificationData || []}
+            familyTypeData={familyTypeData || []}
+            familyBackgroundData={familyBackgroundData || []}
+            maritalOptionsData={maritalOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={2}>
+          <AdditionalPreferencesEdit
+            qualification={qualification}
+            setQualification={setQualification}
+            profession={profession}
+            setProfession={setProfession}
+            workingWith={workingWith}
+            setWorkingWith={setWorkingWith}
+            location={location}
+            setLocation={setLocation}
+            hobbies={hobbies}
+            setHobbies={setHobbies}
+            nonNegotiableQualification={nonNegotiableQualification || ''}
+            setNonNegotiableQualification={setNonNegotiableQualification}
+            nonNegotiableProfession={nonNegotiableProfession || ''}
+            setNonNegotiableProfession={setNonNegotiableProfession}
+            nonNegotiableWorkingWith={nonNegotiableWorkingWith || ''}
+            setNonNegotiableWorkingWith={setNonNegotiableWorkingWith}
+            nonNegotiableLocation={nonNegotiableLocation || ''}
+            setNonNegotiableLocation={setNonNegotiableLocation}
+            nonNegotiableHobbies={nonNegotiableHobbies || ''}
+            setNonNegotiableHobbies={setNonNegotiableHobbies}
+            professionData={professionData || []}
+            qualificationData={qualificationData || []}
+            hobbiesData={hobbiesData || []}
+            locationData={locationData || []}
+            workingWithOptionsData={workingWithOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <Grid item xs={12}>
+          <Stack direction="row" justifyContent="flex-end" spacing={2}>
+            <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
+              Previous
+            </Button>
+            <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
+              Continue
+            </Button>
+          </Stack>
+        </Grid>
+      </Paper>
+    </>
   );
 };
 

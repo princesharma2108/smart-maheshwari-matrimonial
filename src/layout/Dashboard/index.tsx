@@ -17,7 +17,6 @@ import Header from './Header';
 import Footer from './Footer';
 import HorizontalBar from './Drawer/HorizontalBar';
 import Loader from 'components/Loader';
-import AddCustomer from 'sections/apps/customer/AddCustomer';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import AuthGuard from 'utils/route-guard/AuthGuard';
 
@@ -72,7 +71,7 @@ export default function MainLayout() {
               xs: 0,
               ...(container && { px: { xs: 0, md: 2 } }),
               position: 'relative',
-              minHeight: 'calc(100vh - 110px)',
+              minHeight: 'calc(100vh - 89px)',
               display: 'flex',
               flexDirection: 'column'
             }}
@@ -82,7 +81,7 @@ export default function MainLayout() {
             {/* <Footer /> */}
           </Container>
         </Box>
-        <AddCustomer />
+        {/* <AddCustomer /> */}
       </Box>
     </AuthGuard>
   );

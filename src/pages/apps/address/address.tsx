@@ -11,6 +11,7 @@ interface AddressProps {
   handleAddressChange: (address: string) => void;
   handleCityChange: (city: string) => void;
   handleStateChange: (state: string) => void;
+  handleCountryChange: (state: string) => void;
   handleZipChange: (zip: string) => void;
   handleLatitudeChange: (latitude: number) => void;
   handleLongitudeChange: (longitude: number) => void;
@@ -33,6 +34,7 @@ const Address: React.FC<AddressProps> = ({
   handleAddressChange,
   handleCityChange,
   handleStateChange,
+  handleCountryChange,
   handleZipChange,
   handleLatitudeChange,
   handleLongitudeChange,
@@ -47,12 +49,12 @@ const Address: React.FC<AddressProps> = ({
   error,
   helperText
 }) => {
-  console.log('homeAddressBirth2', initialAddress);
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string>(initialAddress);
   const [locationAddress, setLocationAddress] = useState<string>(initialAddress);
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [selectedState, setSelectedState] = useState<string>('');
+  const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [selectedZip, setSelectedZip] = useState<string>('');
   const [selectedLatitude, setSelectedLatitude] = useState<number | null>(null);
   const [selectedLongitude, setSelectedLongitude] = useState<number | null>(null);
@@ -62,26 +64,23 @@ const Address: React.FC<AddressProps> = ({
     setValue: setPlaceSearchValue,
     clearSuggestions
   } = usePlacesAutocomplete({
-    //requestOptions: { componentRestrictions: { country: 'IN' } },
+    // requestOptions: { componentRestrictions: { country: 'IN' }, types: ['geocode'] },
     debounce: 300
   });
-
   const [getPlaceDetails] = usePlaceDetails();
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSelectedAddress(value);
     setLocationAddress(value);
     setPlaceSearchValue(value);
   };
-
   const handleSelectSuggestion = (suggestion: string, placeData: any) => {
     setSelectedAddress(suggestion);
     // ✅ Clear suggestions immediately to close the dropdown
     setSuggestions([]);
     clearSuggestions();
     getPlaceDetails(placeData.place_id, (res: any) => {
-      console.log('resultAddress', res);
+      // if (res.country !== 'India') return; // ✅ Ensure selection is from India
       // setSelectedAddress(res.street_address || '');
       setSelectedCity(res.city || '');
       setSelectedState(res.state || '');
@@ -101,6 +100,7 @@ const Address: React.FC<AddressProps> = ({
       handleAddressChange(completeAddress);
       handleCityChange(res.city);
       handleStateChange(res.state);
+      handleCountryChange(res.country);
       handleZipChange(res.postal_code);
       handleLatitudeChange(res.location.coordinates[0]);
       handleLongitudeChange(res.location.coordinates[1]);
@@ -109,7 +109,6 @@ const Address: React.FC<AddressProps> = ({
       clearSuggestions();
     });
   };
-
   useEffect(() => {
     if (status === 'OK') {
       setSuggestions(data.map((suggestion) => suggestion.description));
@@ -126,16 +125,8 @@ const Address: React.FC<AddressProps> = ({
       setSuggestions([]);
     }
   }, [selectedAddress]);
-  console.log('homeAddressBirth3', selectedAddress);
   return (
     <Grid container direction="column" spacing={1} sx={{ padding: '0' }}>
-      {/* {!editable && (
-        <Grid item>
-          <Typography variant="body2" color={labelColor || 'textSecondary'}>
-            {fieldName}
-          </Typography>
-        </Grid>
-      )} */}
       <Grid sx={{ padding: '0' }}>
         <TextField
           inputRef={addressInputRef}

@@ -34,7 +34,7 @@ import { fetcher } from 'utils/axios';
 import 'assets/styles/styles.scss';
 // assets
 import { Eye, EyeSlash } from 'iconsax-react';
-import { Box } from '@mui/material';
+import { Box, MenuItem, Select } from '@mui/material';
 // reducer - state management
 import { LOGIN, LOGOUT } from 'contexts/auth-reducer/actions';
 import authReducer from 'contexts/auth-reducer/auth';
@@ -46,7 +46,7 @@ import { openSnackbar } from 'api/snackbar';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { KeyedObject } from 'types/root';
-import { getUserStage } from 'apiServices/user';
+import { getOTP, getUserStage } from 'apiServices/user';
 import { APP_VERSION } from 'config';
 interface ErrorData {
   response: any;
@@ -65,6 +65,11 @@ interface ResponseStageData {
   registrationStage: number;
   message: string;
   status: string;
+}
+interface ResponseOTPData {
+  status: string;
+  message: string;
+  otp: string;
 }
 // ============================|| JWT - LOGIN ||============================ //
 
@@ -86,6 +91,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -106,8 +112,6 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
 
     // Define listener to capture OTP and user JSON URL
     window.phoneEmailListener = async (userObj: { user_json_url: string; otp: string }) => {
-      console.log('userObj', userObj);
-
       try {
         const response = await fetch(userObj.user_json_url);
         const userData = await response.json();
@@ -126,16 +130,15 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       window.phoneEmailListener = null; // Cleanup
     };
   }, []);
-
-  console.log('phoneNumber', phoneNumber);
-  useEffect(() => {
-    if (phoneNumber) {
-      loginUserAPI(phoneNumber);
-    }
-  }, [phoneNumber]);
-
+  // useEffect(() => {
+  //   if (phoneNumber) {
+  //     loginUserAPI(phoneNumber);
+  //   }
+  // }, [phoneNumber]);
   const loginUserAPI = async (phoneNumber: string) => {
-    console.log('inLoginUserAPI');
+    // Clear local and session storage BEFORE proceeding
+    localStorage.clear();
+    sessionStorage.clear();
     const loginData = {
       user: phoneNumber,
       password: '12345'
@@ -150,7 +153,6 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       await login(registerData);
       const storedData = localStorage.getItem('userData');
       const userData = storedData ? JSON.parse(storedData) : {};
-      console.log('userData', userData);
       openSnackbar({
         open: true,
         message: 'Login Successfully',
@@ -162,7 +164,9 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       if (userData.created == false) {
         getUserStageAPI();
       } else {
-        window.location.href = '/upload-biodata';
+        // ✅ Store route before navigating
+        sessionStorage.setItem('allowedRoute', '/upload-biodata');
+        navigate('/upload-biodata', { replace: true });
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -185,27 +189,36 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       if (responseData.status === 'success') {
         switch (responseData.registrationStage) {
           case 1:
-            navigate('/upload-biodata');
+            sessionStorage.setItem('allowedRoute', '/upload-biodata');
+            navigate('/upload-biodata', { replace: true });
             break;
           case 2:
-            navigate('/personal-details');
+            sessionStorage.setItem('allowedRoute', '/personal-details');
+            navigate('/personal-details', { replace: true });
             break;
           case 3:
-            navigate('/preferences');
+            sessionStorage.setItem('allowedRoute', '/preferences');
+            navigate('/preferences', { replace: true });
             break;
           case 4:
-            navigate('/upload-photos');
+            sessionStorage.setItem('allowedRoute', '/upload-photos');
+            navigate('/upload-photos', { replace: true });
             break;
           case 5:
-            navigate('/widget/statistics');
+            /*For Complete APP*/
+            sessionStorage.setItem('allowedRoute', '/widget/statistics');
+            navigate('/widget/statistics', { replace: true });
+            /*For Coming Soon*/
+            // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
+            // navigate('/maintenance/coming-soon2', { replace: true });
             break;
           default:
-            console.log('Unknown registration stage:', responseData.registrationStage);
+            sessionStorage.setItem('allowedRoute', '/upload-biodata');
             navigate('/upload-biodata');
             break;
         }
       } else {
-        console.log("API call unsuccessful or status is not 'success'");
+        sessionStorage.setItem('allowedRoute', '/upload-biodata');
         navigate('/upload-biodata');
       }
     } catch (error) {
@@ -221,28 +234,45 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       } as SnackbarProps);
     }
   };
+
   return (
     <>
-      {/* <Formik
+      <Formik
         initialValues={{
-          email: 'info@phoenixcoded.co',
-          password: '123456',
+          countryCode: '+91',
+          phone: '',
+          otp: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string().max(255).required('Password is required')
+          phone: Yup.string()
+            .matches(/^\d{10}$/, 'Enter a valid 10-digit phone number')
+            .required('Phone number is required'),
+          otp: Yup.string()
+            .matches(/^\d{4,6}$/, 'Enter a valid OTP')
+            .required('OTP is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          const registerData = {
+            phoneNumber: values.phone,
+            otp: values.otp,
+            appVersion: APP_VERSION
+          };
           try {
-            await login(values.email, values.password);
+            await login(registerData); // Replace with your OTP verification logic
+            const storedData = localStorage.getItem('userData');
+            const userData = storedData ? JSON.parse(storedData) : {};
+            if (userData.created == false) {
+              getUserStageAPI();
+            } else {
+              // ✅ Store route before navigating
+              sessionStorage.setItem('allowedRoute', '/upload-biodata');
+              navigate('/upload-biodata', { replace: true });
+            }
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
-              //preload('api/menu/dashboard', fetcher); // load menu on login success
-              //preload('/dashboard/dashboard', fetcher);
-              // navigate('/dashboard/default');
-              navigate('/upload-biodata');
+              // navigate('/upload-biodata'); // Or your next screen
             }
           } catch (err: any) {
             console.error(err);
@@ -254,99 +284,180 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
           }
         }}
       >
-        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-          <form noValidate onSubmit={handleSubmit}>
-            <Grid container spacing={3} justifyContent={'center'}>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">User</InputLabel>
-                  <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setUser(e.target.value); // Update email state
-                    }}
-                    placeholder="Enter email address"
-                    fullWidth
-                    error={Boolean(touched.email && errors.email)}
-                    className="inputFieldLogin"
-                  />
-                </Stack>
-                {touched.email && errors.email && (
-                  <FormHelperText error id="standard-weight-helper-text-email-login">
-                    {errors.email}
-                  </FormHelperText>
-                )}
-              </Grid>
-              <Grid item xs={12}>
-                <Stack spacing={1}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
-                  <OutlinedInput
-                    fullWidth
-                    error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
-                    type={showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={(e) => {
-                      handleChange(e);
-                      setPassword(e.target.value); // Update password state
-                    }}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                          color="secondary"
-                        >
-                          {showPassword ? <Eye /> : <EyeSlash />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    placeholder="Enter password"
-                    className="inputFieldLogin"
-                  />
-                </Stack>
-                {touched.password && errors.password && (
-                  <FormHelperText error id="standard-weight-helper-text-password-login">
-                    {errors.password}
-                  </FormHelperText>
-                )}
-              </Grid>
-              <Grid item xs={12} sx={{ mt: -1 }}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        //color="primary"
-                        size="small"
-                        className="inputFieldCheckbox"
-                      />
-                    }
-                    label={<Typography variant="h6">Remember Me</Typography>}
-                  />
-
-                  <Link variant="h6" component={RouterLink} to={isLoggedIn && forgot ? forgot : '/forgot-password'} color="text.primary">
-                    Forgot Password?
-                  </Link>
-                </Stack>
-              </Grid>
-              {errors.submit && (
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => {
+          const getOTPAPI = async () => {
+            const otpData = {
+              phoneNumber: values.phone,
+              countryCode: values.countryCode
+            };
+            try {
+              const response = await getOTP(otpData);
+              const responseData = response.data as ResponseOTPData;
+              openSnackbar({
+                open: true,
+                message: responseData.message,
+                variant: 'alert',
+                alert: { color: 'success' }
+              } as SnackbarProps);
+              setIsOtpSent(true);
+            } catch (error) {
+              const errorData = error as ErrorData;
+              openSnackbar({
+                open: true,
+                message: errorData.response.data.message,
+                variant: 'alert',
+                alert: {
+                  color: 'error'
+                }
+              } as SnackbarProps);
+            }
+          };
+          return (
+            <form noValidate onSubmit={handleSubmit}>
+              <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
-                  <FormHelperText error>{errors.submit}</FormHelperText>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
+                    <OutlinedInput
+                      id="phone-input"
+                      type="tel"
+                      value={values.phone}
+                      name="phone"
+                      onBlur={handleBlur}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        const isValid = /^[0-9\b]*$/.test(newValue); // allow empty & digits
+
+                        if (isValid && newValue.length <= 10) {
+                          handleChange(e);
+                        }
+                      }}
+                      placeholder="Enter your phone number"
+                      fullWidth
+                      error={Boolean(touched.phone && errors.phone)}
+                      className="inputFieldLogin"
+                      startAdornment={
+                        <InputAdornment position="start">
+                          <Select
+                            value={values.countryCode}
+                            name="countryCode"
+                            onChange={(e) => {
+                              handleChange(e);
+                              // setCountryCode(e.target.value); // Optional
+                            }}
+                            variant="standard"
+                            disableUnderline
+                            sx={{ minWidth: 60, fontWeight: 500 }}
+                          >
+                            <MenuItem value="+91">+91</MenuItem>
+                            <MenuItem value="+1">+1</MenuItem>
+                            <MenuItem value="+44">+44</MenuItem>
+                            <MenuItem value="+61">+61</MenuItem>
+                          </Select>
+                        </InputAdornment>
+                      }
+                    />
+                  </Stack>
+                  {touched.phone && errors.phone && (
+                    <FormHelperText error id="helper-text-phone">
+                      {errors.phone}
+                    </FormHelperText>
+                  )}
                 </Grid>
-              )}
-              <Grid item xs={12}>
+                {isOtpSent && (
+                  <Grid item xs={12}>
+                    <Stack spacing={1}>
+                      <InputLabel htmlFor="otp">OTP</InputLabel>
+                      <Stack direction="row" spacing={1} justifyContent="center">
+                        {[0, 1, 2, 3].map((index) => (
+                          <OutlinedInput
+                            key={index}
+                            inputProps={{
+                              maxLength: 1,
+                              style: { textAlign: 'center', fontSize: 24 },
+                              autoComplete: 'one-time-code' // or use 'off' if you want to fully disable autofill
+                            }}
+                            type="text"
+                            value={values.otp[index] || ''}
+                            className="inputFieldLogin"
+                            onChange={(e) => {
+                              const val = e.target.value.replace(/\D/, '');
+                              const otpArr = values.otp.split('');
+                              otpArr[index] = val;
+                              const newOtp = otpArr.join('');
+                              handleChange({
+                                target: { name: 'otp', value: newOtp }
+                              });
+
+                              // Auto move to next input
+                              if (val && e.target.nextSibling) {
+                                const nextInput = e.target.parentNode?.parentNode?.querySelector(
+                                  `input[name="otp${index + 1}"]`
+                                ) as HTMLInputElement;
+                                if (nextInput) nextInput.focus();
+                              }
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Backspace' && !values.otp[index] && index > 0) {
+                                const prevInput = e.currentTarget.parentNode?.parentNode?.querySelector(
+                                  `input[name="otp${index - 1}"]`
+                                ) as HTMLInputElement;
+                                if (prevInput) prevInput.focus();
+                              }
+                            }}
+                            name={`otp${index}`}
+                            sx={{ width: 60 }}
+                            error={Boolean(touched.otp && errors.otp)}
+                          />
+                        ))}
+                      </Stack>
+                      <input type="hidden" name="otp" value={values.otp} />
+                    </Stack>
+                    {touched.otp && errors.otp && (
+                      <FormHelperText error id="helper-text-otp">
+                        {errors.otp}
+                      </FormHelperText>
+                    )}
+                  </Grid>
+                )}
+                {errors.submit && (
+                  <Grid item xs={12}>
+                    <FormHelperText error>{errors.submit}</FormHelperText>
+                  </Grid>
+                )}
+                <Grid item xs={12}>
+                  {!isOtpSent ? (
+                    <AnimateButton>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className="buttonStyle"
+                        onClick={() => {
+                          if (/^\d{10}$/.test(values.phone)) {
+                            getOTPAPI();
+                          }
+                        }}
+                      >
+                        Send OTP
+                      </Button>
+                    </AnimateButton>
+                  ) : (
+                    <AnimateButton>
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        type="submit"
+                        color="secondary"
+                        className="buttonStyle"
+                        disabled={isSubmitting || values.otp.length < 4}
+                      >
+                        Login
+                      </Button>
+                    </AnimateButton>
+                  )}
+                </Grid>
+                {/* <Grid item xs={12}>
                 <AnimateButton>
                   <Button
                     disableElevation
@@ -357,21 +468,22 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     variant="contained"
                     className="buttonStyle"
                   >
-                    Login
+                    Verify OTP
                   </Button>
                 </AnimateButton>
+              </Grid> */}
               </Grid>
-            </Grid>
-          </form>
-        )}
-      </Formik> */}
+            </form>
+          );
+        }}
+      </Formik>
 
       {/* Phone Verification Button */}
-      <Grid container spacing={3} justifyContent={'center'}>
+      {/* <Grid container spacing={3} justifyContent={'center'}>
         <div style={{ textAlign: 'center', marginTop: '0px' }}>
           <div ref={buttonRef} className="pe_signin_button" data-client-id="13139718047550239662" style={{ width: '100%' }}></div>
         </div>
-      </Grid>
+      </Grid> */}
     </>
   );
 }

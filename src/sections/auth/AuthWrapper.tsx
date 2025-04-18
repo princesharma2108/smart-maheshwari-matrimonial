@@ -34,7 +34,7 @@ export default function AuthWrapper({ children }: Props) {
           borderRadius: 2,
           maxWidth: 900,
           width: '100%',
-          height: { xs: 'auto', md: 550 }, // Set a fixed height for large screens
+          height: { xs: 'auto', md: 600 }, // Set a fixed height for large screens
           display: 'flex',
           flexDirection: 'row'
         }}

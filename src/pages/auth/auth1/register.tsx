@@ -56,7 +56,6 @@ export default function Register() {
   function googleLogin() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
-      console.log('result', result);
       const user = result.user;
       setUserId(user.uid);
       setUserEmail(user.email);
@@ -70,9 +69,6 @@ export default function Register() {
       }
     });
   }
-  console.log('userDetailsLogin', userDetails);
-  console.log('userDetailsId', userId);
-  console.log('userDetailsEmail', userEmail);
   useEffect(() => {
     if (userEmail && userId) {
       registerUserAPI(userEmail, userId);
@@ -80,7 +76,6 @@ export default function Register() {
   }, [userEmail, userId]);
 
   const registerUserAPI = async (userEmail: string, userId: string) => {
-    console.log('inRegisterUserAPI');
     const registerData = {
       phoneNumber: null,
       emailAddress: userEmail,
@@ -89,7 +84,6 @@ export default function Register() {
     };
     try {
       const response = await registerUser(registerData);
-      console.log('response', response);
       const responseData = response.data as ResponseData;
       // setTimeout(() => {
       //   window.location.reload();
@@ -102,7 +96,7 @@ export default function Register() {
           color: 'success'
         }
       } as SnackbarProps);
-      //window.location.href = '/';
+      //window.location.href = '/login';
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -130,7 +124,7 @@ export default function Register() {
               Create an account to get started, already have an account?{' '}
               <Typography
                 component={Link}
-                to={isLoggedIn ? '/auth/login' : '/'}
+                to={isLoggedIn ? '/auth/login' : '/login'}
                 variant="body1"
                 sx={{ textDecoration: 'none', color: '#f00757', display: 'inline' }}
               >

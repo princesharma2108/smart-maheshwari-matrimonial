@@ -1,51 +1,11 @@
-import { useCallback, useState, useEffect } from 'react';
-import debounce from 'lodash/debounce';
-
 declare global {
   interface Window {
     google: any;
   }
 }
-// import { completeTask } from "app/services/workflow";
-// import { useDispatch } from "react-redux";
-// import { notificationOperations } from "app/store/state/notification";
-export const useDebounce = (handler: any, delay: any) => {
-  return useCallback(
-    debounce((...args) => handler(args), delay),
-    [handler]
-  );
-};
-
-export const useMountEffect = (func: any) => useEffect(func, []);
-
-// export const useCompleteTaskHandler = (taskName) => {
-//   const [isTaskComplete, setTaskComplete] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [isError, setIsError] = useState(false);
-//   const dispatch = useDispatch();
-//   const completeTaskHelper = async (variables = {}) => {
-//     setIsError(false);
-//     setIsLoading(true);
-//     try {
-//       const res = await completeTask(taskName, variables);
-//       if (!res.isTaskAlreadyComplete) {
-//         dispatch(notificationOperations.fetchUserTask());
-//       } else {
-//         console.log(`[Workflow] Not fetching tasks as task already completed!`);
-//       }
-//       setTaskComplete(true);
-//     } catch (error) {
-//       setIsError(true);
-//     }
-//     setIsLoading(false);
-//   };
-//   return [{ isTaskComplete, isLoading, isError }, completeTaskHelper];
-// };
-
 interface PlaceDetailsOptions {
   hidePlaceNameInStreetAddress?: boolean;
 }
-
 export const usePlaceDetails = (options: PlaceDetailsOptions = {}) => {
   const getPlaceDetails = (place_id: any, setPlaceResponse: any) => {
     try {
@@ -61,7 +21,6 @@ export const usePlaceDetails = (options: PlaceDetailsOptions = {}) => {
       function callback(place: any, status: any) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
           const address_components = place.address_components;
-          console.log('address_components', address_components);
           const location = place.geometry.location;
           interface PlaceDetails {
             country: any;

@@ -78,7 +78,12 @@ export default function TabStep2({
     maritalStatus: ''
   });
   const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
-  const handleWeightChange = (event: ChangeEvent<HTMLInputElement>) => setWeight(event.target.value);
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= 3 && /^\d*$/.test(value)) {
+      setWeight(value);
+    }
+  };
   const validateStep = () => {
     let newErrors = {
       weight: '',
@@ -101,7 +106,6 @@ export default function TabStep2({
     setIsStepValid(isValid); // Update parent state
     return isValid;
   };
-
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [weight, height, gender, hobbies, complexion, maritalStatus]);
@@ -120,6 +124,7 @@ export default function TabStep2({
                 </InputLabel>
                 <TextField
                   fullWidth
+                  type="number"
                   id="weight"
                   value={weight}
                   onChange={handleWeightChange}
@@ -128,6 +133,10 @@ export default function TabStep2({
                   onBlur={validateStep}
                   error={!!errors.weight}
                   helperText={errors.weight}
+                  inputProps={{
+                    maxLength: 3, // <-- for string input
+                    max: 999 // <-- ensures number doesn't exceed 999
+                  }}
                 />
               </Stack>
             </Grid>
@@ -149,6 +158,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Height
                   </MenuItem>
+                  {!heightOptions.includes(height) && height && <MenuItem value={height}>{height}</MenuItem>}
                   {heightOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

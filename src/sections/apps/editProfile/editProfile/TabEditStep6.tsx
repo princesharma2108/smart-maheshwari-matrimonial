@@ -93,6 +93,7 @@ export default function TabEditStep6({
                       <MenuItem value="" disabled>
                         Select Gotra
                       </MenuItem>
+                      {!gotraOptions.includes(gotra) && gotra && <MenuItem value={gotra}>{gotra}</MenuItem>}
                       {gotraOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}

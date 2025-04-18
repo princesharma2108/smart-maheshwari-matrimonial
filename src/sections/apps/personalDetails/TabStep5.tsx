@@ -71,6 +71,8 @@ export default function TabStep5({
   });
   const [annualIncome, setAnnualIncome] = useState('');
   // Handlers
+  const handleHighestQualificationChange = (event: SelectChangeEvent) => setHighestQualification(event.target.value);
+  const handleAdditionalQualificationChange = (event: SelectChangeEvent) => setAdditionalQualification(event.target.value);
   const handleOccupationChange = (event: SelectChangeEvent) => setOccupation(event.target.value);
   const handleWorkingWithChange = (event: SelectChangeEvent) => setWorkingWith(event.target.value);
   const handleAnnualIncomeChange = (event: SelectChangeEvent) => {
@@ -120,7 +122,7 @@ export default function TabStep5({
                     <InputLabel htmlFor="highest-qualification">
                       Highest Qualification<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <TextField
+                    {/* <TextField
                       fullWidth
                       id="highest-qualification"
                       placeholder="Enter Highest Qualification"
@@ -131,7 +133,29 @@ export default function TabStep5({
                       onBlur={validateStep}
                       error={!!errors.highestQualification}
                       helperText={errors.highestQualification}
-                    />
+                    /> */}
+                    <Select
+                      fullWidth
+                      id="highest-qualification"
+                      value={highestQualification}
+                      onChange={handleHighestQualificationChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.highestQualification}
+                    >
+                      <MenuItem value="" disabled>
+                        Select Highest Qualification
+                      </MenuItem>
+                      {!qualificationOptions.includes(highestQualification) && highestQualification && (
+                        <MenuItem value={highestQualification}>{highestQualification}</MenuItem>
+                      )}
+                      {qualificationOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -142,7 +166,10 @@ export default function TabStep5({
                       id="additional-qualification"
                       placeholder="Enter Additional Qualification"
                       value={additionalQualification}
-                      onChange={(e) => setAdditionalQualification(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/[0-9]/g, '');
+                        setAdditionalQualification(value);
+                      }}
                       className="inputField"
                     />
                   </Stack>
@@ -165,6 +192,7 @@ export default function TabStep5({
                       <MenuItem value="" disabled>
                         Select Occupation
                       </MenuItem>
+                      {!occupationOptions.includes(occupation) && occupation && <MenuItem value={occupation}>{occupation}</MenuItem>}
                       {occupationOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -181,7 +209,10 @@ export default function TabStep5({
                       id="company-name"
                       placeholder="Enter Company/Business Name"
                       value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      onChange={(e) => {
+                        const sanitizedValue = e.target.value.replace(/[^a-zA-Z0-9\-&,./\s]/g, '');
+                        setCompanyName(sanitizedValue);
+                      }}
                       className="inputField"
                     />
                   </Stack>
@@ -264,7 +295,7 @@ export default function TabStep5({
                       </MenuItem>
                       {languageOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
-                          <Checkbox checked={languagesKnown.includes(option)} />
+                          <Checkbox checked={languagesKnown.includes(option)} className="inputFieldCheckbox" />
                           {option}
                         </MenuItem>
                       ))}

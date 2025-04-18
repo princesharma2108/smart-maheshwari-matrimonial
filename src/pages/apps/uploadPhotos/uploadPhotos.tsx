@@ -30,29 +30,30 @@ export default function UploadPhotos() {
 
   const onSubmit = (data: any) => {
     uploadPhotosAPI();
-    console.log('Uploaded Photos:', selectedImages);
     //navigate('/widget/statistics');
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    console.log('FilesInput', files);
-    if (selectedImages.length + files.length > 10) {
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+
+    // Filter files that exceed the size limit
+    const validFiles = files.filter((file) => {
+      if (file.size > maxSize) {
+        alert(`The file "${file.name}" exceeds the 10MB limit.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (selectedImages.length + validFiles.length > 10) {
       alert('You can upload a maximum of 10 photos.');
       return;
     }
 
-    // const validFiles = files.filter((file) => file.type.startsWith('image/'));
-    // if (validFiles.length !== files.length) {
-    //   alert('Only image files (JPEG, PNG) are allowed.');
-    //   return;
-    // }
-
-    // setSelectedImages((prev) => [...prev, ...validFiles]);
-    // setPreviews((prev) => [...prev, ...validFiles.map((file) => URL.createObjectURL(file))]);
-    setSelectedImages((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...files.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
-    setSelectedFiles(files);
+    setSelectedImages((prev) => [...prev, ...validFiles]);
+    setPreviews((prev) => [...prev, ...validFiles.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
+    setSelectedFiles(validFiles);
   };
 
   const handleRemoveFile = (index: number) => {
@@ -67,26 +68,14 @@ export default function UploadPhotos() {
       appVersion: APP_VERSION
     };
     let fileData = [];
-    // Create a FormData object
     const formData = new FormData();
-    // formData.append('data', JSON.stringify(uploadData));
     if (matrimonialId) {
       formData.append('matrimonialId', matrimonialId);
     } else {
       console.warn('No matrimonialId found in localStorage.');
     }
-    // Only append the file if it's selected
     if (selectedImages) {
-      console.log('uploadPhotos', selectedImages);
-      console.log('uploadPhotos2', selectedFiles);
-      console.log(
-        'Selected files:',
-        selectedFiles.map((file) => file.name)
-      );
       fileData = selectedFiles.map((file) => file.name);
-      // selectedImages.forEach((file, index) => {
-      //   formData.append(`photos`, file); // Change `file${index + 1}` to `photos`
-      // });
       selectedFiles.forEach((file) => {
         formData.append('photos', file);
       });
@@ -97,9 +86,6 @@ export default function UploadPhotos() {
     try {
       const response = await uploadPhoto(formData);
       const responseData = response.data as ResponseData;
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
       openSnackbar({
         open: true,
         message: responseData.message,
@@ -108,7 +94,8 @@ export default function UploadPhotos() {
           color: 'success'
         }
       } as SnackbarProps);
-      navigate('/questionare');
+      sessionStorage.setItem('allowedRoute', '/questionare');
+      navigate('/questionare', { replace: true });
       reset();
       setSelectedImages([]);
       setPreviews([]);
@@ -205,6 +192,20 @@ export default function UploadPhotos() {
           </Box>
         )}
         <Grid container spacing={3} justifyContent="center">
+          {/* Back Button */}
+          <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                sessionStorage.setItem('allowedRoute', '/additional-information');
+                navigate('/additional-information', { replace: true });
+              }}
+              className="buttonStyleOutlined"
+            >
+              &lt; Back
+            </Button>
+          </Grid>
           {/* Title */}
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <Typography variant="h3">Upload Photos</Typography>
@@ -275,19 +276,22 @@ export default function UploadPhotos() {
           </Grid>
 
           {/* Skip Link */}
-          <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
+          <>
+            {/* <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2">
               If you don't have photos, then{' '}
               <Link
                 component={RouterLink}
                 //to="/widget/statistics"
                 to="/questionare"
+                replace={true}
                 sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
               >
                 Skip
               </Link>
             </Typography>
-          </Grid>
+          </Grid> */}
+          </>
         </Grid>
       </>
     </BackgroundWrapper>

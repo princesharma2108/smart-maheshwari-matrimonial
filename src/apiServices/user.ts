@@ -107,3 +107,14 @@ export const postUserStage = async <T>(data: any, config?: AxiosRequestConfig): 
     throw error;
   }
 };
+
+//Get OTP
+export const getOTP = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>('/request-otp', data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};

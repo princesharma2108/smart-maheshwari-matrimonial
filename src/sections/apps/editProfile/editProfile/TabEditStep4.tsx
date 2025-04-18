@@ -66,7 +66,11 @@ export default function TabEditStep4({
     const numericIncome = Number(maxIncome) * 100000; // Convert to INR
     setFamilyIncome(numericIncome.toString()); // Store as a string
   };
-
+  const handleTextChange = (setter: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const lettersOnly = value.replace(/[^a-zA-Z\s]/g, ''); // only letters and spaces
+    setter(lettersOnly);
+  };
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
   const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
   const validateStep = () => {
@@ -101,10 +105,11 @@ export default function TabEditStep4({
                     <InputLabel htmlFor="father-name">Father Name</InputLabel>
                     <TextField
                       fullWidth
+                      type="text"
                       id="father-name"
                       placeholder="Enter Father's Name"
                       value={fatherName}
-                      onChange={(e) => setFatherName(e.target.value)}
+                      onChange={handleTextChange(setFatherName)}
                       autoFocus
                       className="inputField"
                     />
@@ -115,10 +120,11 @@ export default function TabEditStep4({
                     <InputLabel htmlFor="mother-name">Mother Name</InputLabel>
                     <TextField
                       fullWidth
+                      type="text"
                       id="mother-name"
                       placeholder="Enter Mother's Name"
                       value={motherName}
-                      onChange={(e) => setMotherName(e.target.value)}
+                      onChange={handleTextChange(setMotherName)}
                       className="inputField"
                     />
                   </Stack>
@@ -131,9 +137,10 @@ export default function TabEditStep4({
                     <TextField
                       fullWidth
                       id="hometown"
+                      type="text"
                       placeholder="Enter Hometown"
                       value={hometown}
-                      onChange={(e) => setHometown(e.target.value)}
+                      onChange={handleTextChange(setHometown)}
                       className="inputField"
                       onBlur={validateStep}
                       error={!!errors.hometown}

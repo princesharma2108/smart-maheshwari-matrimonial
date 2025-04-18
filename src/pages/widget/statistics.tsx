@@ -11,6 +11,10 @@ import heightIcon from 'assets/images/latestMatches/heightIcon.svg';
 import incomeIconBlack from 'assets/images/latestMatches/incomeIconBlack.svg';
 import professionIcon from 'assets/images/latestMatches/professionIcon.svg';
 import notificationIcon from 'assets/images/latestMatches/notificationIcon.svg';
+import matchScoreGreen from 'assets/images/latestMatches/matchScoreGreen.svg';
+import matchScoreOrange from 'assets/images/latestMatches/matchScoreOrange.svg';
+import matchScorePurple from 'assets/images/latestMatches/matchScorePurple.svg';
+import gunnIcon from 'assets/images/latestMatches/gunnIcon.svg';
 import AnimateButton from 'components/@extended/AnimateButton';
 // assets
 import loginBG from 'assets/images/login/loginBG.jpeg';
@@ -19,8 +23,9 @@ import loginBG3 from 'assets/images/login/loginBG3.jpeg';
 import Button from '@mui/material/Button';
 import './latestMatches.scss';
 import { Box, Stack } from '@mui/material';
-import { getMatchResults } from 'apiServices/data';
+import { getMatchResults, getUserDetails } from 'apiServices/data';
 import latestMatchBG from 'assets/images/latestMatches/latestMatchBG.png';
+import searchMatches from 'assets/images/latestMatches/searchMatches.png';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { useEffect, useState } from 'react';
@@ -137,121 +142,203 @@ const matchProfiles = {
         compressed: '',
         original: 'https://smartmatrimony.s3.amazonaws.com/MP271737980499_1814267079.jpg'
       },
-      requestMatch: false,
+      isRequested: true,
       isManglik: false
     }
   ],
   message: 'Matchmaking data retrieved successfully',
   status: 'success'
 };
-const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) => (
-  <Grid container spacing={0} sx={{ height: '450px', marginBottom: 3, display: 'flex', alignItems: 'center' }}>
-    {/* Left Side: Profile Picture */}
-    <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '10px 0 0 10px' }}>
-      <img
-        src={profile?.profilePic?.original || latestMatchBG} // Fallback image if null
-        alt="Match"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px 0 0 10px' }}
-      />
-    </Grid>
+const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) => {
+  const getMatchScoreImage = () => {
+    if (profile.matchScore >= 85) return matchScoreGreen;
+    if (profile.matchScore >= 60 && profile.matchScore < 85) return matchScoreOrange;
+    return matchScorePurple;
+  };
+  const getMatchScoreImageWidth = () => {
+    if (profile.matchScore < 0 || profile.matchScore > 99) return '53px';
+    return '46px';
+  };
+  return (
+    <Grid container spacing={0} sx={{ height: '450px', marginBottom: 3, display: 'flex', alignItems: 'center' }}>
+      {/* Left Side: Profile Picture */}
+      <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '16px 0 0 16px', position: 'relative' }}>
+        <img
+          src={profile?.profilePic?.original || latestMatchBG} // Fallback image if null
+          alt="Match"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px 0 0 16px' }}
+        />
+        {/* Overlay Content */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            padding: '6px 12px',
+            backgroundColor: '#F00757', // Semi-transparent overlay
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: 500,
+            borderTopLeftRadius: '16px',
+            borderBottomRightRadius: '16px'
+          }}
+        >
+          {/* <img src={gunnIcon} /> */}
+          <Typography>{profile.gunScore}/36 Gunn Matched</Typography>
+        </Box>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 8,
+            right: 8
+          }}
+        >
+          {/* Stack-like Container */}
+          <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {/* Background SVG */}
+            <img src={getMatchScoreImage()} alt="Match Score" width={getMatchScoreImageWidth()} />
 
-    {/* Right Side: Profile Details */}
-    <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '0 10px 10px 0' }}>
-      <Paper
-        elevation={3}
-        sx={{
-          p: 3,
-          width: '100%',
-          backgroundColor: '#FAF7F2',
-          borderRadius: '0 10px 10px 0',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          height: '100%',
-          boxShadow: 'none'
-        }}
-      >
-        {/* Name & Manglik Status */}
-        <Grid container flexDirection="column" alignItems="left">
-          <Typography variant="h4" fontWeight="bold">
-            {profile?.name || 'Unknown'}
-          </Typography>
-          <Typography variant="h6" fontWeight="bold" color="#f00757">
-            {profile?.isManglik ? 'Manglik' : 'Non-Manglik'}
-          </Typography>
-        </Grid>
-
-        {/* Location, Age, Degree */}
-        <Grid container alignItems="center" gap="8px">
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={locationIconBlack} alt="Location" /> {profile?.location || 'Unknown'}
-          </Typography>
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={birthdayIconBlack} alt="Age" /> {profile?.age ? `${profile.age} years` : 'N/A'}
-          </Typography>
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={degreeIconBlack} alt="Degree" /> {profile?.degree || 'Not Specified'}
-          </Typography>
-        </Grid>
-
-        {/* Height, Employment, Income */}
-        <Grid container alignItems="center" gap="8px">
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={heightIcon} height={16} width={16} alt="Height" /> {profile?.height || 'N/A'}
-          </Typography>
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={professionIcon} alt="Profession" /> {profile?.employment || 'Unemployed'}
-          </Typography>
-          <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <img src={incomeIconBlack} alt="Income" /> {profile?.income || 'Not Disclosed'}
-          </Typography>
-        </Grid>
-        <Grid>
-          <Typography
-            variant="h6"
-            sx={{
-              display: '-webkit-box',
-              WebkitLineClamp: 5,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden'
-            }}
-          >
-            {
-              "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating "
-            }
-          </Typography>
-        </Grid>
-
-        {/* Match Request Button */}
-        <Box sx={{ flexGrow: 1 }} />
-        {profile?.requestMatch ? (
-          <Box sx={{ width: '100%' }}>
-            <AnimateButton>
-              <Button variant="contained" sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}>
-                Request Matchmaking
-              </Button>
-            </AnimateButton>
+            {/* Overlay Percentage & Match Text */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: profile.matchScore < 0 || profile.matchScore > 99 ? 8 : 6,
+                right: profile.matchScore < 0 ? 11 : 9,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Typography sx={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{profile.matchScore}%</Typography>
+              <Typography sx={{ fontSize: '7px', fontWeight: 500, color: '#fff' }}>Match</Typography>
+            </Box>
           </Box>
-        ) : null}
-      </Paper>
+        </Box>
+      </Grid>
+      <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '0 16px 16px 0' }}>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 3,
+            width: '100%',
+            backgroundColor: '#FAF7F2',
+            borderRadius: '0 16px 16px 0',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            height: '100%',
+            boxShadow: 'none'
+          }}
+        >
+          {/* Name & Manglik Status */}
+          <Grid container flexDirection="column" alignItems="left">
+            <Typography variant="h4" fontWeight="bold">
+              {profile?.name || 'Unknown'}
+            </Typography>
+            {profile?.isManglik && (
+              <Typography variant="h6" fontWeight="bold" color="#f00757">
+                Manglik
+              </Typography>
+            )}
+          </Grid>
+
+          {/* Location, Age, Degree */}
+          <Grid container alignItems="center" gap="8px">
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={locationIconBlack} alt="Location" /> {profile?.location || 'Unknown'}
+            </Typography>
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={birthdayIconBlack} alt="Age" /> {profile?.age ? `${profile.age} years` : 'N/A'}
+            </Typography>
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={degreeIconBlack} alt="Degree" /> {profile?.degree || 'Not Specified'}
+            </Typography>
+          </Grid>
+
+          {/* Height, Employment, Income */}
+          <Grid container alignItems="center" gap="8px">
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={heightIcon} height={16} width={16} alt="Height" /> {profile?.height || 'N/A'}
+            </Typography>
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={professionIcon} alt="Profession" /> {profile?.employment || 'Unemployed'}
+            </Typography>
+            <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <img src={incomeIconBlack} alt="Income" /> {profile?.income || 'Not Disclosed'}
+            </Typography>
+          </Grid>
+          <Grid>
+            <Typography
+              variant="h6"
+              sx={{
+                display: '-webkit-box',
+                WebkitLineClamp: 5,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}
+            >
+              {
+                "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating "
+              }
+            </Typography>
+          </Grid>
+
+          {/* Match Request Button */}
+          <Box sx={{ flexGrow: 1 }} />
+          {profile?.isRequested ? (
+            <Box sx={{ width: '100%' }}>
+              <AnimateButton>
+                <Button variant="contained" sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}>
+                  Request Matchmaking
+                </Button>
+              </AnimateButton>
+            </Box>
+          ) : null}
+        </Paper>
+      </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 export default function LatestMatches() {
   const theme = useTheme();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [userName, setUserName] = useState('');
   const searchResults = location.state?.searchResults;
   console.log('searchResults', searchResults);
   const userId = localStorage.getItem('userId');
   const [matchProfilesData, setMatchProfiles] = useState([]);
+  const getUserDetailsAPI = async () => {
+    //setIsLoading(true);
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseData;
+      setUserName(responseData.data.profile.firstName);
+      localStorage.setItem('userName', responseData.data.profile.firstName);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   const getMatchResultsAPI = async () => {
     setIsLoading(true);
     try {
       const response = await getMatchResults(userId); // Pass the required userId argument
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
       setMatchProfiles(responseData.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -270,6 +357,8 @@ export default function LatestMatches() {
   };
   useEffect(() => {
     getMatchResultsAPI();
+    getUserDetailsAPI();
+    postUserStageAPI();
   }, []);
   const postUserStageAPI = async () => {
     //navigate('/upload-photos');
@@ -305,9 +394,9 @@ export default function LatestMatches() {
       } as SnackbarProps);
     }
   };
-  useEffect(() => {
-    postUserStageAPI();
-  }, []);
+  const hasMatchProfiles = Array.isArray(matchProfilesData) && matchProfilesData.length > 0;
+  const hasSearchResults = Array.isArray(searchResults) && searchResults.length > 0;
+  const dataToRender = hasSearchResults ? searchResults : hasMatchProfiles ? matchProfilesData : [];
   return (
     <>
       {isLoading && ( // Show Loader When API is in Progress
@@ -385,12 +474,20 @@ export default function LatestMatches() {
         </Grid>
         {/* Display two profiles per row */}
         <Grid container spacing={3}>
-          {/* {(matchProfilesData || searchResults || []).map((profile: any, index: any) => ( */}
-          {matchProfiles.data.map((profile, index) => (
-            <Grid item xs={12} md={6} key={index}>
-              <MatchProfile profile={profile} />
+          {/* {matchProfiles.data.map((profile, index) => ( */}
+          {dataToRender.length > 0 ? (
+            dataToRender.map((profile: any, index: any) => (
+              <Grid item xs={12} md={6} key={index}>
+                <MatchProfile profile={profile} />
+              </Grid>
+            ))
+          ) : (
+            <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <img src={searchMatches} height={'200px'} width={'350px'} />
+              <Typography variant="h1">Looks like you have run out of matches</Typography>
+              <Typography variant="h1">Please check back later</Typography>
             </Grid>
-          ))}
+          )}
         </Grid>
       </>
     </>

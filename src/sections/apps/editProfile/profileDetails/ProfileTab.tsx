@@ -46,7 +46,7 @@ export default function ProfileTab() {
 
   const handleListItemClick = (index: number, route: string) => {
     setSelectedIndex(index);
-    navigate(route);
+    navigate(route, { replace: true });
   };
 
   useEffect(() => {
@@ -82,7 +82,10 @@ export default function ProfileTab() {
     >
       <ListItemButton
         selected={selectedIndex === 0}
-        onClick={() => handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit')}
+        onClick={() => {
+          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/personalDetailsEdit');
+          handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit');
+        }}
       >
         <ListItemIcon>
           <Profile size={18} />
@@ -92,7 +95,10 @@ export default function ProfileTab() {
 
       <ListItemButton
         selected={selectedIndex === 1}
-        onClick={() => handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit')}
+        onClick={() => {
+          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/preferencesEdit');
+          handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit');
+        }}
       >
         <ListItemIcon>
           <CardCoin size={18} />
@@ -100,7 +106,13 @@ export default function ProfileTab() {
         <ListItemText primary="Adjust Preference" />
       </ListItemButton>
 
-      <ListItemButton selected={selectedIndex === 2} onClick={() => handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos')}>
+      <ListItemButton
+        selected={selectedIndex === 2}
+        onClick={() => {
+          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/editPhotos');
+          handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos');
+        }}
+      >
         <ListItemIcon>
           <Lock size={18} />
         </ListItemIcon>

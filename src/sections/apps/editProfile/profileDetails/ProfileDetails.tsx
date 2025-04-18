@@ -22,7 +22,6 @@ import IconButton from 'components/@extended/IconButton';
 
 import { ThemeMode, facebookColor, linkedInColor } from 'config';
 import defaultImages from 'assets/images/users/default.png';
-
 // assets
 import { Apple, Camera, Facebook, Google } from 'iconsax-react';
 import { SnackbarProps } from 'types/snackbar';
@@ -45,8 +44,9 @@ interface Props {
 export default function ProfileDetails({ focusInput }: Props) {
   const theme = useTheme();
   const [selectedImage, setSelectedImage] = useState<File | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   const [avatar, setAvatar] = useState<string | undefined>(defaultImages);
-  const [userName, setUsername] = useState('');
+  const [userName, setUserName] = useState('');
   const [profileUrl, setProfileUrl] = useState('');
   const [photosUrl, setPhotosUrl] = useState([]);
   const [prefernceDetails, setPrefernceDetails] = useState({});
@@ -58,19 +58,13 @@ export default function ProfileDetails({ focusInput }: Props) {
   }, [selectedImage]);
 
   const getUserDetailsAPI = async () => {
+    setIsLoading(true);
     const userId = localStorage.getItem('userId');
     try {
       const response = await getUserDetails(userId); // Pass the required userId argument
       const responseData = response.data as ResponseData;
-      console.log('responseData', responseData);
-      setUsername(responseData.data.username);
-      setPhotosUrl(responseData.data.photos);
-      localStorage.setItem('photosUrl', JSON.stringify(responseData.data.photos));
+      setUserName(responseData.data.profile.firstName);
       setProfileUrl(responseData.data.profileUrl);
-      setProfileDetails(responseData.data.profile);
-      localStorage.setItem('profileDetails', JSON.stringify(responseData.data.profile));
-      setPrefernceDetails(responseData.data.preferences);
-      localStorage.setItem('preferenceDetails', JSON.stringify(responseData.data.preferences));
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -82,6 +76,8 @@ export default function ProfileDetails({ focusInput }: Props) {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {

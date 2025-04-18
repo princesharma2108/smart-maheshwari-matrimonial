@@ -18,9 +18,10 @@ import IconButton from 'components/@extended/IconButton';
 import useConfig from 'hooks/useConfig';
 import { MenuOrientation, ThemeMode, NavActionType } from 'config';
 import { handlerDrawerOpen, useGetMenuMaster } from 'api/menu';
-
+import { useNavigate } from 'react-router-dom';
 // types
 import { LinkTarget, NavItemType } from 'types/menu';
+import { useEffect, useState } from 'react';
 
 interface Props {
   item: NavItemType;
@@ -32,8 +33,10 @@ interface Props {
 
 export default function NavItem({ item, level, isParents = false }: Props) {
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [allowedRoute, setAllowedRoute] = useState(sessionStorage.getItem('allowedRoute') || '/');
   const downLG = useMediaQuery(theme.breakpoints.down('lg'));
-  console.log('ItemListMain', item);
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
   const { mode, menuOrientation } = useConfig();
@@ -61,6 +64,12 @@ export default function NavItem({ item, level, isParents = false }: Props) {
   ) : (
     false
   );
+  useEffect(() => {
+    const storedRoute = sessionStorage.getItem('allowedRoute');
+    if (storedRoute !== allowedRoute) {
+      setAllowedRoute(storedRoute || '/');
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -73,6 +82,11 @@ export default function NavItem({ item, level, isParents = false }: Props) {
                 target={itemTarget}
                 disabled={item.disabled}
                 selected={isSelected}
+                onClick={(event) => {
+                  if (item.url) {
+                    sessionStorage.setItem('allowedRoute', item.url); // Update storage immediately
+                  }
+                }}
                 sx={{
                   zIndex: 1201,
                   pl: drawerOpen ? `${level * 20}px` : 1.5,
@@ -209,6 +223,11 @@ export default function NavItem({ item, level, isParents = false }: Props) {
             <ListItemButton
               component={Link}
               to={item.url!}
+              onClick={(event) => {
+                if (item.url) {
+                  sessionStorage.setItem('allowedRoute', item.url); // Update storage immediately
+                }
+              }}
               target={itemTarget}
               disabled={item.disabled}
               selected={isSelected}

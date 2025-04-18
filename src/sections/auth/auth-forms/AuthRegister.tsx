@@ -67,8 +67,6 @@ export default function AuthRegister() {
 
     // Define listener to capture OTP and user JSON URL
     window.phoneEmailListener = async (userObj: { user_json_url: string; otp: string }) => {
-      console.log('userObj', userObj);
-
       try {
         const response = await fetch(userObj.user_json_url);
         const userData = await response.json();
@@ -87,7 +85,6 @@ export default function AuthRegister() {
       window.phoneEmailListener = null; // Cleanup
     };
   }, []);
-  console.log('phoneNumber', phoneNumber);
   useEffect(() => {
     if (phoneNumber) {
       registerUserAPI(phoneNumber);
@@ -95,7 +92,6 @@ export default function AuthRegister() {
   }, [phoneNumber]);
 
   const registerUserAPI = async (phoneNumber: string) => {
-    console.log('inRegisterUserAPI');
     const registerData = {
       phoneNumber: phoneNumber,
       emailAddress: null,
@@ -104,7 +100,6 @@ export default function AuthRegister() {
     };
     try {
       const response = await registerUser(registerData);
-      console.log('response', response);
       const responseData = response.data as ResponseData;
       // setTimeout(() => {
       //   window.location.reload();
@@ -117,7 +112,7 @@ export default function AuthRegister() {
           color: 'success'
         }
       } as SnackbarProps);
-      // window.location.href = '/';
+      // window.location.href = '/login';
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

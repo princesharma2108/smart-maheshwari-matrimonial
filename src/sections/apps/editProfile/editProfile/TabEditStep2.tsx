@@ -117,6 +117,7 @@ export default function TabEditStep2({
                 </InputLabel>
                 <TextField
                   fullWidth
+                  type="number"
                   id="weight"
                   value={weight}
                   onChange={handleWeightChange}
@@ -146,6 +147,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Height
                   </MenuItem>
+                  {!heightOptions.includes(height) && height && <MenuItem value={height}>{height}</MenuItem>}
                   {heightOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

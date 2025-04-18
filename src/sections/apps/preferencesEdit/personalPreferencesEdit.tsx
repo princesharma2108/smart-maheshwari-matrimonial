@@ -110,7 +110,7 @@ export default function PersonalPreferencesEdit({
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <MainCard title="Personal Preferences">
+        <MainCard title="Help us understand what you're looking for in a partner so we can show you the best matches.">
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Stack spacing={1}>
@@ -215,11 +215,13 @@ export default function PersonalPreferencesEdit({
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
-                    {getOptions(options).map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
+                    {getOptions(options)
+                      .sort()
+                      .map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </Stack>
               </Grid>

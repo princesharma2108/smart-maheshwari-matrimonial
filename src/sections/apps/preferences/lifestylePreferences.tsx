@@ -78,7 +78,7 @@ export default function LifestylePreferences({
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
-        <MainCard title="Lifestyle Preferences">
+        <MainCard title="Help us understand what you're looking for in a partner so we can show you the best matches.">
           <Grid container spacing={3}>
             {[
               {
@@ -137,11 +137,13 @@ export default function LifestylePreferences({
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
-                    {getOptions(options).map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
+                    {getOptions(options)
+                      .sort()
+                      .map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </Stack>
               </Grid>

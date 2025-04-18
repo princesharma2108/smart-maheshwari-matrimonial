@@ -12,11 +12,12 @@ import { Paper } from '@mui/material';
 
 interface Props {
   children: ReactElement;
+  padding?: string | number;
 }
 
 // ==============================|| AUTHENTICATION - WRAPPER ||============================== //
 
-export default function BackgroundWrapper({ children }: Props) {
+export default function BackgroundWrapper({ children, padding = 3 }: Props) {
   return (
     <Box
       sx={{
@@ -36,7 +37,7 @@ export default function BackgroundWrapper({ children }: Props) {
       <Paper
         elevation={3}
         sx={{
-          p: 3,
+          p: padding ? padding : 3,
           width: '100%',
           maxWidth: 800,
           mx: 'auto',

@@ -12,7 +12,7 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { LocalizationProvider, TimePicker, DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, TimePicker, DatePicker, renderTimeViewClock } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -79,6 +79,7 @@ export default function TabStep1({
   const [homeAddress, setSelectedHomeAddress] = useState('');
   const [city, setSelectedCity] = useState('');
   const [state, setSelectedState] = useState('');
+  const [country, setSelectedCountry] = useState('');
   const [zipCode, setSelectedZipCode] = useState('');
   const [errors, setErrors] = useState({
     fullName: '',
@@ -109,12 +110,10 @@ export default function TabStep1({
     // handleStepValidation(1, isValid);
     return isValid;
   };
-
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [fullName, timeOfBirth, dateOfBirth, placeOfBirth]);
   const handleHomeAddressChange = (homeAddress: any) => {
-    console.log('homeAddressBirth1', homeAddress);
     setPlaceOfBirth(homeAddress);
   };
   const handleCityAddressChange = (city: any) => {
@@ -123,12 +122,12 @@ export default function TabStep1({
   const handleStateAddressChange = (state: any) => {
     setSelectedState(state);
   };
+  const handleCountryAddressChange = (country: any) => {
+    setSelectedCountry(country);
+  };
   const handleZipAddressChange = (zip: any) => {
     setSelectedZipCode(zip);
   };
-  // useEffect(() => {
-  //   handleStepValidation(stepIndex, isValid); // Mark step as valid if all fields are filled
-  // }, [isValid]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} sm={12}>
@@ -148,16 +147,8 @@ export default function TabStep1({
                   value={fullName}
                   onChange={(e) => {
                     let value = e.target.value;
-
                     // Allow only letters and spaces
                     value = value.replace(/[^A-Za-z ]/g, '');
-
-                    // Trim spaces at the start and end
-                    value = value.trim();
-
-                    // Replace multiple spaces with a single space
-                    value = value.replace(/\s+/g, ' ');
-
                     setFullName(value);
                   }}
                   onBlur={() => {
@@ -187,6 +178,11 @@ export default function TabStep1({
                   <TimePicker
                     value={timeOfBirth}
                     onChange={(newValue) => setTimeOfBirth(newValue)}
+                    viewRenderers={{
+                      hours: renderTimeViewClock,
+                      minutes: renderTimeViewClock,
+                      seconds: renderTimeViewClock
+                    }}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -208,8 +204,10 @@ export default function TabStep1({
                 </InputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    value={dateOfBirth}
+                    value={dateOfBirth ? dayjs(dateOfBirth) : null}
                     onChange={(newValue) => setDateOfBirth(newValue)}
+                    format="DD-MM-YYYY"
+                    maxDate={dayjs().subtract(18, 'year')}
                     slotProps={{
                       textField: {
                         fullWidth: true,
@@ -266,6 +264,7 @@ export default function TabStep1({
                   handleAddressChange={handleHomeAddressChange}
                   handleCityChange={handleCityAddressChange}
                   handleStateChange={handleStateAddressChange}
+                  handleCountryChange={handleCountryAddressChange}
                   handleZipChange={handleZipAddressChange}
                   handleLatitudeChange={function (latitude: number): void {
                     throw new Error('Function not implemented.');

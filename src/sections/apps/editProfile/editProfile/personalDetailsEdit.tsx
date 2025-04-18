@@ -2,13 +2,6 @@ import { useEffect, useState, SyntheticEvent } from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 // material-ui
 import { Tabs, Tab, Box, Typography, Paper, Grid, Stack, Button } from '@mui/material';
-// project-imports
-import MainCard from 'components/MainCard';
-import Breadcrumbs from 'components/@extended/Breadcrumbs';
-import { APP_DEFAULT_PATH } from 'config';
-
-// assets
-import { DocumentText, Lock, Profile, Profile2User, Setting3, TableDocument } from 'iconsax-react';
 import 'assets/styles/styles.scss';
 import TabEditStep1 from './TabEditStep1';
 import TabEditStep2 from './TabEditStep2';
@@ -20,8 +13,9 @@ import TabEditStep7 from './TabEditStep7';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { editProfileDetails, profileDetails } from 'apiServices/user';
-import { getGeneralData } from 'apiServices/data';
+import { getGeneralData, getUserDetails } from 'apiServices/data';
 import dayjs, { Dayjs } from 'dayjs';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
 interface TabPanelProps {
@@ -32,10 +26,15 @@ interface TabPanelProps {
 interface ErrorData {
   response: any;
 }
-interface ResponseData {
+interface ResponseEditData {
   status: string;
   message: string;
   response: any;
+}
+interface ResponseUserData {
+  status: string;
+  message: string;
+  data: any;
 }
 interface ResponseGeneralData {
   status: string;
@@ -51,6 +50,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 };
 export default function PersonalDetailsEdit() {
   const { pathname } = useLocation();
+  const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   const [tabIndex, setTabIndex] = useState(0);
   //Tab 1
   const [fullName, setFullName] = useState('');
@@ -135,6 +136,7 @@ export default function PersonalDetailsEdit() {
     }
   };
   const handleSaveProfileDetailsAPI = async () => {
+    setIsLoading(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
     const matrimonialData = {
       matrimonialId: matrimonialId,
@@ -191,7 +193,7 @@ export default function PersonalDetailsEdit() {
     };
     try {
       const response = await editProfileDetails(profileDetailsData);
-      const responseData = response.data as ResponseData;
+      const responseData = response.data as ResponseEditData;
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1000);
@@ -214,6 +216,8 @@ export default function PersonalDetailsEdit() {
           color: 'error'
         }
       } as SnackbarProps);
+    } finally {
+      setIsLoading(false); // Stop Loader
     }
   };
   const handleNext = () => {
@@ -235,7 +239,6 @@ export default function PersonalDetailsEdit() {
     try {
       const response = await getGeneralData();
       const responseData = response.data as ResponseGeneralData;
-      console.log('responseData', responseData.generalData);
       setSubCasteData(responseData.generalData.subCaste);
       setGotraData(responseData.generalData.gotra);
       setProfessionData(responseData.generalData.profession);
@@ -269,214 +272,278 @@ export default function PersonalDetailsEdit() {
       } as SnackbarProps);
     }
   };
+  const getUserDetailsAPI = async () => {
+    setIsLoadingGetDetails(true);
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseUserData;
+      const profileDetailsData = responseData.data.profile;
+      setFullName(profileDetailsData.firstName || '');
+      setTimeOfBirth(profileDetailsData.birthTime || '');
+      //setDateOfBirth(profileDetailsData.dateOfBirth || '');
+      setDateOfBirth(dayjs(profileDetailsData.dateOfBirth, 'DD-MM-YYYY'));
+      setPlaceOfBirth(profileDetailsData.birthPlace || '');
+      setGender(profileDetailsData.gender || '');
+      setDisability(profileDetailsData.disability || '');
+      setHeight(profileDetailsData.heightCm || '');
+      setWeight(profileDetailsData.weightKg || '');
+      setBloodGroup(profileDetailsData.bloodGroup || '');
+      setComplexion(profileDetailsData.complexion || '');
+      setMaritalStatus(profileDetailsData.maritalStatus || '');
+      setFatherName(profileDetailsData.fatherName || '');
+      setMotherName(profileDetailsData.motherName || '');
+      setHometown(profileDetailsData.nativePlace || '');
+      setSiblings(profileDetailsData.siblingCount || '');
+      setFamilyIncome(profileDetailsData.familyIncomeInr || '');
+      setFamilyType(profileDetailsData.familyType || '');
+      setHighestQualification(profileDetailsData.qualification || '');
+      setAdditionalQualification(profileDetailsData.additionalQualification || '');
+      setOccupation(profileDetailsData.occupation || '');
+      setCompanyName(profileDetailsData.occupationCompany || '');
+      setState(profileDetailsData.occupationLocation || '');
+      setMinAnnualIncome(profileDetailsData.minAnnualIncome || '');
+      setMaxAnnualIncome(profileDetailsData.maxAnnualIncome || '');
+      setGotra(profileDetailsData.gotra || '');
+      setHobbies(profileDetailsData.hobbies || []);
+      setResidentialAddress(profileDetailsData.address || '');
+      setPhoneNumber(profileDetailsData.phone || '');
+      setEmailAddress(profileDetailsData.email || '');
+      setAlternateContact(profileDetailsData.alternatePhone || '');
+      setLanguagesKnown(profileDetailsData.languagesKnown || []);
+      setCity(profileDetailsData.city || '');
+      setState(profileDetailsData.state || '');
+      setCountry(profileDetailsData.country || '');
+      setGunnMatchingImportant(profileDetailsData.isGunnMatchingImportant || false);
+      setIncludeUnknownManglik(profileDetailsData.isManglik || false);
+      setManglik(profileDetailsData.manglik || '');
+      setDietaryHabits(profileDetailsData.dietary || '');
+      setDrinking(profileDetailsData.drinking || '');
+      setSmoking(profileDetailsData.smoking || '');
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    } finally {
+      setIsLoadingGetDetails(false); // Stop Loader
+    }
+  };
   useEffect(() => {
     getGeneralDataAPI();
-  }, []);
-  useEffect(() => {
-    const storedData = localStorage.getItem('profileDetails');
-    if (storedData) {
-      const profileDetailsData = JSON.parse(storedData);
-      console.log('matrimonialDataJSON1', profileDetailsData);
-      if (profileDetailsData) {
-        setFullName(profileDetailsData.firstName || '');
-        setTimeOfBirth(profileDetailsData.birthTime || '');
-        console.log('matrimonialDataJSON2', profileDetailsData.dateOfBirth);
-        setDateOfBirth(profileDetailsData.dateOfBirth || '');
-        setPlaceOfBirth(profileDetailsData.birthPlace || '');
-        setGender(profileDetailsData.gender || '');
-        setDisability(profileDetailsData.disability || '');
-        setHeight(profileDetailsData.heightCm || '');
-        setWeight(profileDetailsData.weightKg || '');
-        setBloodGroup(profileDetailsData.bloodGroup || '');
-        setComplexion(profileDetailsData.complexion || '');
-        setMaritalStatus(profileDetailsData.maritalStatus || '');
-        setFatherName(profileDetailsData.fatherName || '');
-        setMotherName(profileDetailsData.motherName || '');
-        setHometown(profileDetailsData.nativePlace || '');
-        setSiblings(profileDetailsData.siblingCount || '');
-        setFamilyIncome(profileDetailsData.familyIncomeInr || '');
-        setFamilyType(profileDetailsData.familyType || '');
-        setHighestQualification(profileDetailsData.qualification || '');
-        setAdditionalQualification(profileDetailsData.additionalQualification || '');
-        setOccupation(profileDetailsData.occupation || '');
-        setCompanyName(profileDetailsData.occupationCompany || '');
-        setState(profileDetailsData.occupationLocation || '');
-        setMinAnnualIncome(profileDetailsData.minAnnualIncome || '');
-        setMaxAnnualIncome(profileDetailsData.maxAnnualIncome || '');
-        setGotra(profileDetailsData.gotra || '');
-        setHobbies(profileDetailsData.hobbies || []);
-        setResidentialAddress(profileDetailsData.address || '');
-        setPhoneNumber(profileDetailsData.phone || '');
-        setEmailAddress(profileDetailsData.email || '');
-        setAlternateContact(profileDetailsData.alternatePhone || '');
-        setLanguagesKnown(profileDetailsData.languagesKnown || []);
-        setCity(profileDetailsData.city || '');
-        setState(profileDetailsData.state || '');
-        setCountry(profileDetailsData.country || '');
-        setGunnMatchingImportant(profileDetailsData.isGunnMatchingImportant || false);
-        setIncludeUnknownManglik(profileDetailsData.isManglik || false);
-        setManglik(profileDetailsData.manglik || '');
-        setDietaryHabits(profileDetailsData.dietary || '');
-        setDrinking(profileDetailsData.drinking || '');
-        setSmoking(profileDetailsData.smoking || '');
-      }
-    }
+    getUserDetailsAPI();
   }, []);
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Personal Details
-      </Typography>
-      <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-        {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
-          <Tab key={index} label={label} className="tabStyle" disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)} />
-        ))}
-      </Tabs>
-      <TabPanel value={tabIndex} index={0}>
-        <TabEditStep1
-          fullName={fullName}
-          setFullName={setFullName}
-          timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
-          setTimeOfBirth={(value: Dayjs | null) => setTimeOfBirth(value)}
-          dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
-          setDateOfBirth={(value) => setDateOfBirth(value ? dayjs(value.format('DD-MM-YYYY')) : null)}
-          placeOfBirth={placeOfBirth}
-          setPlaceOfBirth={setPlaceOfBirth}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={1}>
-        <TabEditStep2
-          weight={weight}
-          setWeight={setWeight}
-          height={height}
-          setHeight={setHeight}
-          gender={gender}
-          setGender={setGender}
-          hobbies={hobbies}
-          setHobbies={setHobbies}
-          disability={disability}
-          setDisability={setDisability}
-          bloodGroup={bloodGroup}
-          setBloodGroup={setBloodGroup}
-          complexion={complexion}
-          setComplexion={setComplexion}
-          maritalStatus={maritalStatus}
-          setMaritalStatus={setMaritalStatus}
-          heightOptions={heightData || []}
-          hobbiesOptions={hobbiesData || []}
-          disabilities={disabilitiesData || []}
-          bloodGroupOptions={bloodGroupsData || []}
-          complexionOptions={complexionData || []}
-          maritalOptions={maritalOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={2}>
-        <TabEditStep3
-          drinking={drinking}
-          setDrinking={setDrinking}
-          smoking={smoking}
-          setSmoking={setSmoking}
-          dietaryHabits={dietaryHabits}
-          setDietaryHabits={setDietaryHabits}
-          drinkingOptions={drinkingOptionsData || []}
-          smokingOptions={smokingOptionsData || []}
-          dietaryOptions={dietaryOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={3}>
-        <TabEditStep4
-          fatherName={fatherName}
-          setFatherName={setFatherName}
-          motherName={motherName}
-          setMotherName={setMotherName}
-          hometown={hometown}
-          setHometown={setHometown}
-          siblings={siblings}
-          setSiblings={setSiblings}
-          familyIncome={familyIncome}
-          setFamilyIncome={setFamilyIncome}
-          familyType={familyType}
-          setFamilyType={setFamilyType}
-          familyTypeOptions={familyTypeData || []}
-          siblingOptions={siblingOptionsData || []}
-          incomeOptions={incomeOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={4}>
-        <TabEditStep5
-          highestQualification={highestQualification}
-          setHighestQualification={setHighestQualification}
-          additionalQualification={additionalQualification}
-          setAdditionalQualification={setAdditionalQualification}
-          occupation={occupation}
-          setOccupation={setOccupation}
-          companyName={companyName}
-          setCompanyName={setCompanyName}
-          workingWith={workingWith}
-          setWorkingWith={setWorkingWith}
-          minAnnualIncome={minAnnualIncome}
-          setMinAnnualIncome={setMinAnnualIncome}
-          maxAnnualIncome={maxAnnualIncome}
-          setMaxAnnualIncome={setMaxAnnualIncome}
-          languagesKnown={languagesKnown}
-          setLanguagesKnown={setLanguagesKnown}
-          qualificationOptions={qualificationData || []}
-          occupationOptions={occupationData || []}
-          workingWithOptions={workingWithOptionsData || []}
-          incomeOptions={incomeOptionsData || []}
-          languageOptions={languageData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={5}>
-        <TabEditStep6
-          gotra={gotra}
-          setGotra={setGotra}
-          manglik={manglik}
-          setManglik={setManglik}
-          gunnMatchingImportant={gunnMatchingImportant}
-          setGunnMatchingImportant={setGunnMatchingImportant}
-          includeUnknownManglik={includeUnknownManglik}
-          setIncludeUnknownManglik={setIncludeUnknownManglik}
-          gotraOptions={gotraData || []}
-          manglikOptions={manglikOptionsData || []}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      <TabPanel value={tabIndex} index={6}>
-        <TabEditStep7
-          residentialAddress={residentialAddress}
-          setResidentialAddress={setResidentialAddress}
-          phoneNumber={phoneNumber}
-          setPhoneNumber={setPhoneNumber}
-          emailAddress={emailAddress}
-          setEmailAddress={setEmailAddress}
-          alternateContact={alternateContact}
-          setAlternateContact={setAlternateContact}
-          country={country}
-          setCountry={setCountry}
-          state={state}
-          setState={setState}
-          city={city}
-          setCity={setCity}
-          setIsStepValid={setIsStepValid}
-        />
-      </TabPanel>
-      {/* Buttons */}
-      <Grid item xs={12}>
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-          <Button variant="outlined" color="secondary" onClick={handlePrevious}>
-            Previous
-          </Button>
-          <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
-            Continue
-          </Button>
-        </Stack>
-      </Grid>
+      {(isLoadingGetDetails || isLoading) && ( // Show Loader When API is in Progress
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'left',
+            gap: '4px',
+            height: '100vh',
+            position: 'absolute',
+            width: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999
+          }}
+        >
+          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
+          <BallTriangle
+            height={100}
+            width={100}
+            radius={5}
+            color="#f00757"
+            ariaLabel="ball-triangle-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
+            <Typography variant="h3" color={'#f00757'}>
+              {isLoading ? 'Updating Profile Details' : ' Fetching User Details'}
+            </Typography>
+            <ThreeDots
+              visible={true}
+              height="20"
+              width="20"
+              color="#f00757"
+              radius="9"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{ marginBottom: '5px' }}
+              wrapperClass=""
+            />
+          </Stack>
+        </Box>
+      )}
+      <>
+        <Typography variant="h5" gutterBottom>
+          Personal Details
+        </Typography>
+        <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
+          {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
+            <Tab
+              key={index}
+              label={label}
+              className="tabStyle"
+              disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+            />
+          ))}
+        </Tabs>
+        <TabPanel value={tabIndex} index={0}>
+          <TabEditStep1
+            fullName={fullName}
+            setFullName={setFullName}
+            timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
+            setTimeOfBirth={(value: Dayjs | null) => setTimeOfBirth(value)}
+            dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
+            setDateOfBirth={(value) => setDateOfBirth(value ? dayjs(value.format('DD-MM-YYYY')) : null)}
+            placeOfBirth={placeOfBirth}
+            setPlaceOfBirth={setPlaceOfBirth}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={1}>
+          <TabEditStep2
+            weight={weight}
+            setWeight={setWeight}
+            height={height}
+            setHeight={setHeight}
+            gender={gender}
+            setGender={setGender}
+            hobbies={hobbies}
+            setHobbies={setHobbies}
+            disability={disability}
+            setDisability={setDisability}
+            bloodGroup={bloodGroup}
+            setBloodGroup={setBloodGroup}
+            complexion={complexion}
+            setComplexion={setComplexion}
+            maritalStatus={maritalStatus}
+            setMaritalStatus={setMaritalStatus}
+            heightOptions={heightData || []}
+            hobbiesOptions={hobbiesData || []}
+            disabilities={disabilitiesData || []}
+            bloodGroupOptions={bloodGroupsData || []}
+            complexionOptions={complexionData || []}
+            maritalOptions={maritalOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={2}>
+          <TabEditStep3
+            drinking={drinking}
+            setDrinking={setDrinking}
+            smoking={smoking}
+            setSmoking={setSmoking}
+            dietaryHabits={dietaryHabits}
+            setDietaryHabits={setDietaryHabits}
+            drinkingOptions={drinkingOptionsData || []}
+            smokingOptions={smokingOptionsData || []}
+            dietaryOptions={dietaryOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={3}>
+          <TabEditStep4
+            fatherName={fatherName}
+            setFatherName={setFatherName}
+            motherName={motherName}
+            setMotherName={setMotherName}
+            hometown={hometown}
+            setHometown={setHometown}
+            siblings={siblings}
+            setSiblings={setSiblings}
+            familyIncome={familyIncome}
+            setFamilyIncome={setFamilyIncome}
+            familyType={familyType}
+            setFamilyType={setFamilyType}
+            familyTypeOptions={familyTypeData || []}
+            siblingOptions={siblingOptionsData || []}
+            incomeOptions={incomeOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={4}>
+          <TabEditStep5
+            highestQualification={highestQualification}
+            setHighestQualification={setHighestQualification}
+            additionalQualification={additionalQualification}
+            setAdditionalQualification={setAdditionalQualification}
+            occupation={occupation}
+            setOccupation={setOccupation}
+            companyName={companyName}
+            setCompanyName={setCompanyName}
+            workingWith={workingWith}
+            setWorkingWith={setWorkingWith}
+            minAnnualIncome={minAnnualIncome}
+            setMinAnnualIncome={setMinAnnualIncome}
+            maxAnnualIncome={maxAnnualIncome}
+            setMaxAnnualIncome={setMaxAnnualIncome}
+            languagesKnown={languagesKnown}
+            setLanguagesKnown={setLanguagesKnown}
+            qualificationOptions={qualificationData || []}
+            occupationOptions={occupationData || []}
+            workingWithOptions={workingWithOptionsData || []}
+            incomeOptions={incomeOptionsData || []}
+            languageOptions={languageData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={5}>
+          <TabEditStep6
+            gotra={gotra}
+            setGotra={setGotra}
+            manglik={manglik}
+            setManglik={setManglik}
+            gunnMatchingImportant={gunnMatchingImportant}
+            setGunnMatchingImportant={setGunnMatchingImportant}
+            includeUnknownManglik={includeUnknownManglik}
+            setIncludeUnknownManglik={setIncludeUnknownManglik}
+            gotraOptions={gotraData || []}
+            manglikOptions={manglikOptionsData || []}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        <TabPanel value={tabIndex} index={6}>
+          <TabEditStep7
+            residentialAddress={residentialAddress}
+            setResidentialAddress={setResidentialAddress}
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+            emailAddress={emailAddress}
+            setEmailAddress={setEmailAddress}
+            alternateContact={alternateContact}
+            setAlternateContact={setAlternateContact}
+            country={country}
+            setCountry={setCountry}
+            state={state}
+            setState={setState}
+            city={city}
+            setCity={setCity}
+            setIsStepValid={setIsStepValid}
+          />
+        </TabPanel>
+        {/* Buttons */}
+        <Grid item xs={12}>
+          <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+            <Button variant="outlined" color="secondary" onClick={handlePrevious}>
+              Previous
+            </Button>
+            <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+              Continue
+            </Button>
+          </Stack>
+        </Grid>
+      </>
     </>
   );
 }

@@ -193,7 +193,8 @@ const PersonalDetails: React.FC = () => {
       preference: null,
       matrimonial: matrimonialData
     };
-    navigate('/preferences');
+    sessionStorage.setItem('allowedRoute', '/preferences');
+    navigate('/preferences', { replace: true });
   };
   const handleNext = () => {
     // navigate('/preferences');
@@ -215,7 +216,6 @@ const PersonalDetails: React.FC = () => {
     try {
       const response = await getGeneralData();
       const responseData = response.data as ResponseGeneralData;
-      console.log('responseData', responseData.generalData);
       setSubCasteData(responseData.generalData.subCaste);
       setGotraData(responseData.generalData.gotra);
       setProfessionData(responseData.generalData.profession);
@@ -264,11 +264,10 @@ const PersonalDetails: React.FC = () => {
     try {
       const response = await extractPDFData(formdata);
       const responseData = response.data as ResponsePDFData;
-      console.log('responseData', responseData.data);
       const pdfData = responseData.data;
       setFullName(pdfData.name || '');
       setTimeOfBirth(pdfData.timeOfBirth || '');
-      setDateOfBirth(pdfData.dateOfBirth || '');
+      setDateOfBirth(pdfData.dateOfBirth ? dayjs(pdfData.dateOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD') : null);
       setPlaceOfBirth(pdfData.placeOfBirth || '');
       setGender(pdfData.gender || '');
       setDisability(pdfData.disability || '');
@@ -363,7 +362,6 @@ const PersonalDetails: React.FC = () => {
     const storedData = localStorage.getItem('matrimonialDetails');
     if (storedData) {
       const matrimonialData = JSON.parse(storedData);
-      console.log('matrimonialDataJSON1', matrimonialData);
       if (matrimonialData) {
         setFullName(matrimonialData.firstName || '');
         setTimeOfBirth(matrimonialData.birthTime || '');
@@ -406,7 +404,6 @@ const PersonalDetails: React.FC = () => {
       }
     }
   }, []);
-
   return (
     <BackgroundWrapper>
       <>
@@ -454,6 +451,20 @@ const PersonalDetails: React.FC = () => {
           </Box>
         )}
         <>
+          {/* Back Button */}
+          <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                sessionStorage.setItem('allowedRoute', '/upload-biodata');
+                navigate('/upload-biodata', { replace: true });
+              }}
+              className="buttonStyleOutlined"
+            >
+              &lt; Back
+            </Button>
+          </Grid>
           <Typography variant="h5" gutterBottom>
             Personal Details
           </Typography>
@@ -602,7 +613,6 @@ const PersonalDetails: React.FC = () => {
               setIsStepValid={setIsStepValid}
             />
           </TabPanel>
-
           {/* Buttons */}
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>

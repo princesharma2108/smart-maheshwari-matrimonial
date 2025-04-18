@@ -17,6 +17,7 @@ import { DRAWER_WIDTH, MINI_DRAWER_WIDTH, MenuOrientation, ThemeMode } from 'con
 
 // assets
 import { HambergerMenu } from 'iconsax-react';
+import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 // ==============================|| MAIN LAYOUT - HEADER ||============================== //
 
@@ -40,17 +41,20 @@ export default function Header() {
   const mainHeader: ReactNode = (
     <Toolbar sx={{ px: { xs: 2, sm: 4.5, lg: 8 } }}>
       {!isHorizontal ? (
-        <IconButton
-          aria-label="open drawer"
-          onClick={() => handlerDrawerOpen(!drawerOpen)}
-          edge="start"
-          color="secondary"
-          variant="light"
-          size="large"
-          sx={{ color: 'secondary.main', bgcolor: drawerOpen ? iconBackColorOpen : iconBackColor, ml: { xs: 0, lg: -2 }, p: 1 }}
-        >
-          <HambergerMenu />
-        </IconButton>
+        <>
+          <IconButton
+            aria-label="open drawer"
+            onClick={() => handlerDrawerOpen(!drawerOpen)}
+            edge="start"
+            color="secondary"
+            variant="light"
+            size="large"
+            sx={{ color: 'secondary.main', bgcolor: drawerOpen ? iconBackColorOpen : iconBackColor, ml: { xs: 0, lg: -2 }, p: 1 }}
+          >
+            <HambergerMenu />
+          </IconButton>
+          {/* <Breadcrumbs /> */}
+        </>
       ) : null}
       {headerContent}
     </Toolbar>

@@ -15,7 +15,9 @@ import Preferences from 'pages/apps/preferences/preferences';
 import AdditionalInformation from 'pages/apps/additionalInformation/additionalInformation';
 import UploadPhotos from 'pages/apps/uploadPhotos/uploadPhotos';
 import Questionare from 'pages/apps/questionare/questionnaire';
-
+import RouteGuard from './RouteGaurd';
+import SplashScreen from 'pages/apps/splashScreen/splashScreen';
+import ComingSoon from 'pages/maintenance/coming-soon/coming-soon2';
 // ==============================|| ROUTES RENDER ||============================== //
 
 const router = createBrowserRouter(
@@ -32,6 +34,26 @@ const router = createBrowserRouter(
     // },
     {
       path: '/',
+      element: <SplashScreen />,
+      children: [
+        {
+          index: true,
+          element: <SplashScreen />
+        }
+      ]
+    },
+    // {
+    //   path: '/maintenance/coming-soon2',
+    //   element: <ComingSoon />,
+    //   children: [
+    //     {
+    //       index: true,
+    //       element: <ComingSoon />
+    //     }
+    //   ]
+    // },
+    {
+      path: '/login',
       element: <Login />,
       children: [
         {
@@ -62,61 +84,109 @@ const router = createBrowserRouter(
     },
     {
       path: '/upload-biodata',
-      element: <UploadBiodata />,
+      element: (
+        <RouteGuard>
+          <UploadBiodata />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <UploadBiodata />
+          element: (
+            <RouteGuard>
+              <UploadBiodata />
+            </RouteGuard>
+          )
         }
       ]
     },
     {
       path: '/personal-details',
-      element: <PersonalDetails />,
+      element: (
+        <RouteGuard>
+          <PersonalDetails />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <PersonalDetails />
+          element: (
+            <RouteGuard>
+              <PersonalDetails />
+            </RouteGuard>
+          )
         }
       ]
     },
     {
       path: '/preferences',
-      element: <Preferences />,
+      element: (
+        <RouteGuard>
+          <Preferences />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <Preferences />
+          element: (
+            <RouteGuard>
+              <Preferences />
+            </RouteGuard>
+          )
         }
       ]
     },
     {
       path: '/additional-information',
-      element: <AdditionalInformation />,
+      element: (
+        <RouteGuard>
+          <AdditionalInformation />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <AdditionalInformation />
+          element: (
+            <RouteGuard>
+              <AdditionalInformation />
+            </RouteGuard>
+          )
         }
       ]
     },
     {
       path: '/upload-photos',
-      element: <UploadPhotos />,
+      element: (
+        <RouteGuard>
+          <UploadPhotos />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <UploadPhotos />
+          element: (
+            <RouteGuard>
+              <UploadPhotos />
+            </RouteGuard>
+          )
         }
       ]
     },
     {
       path: '/questionare',
-      element: <Questionare />,
+      element: (
+        <RouteGuard>
+          <Questionare />
+        </RouteGuard>
+      ),
       children: [
         {
           index: true,
-          element: <Questionare />
+          element: (
+            <RouteGuard>
+              <Questionare />
+            </RouteGuard>
+          )
         }
       ]
     },

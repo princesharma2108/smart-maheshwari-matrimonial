@@ -165,7 +165,6 @@ export default function NavGroup({
   ) : null;
 
   const navCollapse = item.children?.map((menuItem, index) => {
-    console.log('ItemList3', menuItem);
     switch (menuItem.type) {
       case 'collapse':
         return (

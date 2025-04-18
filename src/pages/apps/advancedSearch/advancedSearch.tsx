@@ -151,7 +151,6 @@ export default function AdvancedSearch() {
     try {
       const response = await getAdvancedSearchData();
       const responseData = response.data as ResponseSearchData;
-      console.log('responseData', responseData.data);
       setHeightData(responseData.data.heightOptions);
       setLocationData(responseData.data.locationOptions);
       setMaritalOptionsData(responseData.data.maritalOptions);
@@ -188,7 +187,6 @@ export default function AdvancedSearch() {
     try {
       const response = await postAdvancedSearchData(searchData);
       const responseData = response.data as ResponseSearchData;
-      console.log('responseData', responseData.data);
       setSearchResults(responseData.data);
       openSnackbar({
         open: true,
@@ -198,7 +196,8 @@ export default function AdvancedSearch() {
           color: 'success'
         }
       } as SnackbarProps);
-      navigate('/widget/statistics', { state: { searchResults: responseData.data } });
+      sessionStorage.setItem('allowedRoute', '/widget/statistics');
+      navigate('/widget/statistics', { state: { searchResults: responseData.data }, replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -217,6 +216,17 @@ export default function AdvancedSearch() {
   useEffect(() => {
     advancedSearchDataAPI();
   }, []);
+  const handleReset = () => {
+    setMaritalStatus('');
+    setMinAge('');
+    setMaxAge('');
+    setMinHeight('');
+    setMaxHeight('');
+    setLocation('');
+    setTagCategories([]);
+    // Optionally reset tab to default
+    // setTabIndex(0);
+  };
   return (
     <>
       {isLoading && ( // Show Loader When API is in Progress
@@ -294,7 +304,7 @@ export default function AdvancedSearch() {
           {/* Buttons */}
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-              <Button variant="outlined" color="secondary" onClick={() => {}}>
+              <Button variant="outlined" color="secondary" onClick={handleReset}>
                 Reset
               </Button>
               <Button variant="contained" className="buttonStyle" onClick={sendAdvancedSearchDataAPI}>

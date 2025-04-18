@@ -8,6 +8,7 @@ import PagesLayout from 'layout/Pages';
 
 import { SimpleLayoutType } from 'config';
 import { loader as productsLoader, productLoader } from 'api/products';
+import RouteGuard from './RouteGaurd';
 
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
@@ -15,11 +16,6 @@ const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics
 
 // render - widget
 const WidgetStatistics = Loadable(lazy(() => import('pages/widget/statistics')));
-
-// render - applications
-
-const AppCustomerList = Loadable(lazy(() => import('pages/apps/customer/list')));
-const AppCustomerCard = Loadable(lazy(() => import('pages/apps/customer/card')));
 
 const UserProfile = Loadable(lazy(() => import('pages/apps/profiles/user')));
 const UserTabPersonal = Loadable(lazy(() => import('sections/apps/profiles/user/TabPersonal')));
@@ -46,12 +42,6 @@ const AccountTabAccount = Loadable(lazy(() => import('sections/apps/profiles/acc
 const AccountTabPassword = Loadable(lazy(() => import('sections/apps/profiles/account/TabPassword')));
 const AccountTabRole = Loadable(lazy(() => import('sections/apps/profiles/account/TabRole')));
 const AccountTabSettings = Loadable(lazy(() => import('sections/apps/profiles/account/TabSettings')));
-
-const AppECommProducts = Loadable(lazy(() => import('pages/apps/e-commerce/product')));
-const AppECommProductDetails = Loadable(lazy(() => import('pages/apps/e-commerce/product-details')));
-const AppECommProductList = Loadable(lazy(() => import('pages/apps/e-commerce/products-list')));
-const AppECommCheckout = Loadable(lazy(() => import('pages/apps/e-commerce/checkout')));
-const AppECommAddProduct = Loadable(lazy(() => import('pages/apps/e-commerce/add-product')));
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/auth1/login')));
@@ -104,7 +94,11 @@ const MainRoutes = {
           children: [
             {
               path: 'statistics',
-              element: <WidgetStatistics />
+              element: (
+                <RouteGuard>
+                  <WidgetStatistics />
+                </RouteGuard>
+              )
             }
           ]
         },
@@ -112,24 +106,15 @@ const MainRoutes = {
           path: 'apps',
           children: [
             {
-              path: 'customer',
-              children: [
-                {
-                  path: 'customer-list',
-                  element: <AppCustomerList />
-                },
-                {
-                  path: 'customer-card',
-                  element: <AppCustomerCard />
-                }
-              ]
-            },
-            {
               path: 'aboutUs',
               children: [
                 {
                   path: 'aboutUs',
-                  element: <AppAboutUs />
+                  element: (
+                    <RouteGuard>
+                      <AppAboutUs />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -138,7 +123,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'latestMatches',
-                  element: <AppLatestMatches />
+                  element: (
+                    <RouteGuard>
+                      <AppLatestMatches />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -147,7 +136,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'appFeedback',
-                  element: <AppFeedback />
+                  element: (
+                    <RouteGuard>
+                      <AppFeedback />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -156,7 +149,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'contactSupport',
-                  element: <AppContactSuppport />
+                  element: (
+                    <RouteGuard>
+                      <AppContactSuppport />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -165,7 +162,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'advancedSearch',
-                  element: <AppAdvancedSearch />
+                  element: (
+                    <RouteGuard>
+                      <AppAdvancedSearch />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -174,7 +175,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'subscriptionPlan',
-                  element: <AppSubscriptionPlan />
+                  element: (
+                    <RouteGuard>
+                      <AppSubscriptionPlan />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -183,7 +188,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'preferencesEdit',
-                  element: <EditAdjustPreference />
+                  element: (
+                    <RouteGuard>
+                      <EditAdjustPreference />
+                    </RouteGuard>
+                  )
                 }
               ]
             },
@@ -192,19 +201,35 @@ const MainRoutes = {
               children: [
                 {
                   path: 'editProfile',
-                  element: <AppEditProfile />,
+                  element: (
+                    <RouteGuard>
+                      <AppEditProfile />
+                    </RouteGuard>
+                  ),
                   children: [
                     {
                       path: 'personalDetailsEdit',
-                      element: <AppPersonalDetailsEdit />
+                      element: (
+                        <RouteGuard>
+                          <AppPersonalDetailsEdit />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'preferencesEdit',
-                      element: <EditAdjustPreference />
+                      element: (
+                        <RouteGuard>
+                          <EditAdjustPreference />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'editPhotos',
-                      element: <AppEditPhotos />
+                      element: (
+                        <RouteGuard>
+                          <AppEditPhotos />
+                        </RouteGuard>
+                      )
                     }
                   ]
                 }
@@ -215,86 +240,103 @@ const MainRoutes = {
               children: [
                 {
                   path: 'account',
-                  element: <AccountProfile />,
+                  element: (
+                    <RouteGuard>
+                      <AccountProfile />
+                    </RouteGuard>
+                  ),
                   children: [
                     {
                       path: 'basic',
-                      element: <AccountTabProfile />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabProfile />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'personal',
-                      element: <AccountTabPersonal />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabPersonal />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'my-account',
-                      element: <AccountTabAccount />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabAccount />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'password',
-                      element: <AccountTabPassword />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabPassword />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'role',
-                      element: <AccountTabRole />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabRole />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'settings',
-                      element: <AccountTabSettings />
+                      element: (
+                        <RouteGuard>
+                          <AccountTabSettings />
+                        </RouteGuard>
+                      )
                     }
                   ]
                 },
                 {
                   path: 'user',
-                  element: <UserProfile />,
+                  element: (
+                    <RouteGuard>
+                      <UserProfile />
+                    </RouteGuard>
+                  ),
                   children: [
                     {
                       path: 'personal',
-                      element: <UserTabPersonal />
+                      element: (
+                        <RouteGuard>
+                          <UserTabPersonal />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'payment',
-                      element: <UserTabPayment />
+                      element: (
+                        <RouteGuard>
+                          <UserTabPayment />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'password',
-                      element: <UserTabPassword />
+                      element: (
+                        <RouteGuard>
+                          <UserTabPassword />
+                        </RouteGuard>
+                      )
                     },
                     {
                       path: 'settings',
-                      element: <UserTabSettings />
+                      element: (
+                        <RouteGuard>
+                          <UserTabSettings />
+                        </RouteGuard>
+                      )
                     }
                   ]
-                }
-              ]
-            },
-            {
-              path: 'e-commerce',
-              children: [
-                {
-                  path: 'products',
-                  element: <AppECommProducts />,
-                  loader: productsLoader,
-                  errorElement: <ErrorBoundary />
-                },
-                {
-                  path: 'product-details/:id',
-                  element: <AppECommProductDetails />,
-                  loader: productLoader,
-                  errorElement: <ErrorBoundary />
-                },
-                {
-                  path: 'product-list',
-                  element: <AppECommProductList />,
-                  loader: productsLoader,
-                  errorElement: <ErrorBoundary />
-                },
-                {
-                  path: 'add-new-product',
-                  element: <AppECommAddProduct />
-                },
-                {
-                  path: 'checkout',
-                  element: <AppECommCheckout />
                 }
               ]
             }
@@ -328,7 +370,11 @@ const MainRoutes = {
         },
         {
           path: 'coming-soon2',
-          element: <MaintenanceComingSoon2 />
+          element: (
+            <RouteGuard>
+              <MaintenanceComingSoon2 />
+            </RouteGuard>
+          )
         }
       ]
     },

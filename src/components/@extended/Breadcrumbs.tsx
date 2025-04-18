@@ -139,7 +139,7 @@ export default function Breadcrumbs({
         component={Link}
         to={document.location.pathname}
         variant="body1"
-        sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+        sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}
         color={window.location.pathname === main.url ? 'text.secondary' : 'text.primary'}
       >
         {icons && <CollapseIcon style={iconSX} />}
@@ -179,7 +179,7 @@ export default function Breadcrumbs({
           </Grid>
           {title && titleBottom && (
             <Grid item sx={{ mt: card === false ? 0 : 1 }}>
-              <Typography variant="h2" sx={{ fontWeight: 700 }}>
+              <Typography variant="h2" sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
                 {main.title}
               </Typography>
             </Grid>
@@ -270,7 +270,7 @@ export default function Breadcrumbs({
             <Grid item>{tempContent}</Grid>
             {title && titleBottom && (
               <Grid item sx={{ mt: card === false ? 0 : 1 }}>
-                <Typography variant="h2" sx={{ fontWeight: 700 }}>
+                <Typography variant="h2" sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}>
                   {custom ? heading : item?.title}
                 </Typography>
               </Grid>
