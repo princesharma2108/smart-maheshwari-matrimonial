@@ -187,7 +187,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
           }}
         >
           {/* <img src={gunnIcon} /> */}
-          <Typography>{profile.gunScore}/36 Gunn Matched</Typography>
+          <Typography>{profile.gunScore || 0}/36 Gunn Matched</Typography>
         </Box>
         <Box
           sx={{
@@ -213,7 +213,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
                 justifyContent: 'center'
               }}
             >
-              <Typography sx={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{profile.matchScore}%</Typography>
+              <Typography sx={{ fontSize: '12px', fontWeight: 700, color: '#fff' }}>{profile.matchScore || 0}%</Typography>
               <Typography sx={{ fontSize: '7px', fontWeight: 500, color: '#fff' }}>Match</Typography>
             </Box>
           </Box>
@@ -281,9 +281,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
                 overflow: 'hidden'
               }}
             >
-              {
-                "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating "
-              }
+              {profile?.aboutMe || 'No description available.'}
             </Typography>
           </Grid>
 
