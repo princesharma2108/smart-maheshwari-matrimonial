@@ -91,7 +91,11 @@ export default function TabEditStep5({
   const handleLanguagesKnownChange = (event: SelectChangeEvent<string[]>) => {
     setLanguagesKnown(event.target.value as string[]);
   };
-  const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
+  const incomeOptions = Array.from({ length: 20 }, (_, i) => {
+    const start = String(i * 5).padStart(2, '0');
+    const end = String((i + 1) * 5).padStart(2, '0');
+    return `${start} - ${end} Lakhs`;
+  });
   const validateStep = () => {
     let newErrors = {
       highestQualification: '',

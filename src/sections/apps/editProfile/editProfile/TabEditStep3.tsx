@@ -99,7 +99,9 @@ export default function TabEditStep3({
             {/* Smoking Habits */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="smoking-habits">Smoking Habits</InputLabel>
+                <InputLabel htmlFor="smoking-habits">
+                  Smoking Habits<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <Select
                   fullWidth
                   value={smoking}

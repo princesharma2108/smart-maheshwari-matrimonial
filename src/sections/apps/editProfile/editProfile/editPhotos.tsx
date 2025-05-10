@@ -8,12 +8,13 @@ import AuthDivider from 'sections/auth/AuthDivider';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import 'assets/styles/styles.scss';
 import MainCard from 'components/MainCard';
-import { makeProfilePhoto, uploadBiodata, uploadPhoto } from 'apiServices/user';
+import { deletePhoto, makeProfilePhoto, uploadBiodata, uploadPhoto } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { APP_VERSION } from 'config';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import { getGeneralData, getUserDetails } from 'apiServices/data';
 interface ErrorData {
   response: any;
 }
@@ -21,8 +22,14 @@ interface ResponseData {
   message: string;
   status: string;
 }
+interface ResponseUserData {
+  status: string;
+  message: string;
+  data: any;
+}
 export default function EditPhotos() {
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
+  const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
   const [isLoadingMakeProfile, setIsLoadingMakeProfile] = useState<boolean>(false); // Loader State
   const [isLoadingDeletePhoto, setIsLoadingDeletePhoto] = useState<boolean>(false); // Loader State
   const { register, handleSubmit, reset } = useForm();
@@ -63,7 +70,6 @@ export default function EditPhotos() {
       return newAnchors;
     });
   };
-
   const handleMenuClose = (index: number) => {
     setMenuAnchor((prev) => {
       const newAnchors = [...prev];
@@ -71,7 +77,30 @@ export default function EditPhotos() {
       return newAnchors;
     });
   };
-
+  const getUserDetailsAPI = async () => {
+    setIsLoadingGetDetails(true);
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await getUserDetails(userId); // Pass the required userId argument
+      const responseData = response.data as ResponseUserData;
+      const photosData = responseData.data.photos;
+      setPreviews(photosData);
+      setExistingPhotos(photosData);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    } finally {
+      setIsLoadingGetDetails(false); // Stop Loader
+    }
+  };
   const handleSetAsProfilePhoto = (index: number, preview: string) => {
     if (index !== 0) {
       const updatedPreviews = [previews[index], ...previews.filter((_, i) => i !== index)];
@@ -90,9 +119,9 @@ export default function EditPhotos() {
     try {
       const response = await makeProfilePhoto(profileData);
       const responseData = response.data as ResponseData;
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1000);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       openSnackbar({
         open: true,
         message: responseData.message,
@@ -130,7 +159,7 @@ export default function EditPhotos() {
       profileUrl: preview
     };
     try {
-      const response = await makeProfilePhoto(deleteData);
+      const response = await deletePhoto(deleteData);
       const responseData = response.data as ResponseData;
       // setTimeout(() => {
       //   window.location.reload();
@@ -183,6 +212,13 @@ export default function EditPhotos() {
     } else {
       console.log('No file selected, proceeding without image');
     }
+    // ⏩ IMMEDIATE UI UPDATE
+    // const newPhotoUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+    // const updatedPhotos = [...existingPhotos, ...newPhotoUrls];
+    // setPreviews(updatedPhotos);
+    // setExistingPhotos(updatedPhotos);
+    // localStorage.setItem('photosUrl', JSON.stringify(updatedPhotos));
+
     formData.append('appVersion', '1.0.4');
     try {
       const response = await uploadPhoto(formData);
@@ -203,11 +239,12 @@ export default function EditPhotos() {
       const updatedPhotos = [...existingPhotos, ...newPhotoUrls];
 
       localStorage.setItem('photosUrl', JSON.stringify(updatedPhotos));
+      setPreviews(updatedPhotos);
       setExistingPhotos(updatedPhotos);
       //navigate('/questionare');
-      reset();
-      setSelectedImages([]);
-      setPreviews([]);
+      //reset();
+      // setSelectedImages([]);
+      // setPreviews([]);
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -224,13 +261,7 @@ export default function EditPhotos() {
     }
   };
   useEffect(() => {
-    const storedData = localStorage.getItem('photosUrl');
-    const photosUrlData: string[] = storedData ? JSON.parse(storedData) : [];
-
-    if (photosUrlData.length > 0) {
-      setPreviews(photosUrlData);
-      setExistingPhotos(photosUrlData); // Store existing images separately
-    }
+    getUserDetailsAPI();
   }, []);
   return (
     <>
@@ -294,7 +325,6 @@ export default function EditPhotos() {
                   <Typography variant="body1">Select Your Photos</Typography>
                 </AuthDivider>
               </Grid>
-
               {/* Upload Button */}
               <Grid item xs={12} sx={{ textAlign: 'center' }}>
                 <Button
@@ -313,8 +343,8 @@ export default function EditPhotos() {
               {/* Selected Photos */}
               {previews.length > 0 && (
                 <Grid item xs={12}>
-                  <Typography variant="body1" sx={{ textAlign: 'center', mt: 2 }}>
-                    Selected Photos ({selectedImages.length}/10)
+                  <Typography variant="body1" sx={{ textAlign: 'center', mt: 0, mb: 1 }}>
+                    Selected Photos ({previews.length}/10)
                   </Typography>
                   <Grid container spacing={2} justifyContent="center">
                     {previews.map((preview, index) => (

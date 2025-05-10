@@ -9,6 +9,7 @@ import { openSnackbar } from 'api/snackbar';
 import { editProfileDetails, profileDetails } from 'apiServices/user';
 import { getGeneralData, getUserDetails } from 'apiServices/data';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import { useLocation } from 'react-router-dom';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -41,6 +42,9 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 };
 
 const PreferencesEdit: React.FC = () => {
+  const locationPreferenceData = useLocation();
+  const data = locationPreferenceData.state;
+  console.log('locationPreferenceData', data);
   const [tabIndex, setTabIndex] = useState(0);
   const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State

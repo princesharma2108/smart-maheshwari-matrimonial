@@ -49,7 +49,10 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   );
 };
 export default function PersonalDetailsEdit() {
+  const location = useLocation();
   const { pathname } = useLocation();
+  const data = location.state;
+  console.log('ProfileData', data);
   const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   const [tabIndex, setTabIndex] = useState(0);
@@ -295,7 +298,9 @@ export default function PersonalDetailsEdit() {
       setMotherName(profileDetailsData.motherName || '');
       setHometown(profileDetailsData.nativePlace || '');
       setSiblings(profileDetailsData.siblingCount || '');
-      setFamilyIncome(profileDetailsData.familyIncomeInr || '');
+      const convertedIncome = profileDetailsData.income.replace('Lac/Year', ' Lakhs').replace(/\.0/g, '').replace('-', ' - ');
+      console.log('convertedIncome', convertedIncome);
+      setFamilyIncome(convertedIncome || '');
       setFamilyType(profileDetailsData.familyType || '');
       setHighestQualification(profileDetailsData.qualification || '');
       setAdditionalQualification(profileDetailsData.additionalQualification || '');

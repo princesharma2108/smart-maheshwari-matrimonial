@@ -40,6 +40,7 @@ import '@fontsource/public-sans/700.css';
 import App from './App';
 import { ConfigProvider } from 'contexts/ConfigContext';
 import reportWebVitals from './reportWebVitals';
+import React from 'react';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -48,7 +49,9 @@ const root = createRoot(container!);
 
 root.render(
   <ConfigProvider>
-    <App />
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
   </ConfigProvider>
 );
 

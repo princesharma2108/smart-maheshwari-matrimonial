@@ -97,7 +97,7 @@ export default function TabStep2({
     if (!weight) newErrors.weight = 'This field is required.';
     if (!height) newErrors.height = 'This field is required.';
     if (!gender) newErrors.gender = 'This field is required.';
-    if (!hobbies) newErrors.hobbies = 'This field is required.';
+    if (hobbies.length == 0) newErrors.hobbies = 'This field is required.';
     if (!complexion) newErrors.complexion = 'This field is required.';
     if (!maritalStatus) newErrors.maritalStatus = 'This field Status is required.';
 
@@ -177,7 +177,9 @@ export default function TabStep2({
                 <Select
                   fullWidth
                   value={gender}
-                  onChange={handleSelectChange(setGender)}
+                  onChange={() => {
+                    handleSelectChange(setGender);
+                  }}
                   displayEmpty
                   className="inputFieldLogin"
                   onBlur={validateStep}

@@ -9,6 +9,7 @@ import StyledEngineProvider from '@mui/material/StyledEngineProvider';
 import Palette from './palette';
 import Typography from './typography';
 import CustomShadows from './shadows';
+import componentsOverride from './overrides';
 
 import { HEADER_HEIGHT, ThemeMode } from 'config';
 import useConfig from 'hooks/useConfig';
@@ -74,6 +75,7 @@ export default function ThemeCustomization({ children }: ThemeCustomizationProps
   );
 
   const themes: Theme = createTheme(themeOptions);
+  themes.components = componentsOverride(themes);
 
   return (
     <StyledEngineProvider injectFirst>

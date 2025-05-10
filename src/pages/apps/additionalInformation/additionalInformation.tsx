@@ -290,44 +290,48 @@ const AdditionalInformation: React.FC = () => {
                   <FormControl component="fieldset" sx={{ display: 'flex', width: '100%' }}>
                     <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
                       {aboutMeDescriptions.map((text, index) => (
-                        <Stack key={index} direction="row" alignItems="center" spacing={2} sx={{ mt: 1 }}>
-                          <FormControlLabel
-                            sx={{ flex: 1, display: 'flex', alignItems: 'center' }} // Ensures full width
-                            value={text}
-                            control={
-                              <Radio
-                                sx={{
-                                  color: '#FF4081',
-                                  '&.Mui-checked': { color: '#D81B60' },
-                                  '& .MuiSvgIcon-root': { fontSize: 28 },
-                                  flex: 0
-                                }}
+                        <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
+                          <Grid item>
+                            <Radio
+                              value={text}
+                              checked={selectedAboutMe === text}
+                              sx={{
+                                color: '#FF4081',
+                                '&.Mui-checked': { color: '#D81B60' },
+                                '& .MuiSvgIcon-root': { fontSize: 28 }
+                              }}
+                            />
+                          </Grid>
+
+                          <Grid item xs>
+                            {isEditing === index ? (
+                              <TextField
+                                value={editedText}
+                                onChange={(e) => setEditedText(e.target.value)}
+                                size="medium"
+                                variant="outlined"
+                                multiline
+                                minRows={1}
+                                maxRows={5}
+                                fullWidth
+                                className="inputField"
                               />
-                            }
-                            label={
-                              // isEditing === index ? (
-                              //   <Box sx={{ maxWidth: '100%', display: 'flex', flex: 4, alignSelf: 'stretch!important' }}>
-                              //     <TextField
-                              //       value={editedText}
-                              //       onChange={(e) => setEditedText(e.target.value)}
-                              //       size="small"
-                              //       variant="outlined"
-                              //       className="inputField"
-                              //       multiline
-                              //       minRows={1}
-                              //       maxRows={5}
-                              //       fullWidth
-                              //       sx={{ maxWidth: '100%' }} // Ensure it fully stretches
-                              //     />
-                              //   </Box>
-                              // ) : (
-                              <Typography variant="body2" sx={{ width: '100%' }}>
+                            ) : (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  pt: 1,
+                                  cursor: 'pointer',
+                                  width: '100%'
+                                }}
+                                onClick={() => setSelectedAboutMe(text)}
+                              >
                                 {text}
                               </Typography>
-                              // )
-                            }
-                          />
-                          {/* <Stack direction="row" spacing={1} sx={{ marginLeft: 'auto' }}>
+                            )}
+                          </Grid>
+
+                          <Grid item>
                             {isEditing === index ? (
                               <Button variant="contained" size="small" onClick={() => handleSaveEdit(index)} className="buttonStyle">
                                 Save
@@ -343,8 +347,8 @@ const AdditionalInformation: React.FC = () => {
                                 Edit
                               </Button>
                             )}
-                          </Stack> */}
-                        </Stack>
+                          </Grid>
+                        </Grid>
                       ))}
                     </RadioGroup>
                   </FormControl>

@@ -65,6 +65,9 @@ export default function ProfileDetails({ focusInput }: Props) {
       const responseData = response.data as ResponseData;
       setUserName(responseData.data.profile.firstName);
       setProfileUrl(responseData.data.profileUrl);
+      setProfileDetails(responseData.data.profile);
+      setPrefernceDetails(responseData.data.preferences);
+      setPhotosUrl(responseData.data.photos);
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -133,7 +136,7 @@ export default function ProfileDetails({ focusInput }: Props) {
           </Stack>
         </Grid>
         <Grid item xs={12}>
-          <ProfileTab />
+          <ProfileTab profileDetails={profileDetails} preferenceDetails={prefernceDetails} photosUrl={photosUrl} />
         </Grid>
       </Grid>
     </MainCard>

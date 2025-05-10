@@ -90,7 +90,7 @@ export default function TabEditStep2({
     if (!weight) newErrors.weight = 'This field is required.';
     if (!height) newErrors.height = 'This field is required.';
     if (!gender) newErrors.gender = 'This field is required.';
-    if (!hobbies) newErrors.hobbies = 'This field is required.';
+    if (hobbies.length == 0) newErrors.hobbies = 'This field is required.';
     if (!complexion) newErrors.complexion = 'This field is required.';
     if (!maritalStatus) newErrors.maritalStatus = 'This field Status is required.';
 
@@ -187,7 +187,9 @@ export default function TabEditStep2({
             {/* {/ Hobbies /} */}
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="hobbies">Hobbies</InputLabel>
+                <InputLabel htmlFor="hobbies">
+                  Hobbies<span style={{ color: 'red' }}>*</span>
+                </InputLabel>
                 <Select
                   multiple
                   fullWidth

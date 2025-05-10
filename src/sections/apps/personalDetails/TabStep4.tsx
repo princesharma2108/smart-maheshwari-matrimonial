@@ -72,8 +72,11 @@ export default function TabStep4({
     setter(lettersOnly);
   };
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
-  const incomeOptions = Array.from({ length: 20 }, (_, i) => `${i * 5} - ${(i + 1) * 5} Lakhs`);
-
+  const incomeOptions = Array.from({ length: 20 }, (_, i) => {
+    const start = String(i * 5).padStart(2, '0');
+    const end = String((i + 1) * 5).padStart(2, '0');
+    return `${start} - ${end} Lakhs`;
+  });
   const validateStep = () => {
     let newErrors = {
       hometown: '',

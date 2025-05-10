@@ -306,32 +306,10 @@ export default function LatestMatches() {
   const theme = useTheme();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userName, setUserName] = useState('');
   const searchResults = location.state?.searchResults;
   console.log('searchResults', searchResults);
   const userId = localStorage.getItem('userId');
   const [matchProfilesData, setMatchProfiles] = useState([]);
-  const getUserDetailsAPI = async () => {
-    //setIsLoading(true);
-    const userId = localStorage.getItem('userId');
-    try {
-      const response = await getUserDetails(userId); // Pass the required userId argument
-      const responseData = response.data as ResponseData;
-      setUserName(responseData.data.profile.firstName);
-      localStorage.setItem('userName', responseData.data.profile.firstName);
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      const errorData = error as ErrorData;
-      openSnackbar({
-        open: true,
-        message: errorData.response.data.message,
-        variant: 'alert',
-        alert: {
-          color: 'error'
-        }
-      } as SnackbarProps);
-    }
-  };
   const getMatchResultsAPI = async () => {
     setIsLoading(true);
     try {
@@ -355,7 +333,6 @@ export default function LatestMatches() {
   };
   useEffect(() => {
     getMatchResultsAPI();
-    getUserDetailsAPI();
     postUserStageAPI();
   }, []);
   const postUserStageAPI = async () => {

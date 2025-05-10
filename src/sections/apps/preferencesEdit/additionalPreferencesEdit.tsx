@@ -114,6 +114,13 @@ export default function AdditionalPreferencesEdit({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [qualification, profession, workingWith, location, hobbies]);
+  useEffect(() => {
+    if (qualification === 'No Preference') setNonNegotiableQualification('');
+    if (profession === 'No Preference') setNonNegotiableProfession('');
+    if (workingWith === 'No Preference') setNonNegotiableWorkingWith('');
+    if (location === 'No Preference') setNonNegotiableLocation('');
+    // if (hobbies === 'No Preference') setNonNegotiableHobbies('');
+  }, [qualification, profession, workingWith, location, hobbies]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -191,13 +198,11 @@ export default function AdditionalPreferencesEdit({
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
-                    {getOptionsWithNoPreference(data)
-                      .sort()
-                      .map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
+                    {[...data.sort(), 'No Preference'].map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Stack>
               </Grid>

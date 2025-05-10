@@ -163,9 +163,9 @@ export default function ComingSoon() {
   }, [notifyEmail]);
   return (
     <>
-      <Container fixed>
-        <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ minHeight: '100vh', py: 2 }}>
-          <Grid item md={6}>
+      <Box sx={{ px: { xs: 3, sm: 4, md: 6, lg: 8 } }}>
+        <Grid container spacing={4} alignItems="center" justifyContent="center" sx={{ minHeight: '100vh' }}>
+          <Grid item sx={{ display: { xs: 'none', md: 'flex' }, padding: '10px' }}>
             <Box sx={{ height: { xs: 310, sm: 420 }, width: { xs: 360, sm: 'auto' } }}>
               <img src={SMMLogo} alt="coming soon 1" style={{ height: '100%', width: '100%' }} />
             </Box>
@@ -181,23 +181,35 @@ export default function ComingSoon() {
                 </Stack>
               </Grid>
               <Grid item xs={12}>
-                <Stack spacing={1} justifyContent="center" alignItems="center">
+                <Stack justifyContent="center" alignItems="center">
                   <Typography
                     align="center"
                     sx={{
-                      fontSize: '64px',
-                      fontWeight: 500
+                      fontSize: { xs: '36px', md: '64px' },
+                      fontWeight: 700
                     }}
                   >
                     Coming Soon
                   </Typography>
                   <Stack>
-                    <Typography align="center" color="text.secondary">
-                      This site is currently under development, we will let you know
+                    <Typography
+                      align="center"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: { xs: '16px', md: '24px' }
+                      }}
+                    >
+                      This site is currently under development, we will let you know when we go live. Subscribe to get info.
                     </Typography>
-                    <Typography align="center" color="text.secondary">
+                    {/* <Typography
+                      align="center"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: { xs: '16px', md: '24px' }
+                      }}
+                    >
                       when we go live. Subscribe to get info{' '}
-                    </Typography>
+                    </Typography> */}
                   </Stack>
                 </Stack>
               </Grid>
@@ -238,7 +250,7 @@ export default function ComingSoon() {
             </Grid>
           </Grid>
         </Grid>
-      </Container>
+      </Box>
     </>
   );
 }

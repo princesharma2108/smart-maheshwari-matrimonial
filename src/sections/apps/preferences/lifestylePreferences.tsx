@@ -75,6 +75,11 @@ export default function LifestylePreferences({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [drinking, smoking, dietaryHabits]);
+  useEffect(() => {
+    if (drinking === 'No Preference') setNonNegotiableDrinking('');
+    if (smoking === 'No Preference') setNonNegotiableSmoking('');
+    if (dietaryHabits === 'No Preference') setNonNegotiableDietary('');
+  }, [drinking, smoking, dietaryHabits]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -137,13 +142,11 @@ export default function LifestylePreferences({
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
-                    {getOptions(options)
-                      .sort()
-                      .map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
+                    {[...options.sort(), 'No Preference'].map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Stack>
               </Grid>

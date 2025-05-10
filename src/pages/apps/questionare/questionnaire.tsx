@@ -130,13 +130,23 @@ export default function Questionnaire() {
     getUserDetailsAPI();
   }, []);
   // Filter questions based on userGender
-  const filteredQuestions = questionsData
-    .filter((category) => category.CategoryName === 'Bride-Specific Questions' || userGender === 'Male')
-    .filter((category) => category.CategoryName === 'Groom-Specific Questions' || userGender === 'Female');
+  // const filteredQuestions = questionsData
+  //   .filter((category) => category.CategoryName === 'Bride-Specific Questions' || userGender === 'Female')
+  //   .filter((category) => category.CategoryName === 'Groom-Specific Questions' || userGender === 'Male');
+  const filteredQuestions = questionsData.filter((category) => {
+    if (userGender === 'Male') {
+      return category.CategoryName !== 'Bride-Specific Questions';
+    } else if (userGender === 'Female') {
+      return category.CategoryName !== 'Groom-Specific Questions';
+    }
+    return true; // In case gender is not yet determined
+  });
   // Get current section's questions
+  // const currentSectionQuestions = questionsData[section]?.Questions || [];
   const currentSectionQuestions = filteredQuestions[section]?.Questions || [];
   // Check if all questions in the current section are answered
-  const isSectionComplete = currentSectionQuestions.every((q) => answers[q.Id] !== undefined);
+  const isSectionComplete = currentSectionQuestions.every((q) => answers[Number(q.Id)] !== undefined);
+  // if (!filteredQuestions.length || !filteredQuestions[section]) return null;
   return (
     <BackgroundWrapper padding={0}>
       <>

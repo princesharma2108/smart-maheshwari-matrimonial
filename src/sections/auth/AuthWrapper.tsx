@@ -19,22 +19,22 @@ export default function AuthWrapper({ children }: Props) {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100dvh',
         backgroundColor: '#FFE1E7',
         display: 'flex',
         alignItems: 'start',
         justifyContent: 'center',
-        padding: 3
+        padding: 2
       }}
     >
       <Card
         sx={{
-          padding: 4,
+          padding: 2,
           boxShadow: 3,
           borderRadius: 2,
           maxWidth: 900,
           width: '100%',
-          height: { xs: 'auto', md: 600 }, // Set a fixed height for large screens
+          height: { xs: '100%', md: 600 }, // Set a fixed height for large screens
           display: 'flex',
           flexDirection: 'row'
         }}
@@ -58,10 +58,10 @@ export default function AuthWrapper({ children }: Props) {
           {/* Right Side - Image (Takes Full Height) */}
           <Grid
             item
-            xs={12}
+            //xs={12}
             md={6}
             sx={{
-              display: 'flex',
+              display: { xs: 'none', md: 'flex' }, // Hide on small screens
               alignItems: 'start',
               justifyContent: 'center',
               height: '100%', // Make image section take full height

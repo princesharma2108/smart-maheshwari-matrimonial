@@ -5,10 +5,11 @@
   }
 }
 .buttonStyleOutlined {
-  color:#f00757;
+  color: #f00757;
   border-color: #f00757; // Your custom color
   &:hover {
     border-color: #f00757;
+    color: #f00757;
   }
 }
 // .pe_signin_button {
@@ -80,10 +81,16 @@
 
 .customSlider .MuiSlider-thumb {
   background-color: #f00757 !important; /* Thumb color */
+  border-color: #f00757 !important; /* Thumb border color */
+  &:hover,
+  &:focus,
+  &:active {
+    box-shadow: 0 0 0 8px rgba(240, 7, 87, 0.2) !important; // custom hover glow
+  }
 }
 
 .customSlider .MuiSlider-track {
-  background-color: #f00757!important; /* Track color */
+  background-color: #f00757 !important; /* Track color */
 }
 
 .customSlider .MuiSlider-rail {

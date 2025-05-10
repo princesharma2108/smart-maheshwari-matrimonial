@@ -39,14 +39,20 @@ function getPathIndex(pathname: string) {
 
 // ==============================|| USER PROFILE - BASIC ||============================== //
 
-export default function ProfileTab() {
+interface ProfileTabProps {
+  profileDetails: any; // Replace 'any' with the actual type if known
+  preferenceDetails: any; // Replace 'any' with the actual type if known
+  photosUrl: any; // Replace 'any' with the actual type if known
+}
+
+export default function ProfileTab({ profileDetails, preferenceDetails, photosUrl }: ProfileTabProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [selectedIndex, setSelectedIndex] = useState(getPathIndex(pathname));
-
-  const handleListItemClick = (index: number, route: string) => {
+  console.log('profileDetails', profileDetails);
+  const handleListItemClick = (index: number, route: string, data: any) => {
     setSelectedIndex(index);
-    navigate(route, { replace: true });
+    navigate(route, { replace: true, state: data });
   };
 
   useEffect(() => {
@@ -84,7 +90,7 @@ export default function ProfileTab() {
         selected={selectedIndex === 0}
         onClick={() => {
           sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/personalDetailsEdit');
-          handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit');
+          handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit', profileDetails);
         }}
       >
         <ListItemIcon>
@@ -97,7 +103,7 @@ export default function ProfileTab() {
         selected={selectedIndex === 1}
         onClick={() => {
           sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/preferencesEdit');
-          handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit');
+          handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit', preferenceDetails);
         }}
       >
         <ListItemIcon>
@@ -110,7 +116,7 @@ export default function ProfileTab() {
         selected={selectedIndex === 2}
         onClick={() => {
           sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/editPhotos');
-          handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos');
+          handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos', photosUrl);
         }}
       >
         <ListItemIcon>

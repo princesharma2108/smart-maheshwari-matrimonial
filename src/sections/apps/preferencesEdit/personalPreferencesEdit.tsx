@@ -107,6 +107,12 @@ export default function PersonalPreferencesEdit({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [age, familyType, familyBackground, maritalStatus]);
+  useEffect(() => {
+    if (!age[0] && !age[1]) setNonNegotiableAge('');
+    if (familyType === 'No Preference') setNonNegotiableFamilyType('');
+    if (familyBackground === 'No Preference') setNonNegotiableFamilyBackground('');
+    if (maritalStatus === 'No Preference') setNonNegotiableMaritalStatus('');
+  }, [age, familyType, familyBackground, maritalStatus]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -215,13 +221,11 @@ export default function PersonalPreferencesEdit({
                     <MenuItem value="" disabled>
                       Select an option
                     </MenuItem>
-                    {getOptions(options)
-                      .sort()
-                      .map((option) => (
-                        <MenuItem key={option} value={option}>
-                          {option}
-                        </MenuItem>
-                      ))}
+                    {[...options.sort(), 'No Preference'].map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Stack>
               </Grid>
