@@ -62,6 +62,7 @@ export default function TabStep5({
   setIsStepValid
 }: TabStep5Props) {
   const theme = useTheme();
+  console.log('maxAnnualIncome', maxAnnualIncome);
   const [errors, setErrors] = useState({
     highestQualification: '',
     occupation: '',
@@ -91,6 +92,25 @@ export default function TabStep5({
     const end = String((i + 1) * 5).padStart(2, '0');
     return `${start} - ${end} Lakhs`;
   });
+  useEffect(() => {
+    const min = parseInt(minAnnualIncome || '0');
+    const max = parseInt(maxAnnualIncome || '0');
+
+    if (!min && !max) return;
+
+    const value = min || max;
+    for (let i = 0; i < 20; i++) {
+      const rangeMin = i * 5 * 100000;
+      const rangeMax = (i + 1) * 5 * 100000;
+      if (value >= rangeMin && value <= rangeMax) {
+        const newAnnual = `${String(i * 5).padStart(2, '0')} - ${String((i + 1) * 5).padStart(2, '0')} Lakhs`;
+        if (annualIncome !== newAnnual) {
+          setAnnualIncome(newAnnual);
+        }
+        break;
+      }
+    }
+  }, [minAnnualIncome, maxAnnualIncome]);
   const validateStep = () => {
     let newErrors = {
       highestQualification: '',

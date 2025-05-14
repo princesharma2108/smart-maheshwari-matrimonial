@@ -172,6 +172,7 @@ export default function AdvancedSearch() {
   const sendAdvancedSearchDataAPI = async () => {
     setIsLoading(true);
     const matrimonialId = localStorage.getItem('matrimonialId');
+    const isTagCategoriesEmpty = !tagCategories || tagCategories.length === 0;
     const searchData = {
       matrimonialId: matrimonialId,
       basicSearch: {
@@ -180,9 +181,7 @@ export default function AdvancedSearch() {
         heightOptions: [minHeight, maxHeight],
         locationOptions: [location]
       },
-      advancedSearch: {
-        tagCategories: tagCategories
-      }
+      advancedSearch: isTagCategoriesEmpty ? null : { tagCategories: tagCategories }
     };
     try {
       const response = await postAdvancedSearchData(searchData);

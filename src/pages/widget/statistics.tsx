@@ -459,8 +459,7 @@ export default function LatestMatches() {
           ) : (
             <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
               <img src={searchMatches} height={'200px'} width={'350px'} />
-              <Typography variant="h1">Looks like you have run out of matches</Typography>
-              <Typography variant="h1">Please check back later</Typography>
+              <Typography variant="h1">Looking for matches as per your prefernces...</Typography>
             </Grid>
           )}
         </Grid>

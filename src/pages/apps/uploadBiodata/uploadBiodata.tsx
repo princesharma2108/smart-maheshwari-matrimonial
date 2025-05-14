@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress, Stack } from '@mui/material';
@@ -29,6 +29,7 @@ interface ResponseStageData {
 }
 export default function UploadBiodata() {
   const { register, handleSubmit, reset } = useForm();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [pdfLink, setPDFLink] = useState<string>('');
   const [fileName, setFileName] = useState<string | null>(null);
@@ -59,7 +60,11 @@ export default function UploadBiodata() {
   const handleRemoveFile = () => {
     setFilePreview(null);
     setFileName(null);
+    setSelectedFile(null);
     reset();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const uploadBiodataAPI = async () => {
@@ -235,7 +240,17 @@ export default function UploadBiodata() {
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <Button variant="contained" component="label" startIcon={<CloudUploadIcon />} className="buttonStyle">
               Choose File
-              <input type="file" accept="application/pdf" {...register('biodata', { required: true })} onChange={handleFileChange} hidden />
+              <input
+                type="file"
+                accept="application/pdf"
+                {...register('biodata', { required: true })}
+                ref={(e) => {
+                  fileInputRef.current = e;
+                  register('biodata').ref(e);
+                }}
+                onChange={handleFileChange}
+                hidden
+              />
             </Button>
           </Grid>
 

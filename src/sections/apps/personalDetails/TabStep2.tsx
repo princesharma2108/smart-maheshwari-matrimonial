@@ -177,9 +177,7 @@ export default function TabStep2({
                 <Select
                   fullWidth
                   value={gender}
-                  onChange={() => {
-                    handleSelectChange(setGender);
-                  }}
+                  onChange={handleSelectChange(setGender)}
                   displayEmpty
                   className="inputFieldLogin"
                   onBlur={validateStep}
@@ -315,6 +313,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Marital Status
                   </MenuItem>
+                  {!maritalOptions.includes(maritalStatus) && maritalStatus && <MenuItem value={maritalStatus}>{maritalStatus}</MenuItem>}
                   {maritalOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

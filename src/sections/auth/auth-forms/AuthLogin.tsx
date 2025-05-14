@@ -425,7 +425,11 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                     <FormHelperText error>{errors.submit}</FormHelperText>
                   </Grid>
                 )}
+
                 <Grid item xs={12}>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    Login is allowed only with your WhatsApp number.
+                  </Typography>
                   {!isOtpSent ? (
                     <AnimateButton>
                       <Button

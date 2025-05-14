@@ -85,9 +85,9 @@ export default function TabStep3({
                   error={!!errors.drinking}
                 >
                   <MenuItem value="" disabled>
-                    Select Drinking Habits<span style={{ color: 'red' }}>*</span>
+                    Select Drinking Habits
                   </MenuItem>
-                  {drinkingOptions?.sort().map((option: string) => (
+                  {drinkingOptions?.map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>
@@ -110,9 +110,9 @@ export default function TabStep3({
                   error={!!errors.drinking}
                 >
                   <MenuItem value="" disabled>
-                    Select Smoking Habits<span style={{ color: 'red' }}>*</span>
+                    Select Smoking Habits
                   </MenuItem>
-                  {smokingOptions?.sort().map((option: string) => (
+                  {smokingOptions?.map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>
@@ -139,7 +139,7 @@ export default function TabStep3({
                   <MenuItem value="" disabled>
                     Select Dietary Habits
                   </MenuItem>
-                  {dietaryOptions?.sort().map((option) => (
+                  {dietaryOptions?.map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}
                     </MenuItem>

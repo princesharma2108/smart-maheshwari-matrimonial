@@ -272,7 +272,7 @@ const PersonalDetails: React.FC = () => {
       setGender(pdfData.gender || '');
       setDisability(pdfData.disability || '');
       setHeight(pdfData.heightCM || '');
-      setWeight(pdfData.weightKG || '');
+      setWeight(pdfData.weightKG.replace(/kg/i, '').trim() || '');
       setBloodGroup(pdfData.bloodGroup || '');
       setComplexion(pdfData.complexion || '');
       setMaritalStatus(pdfData.maritalStatus || '');
@@ -288,6 +288,7 @@ const PersonalDetails: React.FC = () => {
       setCompanyName(pdfData.occupationCompany || '');
       setWorkingWith(pdfData.workingWith || '');
       setMinAnnualIncome(pdfData.minAnnualIncomeIndividual || '');
+      console.log('maxAnnualIncome1', pdfData.maxAnnualIncomeIndividual);
       setMaxAnnualIncome(pdfData.maxAnnualIncomeIndividual || '');
       setGotra(pdfData.gotra || '');
       setHobbies(pdfData.hobbies || []);

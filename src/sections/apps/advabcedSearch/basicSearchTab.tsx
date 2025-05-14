@@ -193,6 +193,7 @@ export default function BasicSearchTab({
                       {loc}
                     </MenuItem>
                   ))}
+                  <MenuItem value="No Preference">No Preference</MenuItem>
                 </Select>
               </Stack>
             </Grid>

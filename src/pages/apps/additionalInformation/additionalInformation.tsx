@@ -218,7 +218,7 @@ const AdditionalInformation: React.FC = () => {
   return (
     <BackgroundWrapper>
       <>
-        {(isLoading || isLoadingSaveDetails) && ( // Show Loader When API is in Progress
+        {isLoadingSaveDetails && ( // Show Loader When API is in Progress
           <Box
             sx={{
               display: 'flex',
@@ -245,7 +245,7 @@ const AdditionalInformation: React.FC = () => {
             />
             <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
               <Typography variant="h3" color={'#f00757'}>
-                {isLoadingSaveDetails ? 'Saving Profile Details' : 'Fetching About Me Samples'}
+                {'Saving Profile Details'}
               </Typography>
               <ThreeDots
                 visible={true}
@@ -260,6 +260,7 @@ const AdditionalInformation: React.FC = () => {
             </Stack>
           </Box>
         )}
+        {}
         {/* Back Button */}
         <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
           <Button
@@ -286,73 +287,79 @@ const AdditionalInformation: React.FC = () => {
                 <Typography variant="h6" gutterBottom>
                   About Me
                 </Typography>
-                <Grid item container xs={12}>
-                  <FormControl component="fieldset" sx={{ display: 'flex', width: '100%' }}>
-                    <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
-                      {aboutMeDescriptions.map((text, index) => (
-                        <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
-                          <Grid item>
-                            <Radio
-                              value={text}
-                              checked={selectedAboutMe === text}
-                              sx={{
-                                color: '#FF4081',
-                                '&.Mui-checked': { color: '#D81B60' },
-                                '& .MuiSvgIcon-root': { fontSize: 28 }
-                              }}
-                            />
-                          </Grid>
-
-                          <Grid item xs>
-                            {isEditing === index ? (
-                              <TextField
-                                value={editedText}
-                                onChange={(e) => setEditedText(e.target.value)}
-                                size="medium"
-                                variant="outlined"
-                                multiline
-                                minRows={1}
-                                maxRows={5}
-                                fullWidth
-                                className="inputField"
-                              />
-                            ) : (
-                              <Typography
-                                variant="body2"
+                {isLoading ? (
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CircularProgress size={40} sx={{ color: '#f00757' }} />
+                  </Box>
+                ) : (
+                  <Grid item container xs={12}>
+                    <FormControl component="fieldset" sx={{ display: 'flex', width: '100%' }}>
+                      <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
+                        {aboutMeDescriptions.map((text, index) => (
+                          <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
+                            <Grid item>
+                              <Radio
+                                value={text}
+                                checked={selectedAboutMe === text}
                                 sx={{
-                                  pt: 1,
-                                  cursor: 'pointer',
-                                  width: '100%'
+                                  color: '#FF4081',
+                                  '&.Mui-checked': { color: '#D81B60' },
+                                  '& .MuiSvgIcon-root': { fontSize: 28 }
                                 }}
-                                onClick={() => setSelectedAboutMe(text)}
-                              >
-                                {text}
-                              </Typography>
-                            )}
-                          </Grid>
+                              />
+                            </Grid>
 
-                          <Grid item>
-                            {isEditing === index ? (
-                              <Button variant="contained" size="small" onClick={() => handleSaveEdit(index)} className="buttonStyle">
-                                Save
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="outlined"
-                                size="small"
-                                onClick={() => handleEditClick(index)}
-                                startIcon={<EditIcon />}
-                                className="buttonStyleOutlined"
-                              >
-                                Edit
-                              </Button>
-                            )}
+                            <Grid item xs>
+                              {isEditing === index ? (
+                                <TextField
+                                  value={editedText}
+                                  onChange={(e) => setEditedText(e.target.value)}
+                                  size="medium"
+                                  variant="outlined"
+                                  multiline
+                                  minRows={1}
+                                  maxRows={5}
+                                  fullWidth
+                                  className="inputField"
+                                />
+                              ) : (
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    pt: 1,
+                                    cursor: 'pointer',
+                                    width: '100%'
+                                  }}
+                                  onClick={() => setSelectedAboutMe(text)}
+                                >
+                                  {text}
+                                </Typography>
+                              )}
+                            </Grid>
+
+                            <Grid item>
+                              {isEditing === index ? (
+                                <Button variant="contained" size="small" onClick={() => handleSaveEdit(index)} className="buttonStyle">
+                                  Save
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="outlined"
+                                  size="small"
+                                  onClick={() => handleEditClick(index)}
+                                  startIcon={<EditIcon />}
+                                  className="buttonStyleOutlined"
+                                >
+                                  Edit
+                                </Button>
+                              )}
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                  </Grid>
+                )}
               </CardContent>
             </Card>
           </Grid>
