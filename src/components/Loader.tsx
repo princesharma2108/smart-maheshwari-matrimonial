@@ -19,7 +19,7 @@ export interface LoaderProps extends LinearProgressProps {}
 export default function Loader() {
   return (
     <LoaderWrapper>
-      <LinearProgress color="primary" sx={{ height: 2 }} />
+      <LinearProgress sx={{ height: 2, color: '#f00757' }} />
     </LoaderWrapper>
   );
 }

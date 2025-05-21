@@ -449,7 +449,13 @@ const Preferences: React.FC = () => {
         </TabPanel>
         <Grid item xs={12}>
           <Stack direction="row" justifyContent="flex-end" spacing={2}>
-            <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => handlePrevious()}
+              disabled={tabIndex === 0}
+              className="buttonStyleOutlined"
+            >
               Previous
             </Button>
             <Button variant="contained" onClick={() => handleNext()} className="buttonStyle" disabled={!isStepValid}>

@@ -71,6 +71,21 @@ const Address: React.FC<AddressProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSelectedAddress(value);
+    if (fieldName == 'City') {
+      setSelectedCity('');
+      //setSelectedAddress('');
+      handleCityChange('');
+    }
+    if (fieldName == 'State') {
+      setSelectedState('');
+      // setSelectedAddress('');
+      handleStateChange('');
+    }
+    if (fieldName == 'Country') {
+      setSelectedState('');
+      //setSelectedAddress('');
+      handleCountryChange('');
+    }
     setLocationAddress(value);
     setPlaceSearchValue(value);
   };
@@ -82,8 +97,32 @@ const Address: React.FC<AddressProps> = ({
     getPlaceDetails(placeData.place_id, (res: any) => {
       // if (res.country !== 'India') return; // ✅ Ensure selection is from India
       // setSelectedAddress(res.street_address || '');
-      setSelectedCity(res.city || '');
-      setSelectedState(res.state || '');
+      console.log('Residense', res);
+      setSelectedAddress('');
+      if (fieldName == 'City') {
+        console.log('Residense2', res.city);
+        if (res.city == null) {
+          setSelectedCity(res.street_address || '');
+          handleCityChange(res.street_address.split(',')[0].trim());
+        } else {
+          setSelectedCity(res.city || '');
+          handleCityChange(res.city);
+        }
+        setSelectedState(res.state || '');
+        setSelectedCountry(res.country || '');
+        handleStateChange(res.state);
+        handleCountryChange(res.country);
+      }
+      if (fieldName == 'State') {
+        setSelectedState(res.state || '');
+        setSelectedCountry(res.country || '');
+        handleStateChange(res.state);
+        handleCountryChange(res.country);
+      }
+      if (fieldName == 'Country') {
+        setSelectedCountry(res.country || '');
+        handleCountryChange(res.country);
+      }
       setSelectedZip(res.postal_code || '');
       setSelectedLatitude(res.location.coordinates[0]);
       setSelectedLongitude(res.location.coordinates[1]);
@@ -95,12 +134,8 @@ const Address: React.FC<AddressProps> = ({
           ? `${res.city || ''}, ${res.state || ''}, ${res.postal_code || ''}`
           : `${res.city || ''}${res.state ? ', ' : ''}${res.state || ''}`
       );
-
       // handleAddressChange(res.street_address);
       handleAddressChange(completeAddress);
-      handleCityChange(res.city);
-      handleStateChange(res.state);
-      handleCountryChange(res.country);
       handleZipChange(res.postal_code);
       handleLatitudeChange(res.location.coordinates[0]);
       handleLongitudeChange(res.location.coordinates[1]);

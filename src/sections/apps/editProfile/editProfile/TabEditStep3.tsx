@@ -85,7 +85,7 @@ export default function TabEditStep3({
                   error={!!errors.drinking}
                 >
                   <MenuItem value="" disabled>
-                    Select Drinking Habits<span style={{ color: 'red' }}>*</span>
+                    Select Drinking Habits
                   </MenuItem>
                   {drinkingOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
@@ -112,7 +112,7 @@ export default function TabEditStep3({
                   error={!!errors.drinking}
                 >
                   <MenuItem value="" disabled>
-                    Select Smoking Habits<span style={{ color: 'red' }}>*</span>
+                    Select Smoking Habits
                   </MenuItem>
                   {smokingOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>

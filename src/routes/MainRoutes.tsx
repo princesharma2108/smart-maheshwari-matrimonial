@@ -9,7 +9,7 @@ import PagesLayout from 'layout/Pages';
 import { SimpleLayoutType } from 'config';
 import { loader as productsLoader, productLoader } from 'api/products';
 import RouteGuard from './RouteGaurd';
-
+import { Outlet } from 'react-router-dom';
 // render - dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const DashboardAnalytics = Loadable(lazy(() => import('pages/dashboard/analytics')));
@@ -90,258 +90,205 @@ const MainRoutes = {
         //   ]
         // },
         {
-          path: 'widget',
+          path: 'dashboard',
+          element: (
+            <RouteGuard>
+              <WidgetStatistics />
+            </RouteGuard>
+          )
+        },
+        // {
+        //   path: 'apps',
+        //   children: [
+        {
+          path: 'aboutUs',
+          element: (
+            <RouteGuard>
+              <AppAboutUs />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'latestMatches',
+          element: (
+            <RouteGuard>
+              <AppLatestMatches />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'appFeedback',
+          element: (
+            <RouteGuard>
+              <AppFeedback />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'contactSupport',
+          element: (
+            <RouteGuard>
+              <AppContactSuppport />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'advancedSearch',
+          element: (
+            <RouteGuard>
+              <AppAdvancedSearch />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'subscriptionPlan',
+          element: (
+            <RouteGuard>
+              <AppSubscriptionPlan />
+            </RouteGuard>
+          )
+        },
+        {
+          path: 'editProfile',
+          element: (
+            <RouteGuard>
+              <AppEditProfile />
+            </RouteGuard>
+          ),
           children: [
             {
-              path: 'statistics',
+              path: 'personalDetailsEdit',
               element: (
                 <RouteGuard>
-                  <WidgetStatistics />
+                  <AppPersonalDetailsEdit />
+                </RouteGuard>
+              )
+            },
+            {
+              path: 'preferencesEdit',
+              element: (
+                <RouteGuard>
+                  <EditAdjustPreference />
+                </RouteGuard>
+              )
+            },
+            {
+              path: 'editPhotos',
+              element: (
+                <RouteGuard>
+                  <AppEditPhotos />
                 </RouteGuard>
               )
             }
           ]
         },
         {
-          path: 'apps',
+          path: 'profiles',
           children: [
             {
-              path: 'aboutUs',
+              path: 'account',
+              element: (
+                <RouteGuard>
+                  <AccountProfile />
+                </RouteGuard>
+              ),
               children: [
                 {
-                  path: 'aboutUs',
+                  path: 'basic',
                   element: (
                     <RouteGuard>
-                      <AppAboutUs />
+                      <AccountTabProfile />
                     </RouteGuard>
                   )
-                }
-              ]
-            },
-            {
-              path: 'latestMatches',
-              children: [
-                {
-                  path: 'latestMatches',
-                  element: (
-                    <RouteGuard>
-                      <AppLatestMatches />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'appFeedback',
-              children: [
-                {
-                  path: 'appFeedback',
-                  element: (
-                    <RouteGuard>
-                      <AppFeedback />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'contactSupport',
-              children: [
-                {
-                  path: 'contactSupport',
-                  element: (
-                    <RouteGuard>
-                      <AppContactSuppport />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'advancedSearch',
-              children: [
-                {
-                  path: 'advancedSearch',
-                  element: (
-                    <RouteGuard>
-                      <AppAdvancedSearch />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'subscriptionPlan',
-              children: [
-                {
-                  path: 'subscriptionPlan',
-                  element: (
-                    <RouteGuard>
-                      <AppSubscriptionPlan />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'preferencesEdit',
-              children: [
-                {
-                  path: 'preferencesEdit',
-                  element: (
-                    <RouteGuard>
-                      <EditAdjustPreference />
-                    </RouteGuard>
-                  )
-                }
-              ]
-            },
-            {
-              path: 'editProfile',
-              children: [
-                {
-                  path: 'editProfile',
-                  element: (
-                    <RouteGuard>
-                      <AppEditProfile />
-                    </RouteGuard>
-                  ),
-                  children: [
-                    {
-                      path: 'personalDetailsEdit',
-                      element: (
-                        <RouteGuard>
-                          <AppPersonalDetailsEdit />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'preferencesEdit',
-                      element: (
-                        <RouteGuard>
-                          <EditAdjustPreference />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'editPhotos',
-                      element: (
-                        <RouteGuard>
-                          <AppEditPhotos />
-                        </RouteGuard>
-                      )
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              path: 'profiles',
-              children: [
-                {
-                  path: 'account',
-                  element: (
-                    <RouteGuard>
-                      <AccountProfile />
-                    </RouteGuard>
-                  ),
-                  children: [
-                    {
-                      path: 'basic',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabProfile />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'personal',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabPersonal />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'my-account',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabAccount />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'password',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabPassword />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'role',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabRole />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'settings',
-                      element: (
-                        <RouteGuard>
-                          <AccountTabSettings />
-                        </RouteGuard>
-                      )
-                    }
-                  ]
                 },
                 {
-                  path: 'user',
+                  path: 'personal',
                   element: (
                     <RouteGuard>
-                      <UserProfile />
+                      <AccountTabPersonal />
                     </RouteGuard>
-                  ),
-                  children: [
-                    {
-                      path: 'personal',
-                      element: (
-                        <RouteGuard>
-                          <UserTabPersonal />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'payment',
-                      element: (
-                        <RouteGuard>
-                          <UserTabPayment />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'password',
-                      element: (
-                        <RouteGuard>
-                          <UserTabPassword />
-                        </RouteGuard>
-                      )
-                    },
-                    {
-                      path: 'settings',
-                      element: (
-                        <RouteGuard>
-                          <UserTabSettings />
-                        </RouteGuard>
-                      )
-                    }
-                  ]
+                  )
+                },
+                {
+                  path: 'my-account',
+                  element: (
+                    <RouteGuard>
+                      <AccountTabAccount />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'password',
+                  element: (
+                    <RouteGuard>
+                      <AccountTabPassword />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'role',
+                  element: (
+                    <RouteGuard>
+                      <AccountTabRole />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'settings',
+                  element: (
+                    <RouteGuard>
+                      <AccountTabSettings />
+                    </RouteGuard>
+                  )
+                }
+              ]
+            },
+            {
+              path: 'user',
+              element: (
+                <RouteGuard>
+                  <UserProfile />
+                </RouteGuard>
+              ),
+              children: [
+                {
+                  path: 'personal',
+                  element: (
+                    <RouteGuard>
+                      <UserTabPersonal />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'payment',
+                  element: (
+                    <RouteGuard>
+                      <UserTabPayment />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'password',
+                  element: (
+                    <RouteGuard>
+                      <UserTabPassword />
+                    </RouteGuard>
+                  )
+                },
+                {
+                  path: 'settings',
+                  element: (
+                    <RouteGuard>
+                      <UserTabSettings />
+                    </RouteGuard>
+                  )
                 }
               ]
             }
           ]
         }
+        //   ]
+        // }
       ]
     },
     {

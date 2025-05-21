@@ -302,6 +302,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Marital Status
                   </MenuItem>
+                  {!maritalOptions.includes(maritalStatus) && maritalStatus && <MenuItem value={maritalStatus}>{maritalStatus}</MenuItem>}
                   {maritalOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

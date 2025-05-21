@@ -31,6 +31,8 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { APP_VERSION } from 'config';
 import { getUserStage } from 'apiServices/user';
+import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import LoadingOverlay from 'components/LoaderOverlay';
 // ================================|| LOGIN ||================================ //
 interface ErrorData {
   response: any;
@@ -68,6 +70,8 @@ export default function Login() {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [isOTPLoading, setIsOTPLoading] = useState<boolean>(false);
+  const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
   function googleLogin() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
@@ -162,8 +166,8 @@ export default function Login() {
             break;
           case 5:
             /*For Complete APP*/
-            sessionStorage.setItem('allowedRoute', '/widget/statistics');
-            navigate('/widget/statistics', { replace: true });
+            sessionStorage.setItem('allowedRoute', '/dashboard');
+            navigate('/dashboard', { replace: true });
             /*For Coming Soon*/
             // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
             // navigate('/maintenance/coming-soon2', { replace: true });
@@ -197,35 +201,44 @@ export default function Login() {
   }, [userEmail, userId]);
   return (
     <AuthWrapper>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sx={{ textAlign: 'center', pt: '0px !important' }}>
-          <Logo />
-        </Grid>
-        <Grid item xs={12} sx={{ pt: '20px !important' }}>
-          <AuthLogin forgot="/auth/forgot-password" />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pt: '10px !important', pb: '10px !important' }}
-        >
-          <Typography variant="body1">OR</Typography>
-        </Grid>
-        <Grid item xs={12} sx={{ pt: '14px !important' }}>
-          <Grid container spacing={1}>
-            {/* <Grid item xs={12}>
+      <>
+        <LoadingOverlay
+          loading={isOTPLoading || isLoginLoading}
+          message={isOTPLoading ? 'Fetching OTP' : 'Logging in'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
+        <Grid container spacing={3}>
+          <Grid item xs={12} sx={{ textAlign: 'center', pt: '0px !important' }}>
+            <Logo />
+          </Grid>
+          <Grid item xs={12} sx={{ pt: '20px !important' }}>
+            <AuthLogin forgot="/auth/forgot-password" onLoginLoadingChange={setIsLoginLoading} onOTPLoadingChange={setIsOTPLoading} />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', pt: '10px !important', pb: '10px !important' }}
+          >
+            <Typography variant="body1">OR</Typography>
+          </Grid>
+          <Grid item xs={12} sx={{ pt: '14px !important' }}>
+            <Grid container spacing={1}>
+              {/* <Grid item xs={12}>
               <AuthSocButton>
                 <img src={imgFacebook} alt="Facebook" style={{ margin: '0 10px' }} /> Sign In with Facebook
               </AuthSocButton>
             </Grid> */}
-            <Grid item xs={12}>
-              <AuthSocButton onClick={googleLogin}>
-                <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
-              </AuthSocButton>
+              <Grid item xs={12}>
+                <AuthSocButton onClick={googleLogin}>
+                  <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
+                </AuthSocButton>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        {/* <Grid item xs={12} sx={{ pt: '14px !important' }}>
+          {/* <Grid item xs={12} sx={{ pt: '14px !important' }}>
           <Stack direction="row" justifyContent="center" alignItems="baseline" spacing={0.5} sx={{ mb: { xs: -0.5, sm: 0.5 } }}>
             <Typography variant="body1" sx={{ textDecoration: 'none', color: '#40444C' }}>
               Don&apos;t have an account?
@@ -243,7 +256,8 @@ export default function Login() {
             </Typography>
           </Stack>
         </Grid> */}
-      </Grid>
+        </Grid>
+      </>
     </AuthWrapper>
   );
 }

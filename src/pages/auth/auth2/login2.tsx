@@ -68,6 +68,7 @@ export default function Login2() {
           </Stack>
         </Grid>
         <Grid item xs={12}>
+          {/* @ts-ignore */}
           <AuthLogin forgot="/auth/forgot-password2" />
         </Grid>
       </Grid>

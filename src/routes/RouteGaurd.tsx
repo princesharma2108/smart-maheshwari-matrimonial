@@ -11,6 +11,12 @@ const RouteGuard = ({ children }: { children: React.ReactNode }) => {
     console.log('  - Last Allowed Route:', sessionStorage.getItem('allowedRoute'));
     console.log('  - Navigation Type:', navigationType);
 
+    // 🚫 If trying to access "/apps" directly, redirect to "/login"
+    if (location.pathname === '/apps') {
+      console.warn('🚫 Access to /apps is restricted. Redirecting to /login...');
+      window.location.replace('/login');
+      return;
+    }
     // If user navigates manually (POP), force them back
     if (navigationType === 'POP') {
       const lastRoute = sessionStorage.getItem('allowedRoute') || '/login';

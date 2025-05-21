@@ -290,7 +290,7 @@ export default function PersonalDetailsEdit() {
       setGender(profileDetailsData.gender || '');
       setDisability(profileDetailsData.disability || '');
       setHeight(profileDetailsData.heightCm || '');
-      setWeight(profileDetailsData.weightKg || '');
+      setWeight(profileDetailsData.weightKg.replace(/kg/i, '').trim() || '');
       setBloodGroup(profileDetailsData.bloodGroup || '');
       setComplexion(profileDetailsData.complexion || '');
       setMaritalStatus(profileDetailsData.maritalStatus || '');

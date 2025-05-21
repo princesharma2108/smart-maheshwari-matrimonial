@@ -62,7 +62,7 @@ const applications: NavItemType = {
     //   title: <FormattedMessage id="Latest Matches" />,
     //   type: 'item',
     //   icon: icons.latestMatches,
-    //   url: '/apps/latestMatches/latestMatches',
+    //   url: '/latestMatches',
     //   breadcrumbs: true
     // },
     {
@@ -70,7 +70,7 @@ const applications: NavItemType = {
       title: <FormattedMessage id="Advanced Search" />,
       type: 'item',
       icon: icons.advancedSearch,
-      url: '/apps/advancedSearch/advancedSearch',
+      url: '/advancedSearch',
       breadcrumbs: true
     },
     {
@@ -78,8 +78,8 @@ const applications: NavItemType = {
       title: <FormattedMessage id="Edit Profile" />,
       type: 'item',
       icon: icons.profile,
-      url: '/apps/editProfile/editProfile/personalDetailsEdit',
-      //link: '/apps/profiles/account/:tab',
+      url: '/editProfile/personalDetailsEdit',
+      //link: '/profiles/account/:tab',
       breadcrumbs: false
     },
     // {
@@ -87,7 +87,7 @@ const applications: NavItemType = {
     //   title: <FormattedMessage id="App Feedback" />,
     //   type: 'item',
     //   icon: icons.appFeedback,
-    //   url: '/apps/appFeedback/appFeedback',
+    //   url: '/appFeedback',
     //   breadcrumbs: true
     // },
     {
@@ -95,7 +95,7 @@ const applications: NavItemType = {
       title: <FormattedMessage id="Subscription Plan" />,
       type: 'item',
       icon: icons.subscriptionPlan,
-      url: '/apps/subscriptionPlan/subscriptionPlan',
+      url: '/subscriptionPlan',
       breadcrumbs: true
     },
     {
@@ -103,7 +103,7 @@ const applications: NavItemType = {
       title: <FormattedMessage id="About us" />,
       type: 'item',
       icon: icons.aboutUs,
-      url: '/apps/aboutUs/aboutUs',
+      url: '/aboutUs',
       breadcrumbs: true
     }
     // {
@@ -111,7 +111,7 @@ const applications: NavItemType = {
     //   title: <FormattedMessage id="Contact Support" />,
     //   type: 'item',
     //   icon: icons.contactSupport,
-    //   url: '/apps/contactSupport/contactSupport',
+    //   url: '/contactSupport',
     //   breadcrumbs: true
     // }
   ]

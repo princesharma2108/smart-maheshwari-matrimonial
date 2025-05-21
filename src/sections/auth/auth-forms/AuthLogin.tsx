@@ -48,6 +48,7 @@ import { jwtDecode } from 'jwt-decode';
 import { KeyedObject } from 'types/root';
 import { getOTP, getUserStage } from 'apiServices/user';
 import { APP_VERSION } from 'config';
+
 interface ErrorData {
   response: any;
 }
@@ -79,8 +80,12 @@ const initialState: AuthProps = {
   isInitialized: false,
   user: null
 };
-
-export default function AuthLogin({ forgot }: { forgot?: string }) {
+type AuthLoginProps = {
+  forgot?: string;
+  onLoginLoadingChange: (loading: boolean) => void;
+  onOTPLoadingChange: (loading: boolean) => void;
+};
+export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange }: AuthLoginProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
@@ -92,6 +97,8 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
+  const [isOTPLoading, setIsOTPLoading] = useState<boolean>(false);
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -206,8 +213,8 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             break;
           case 5:
             /*For Complete APP*/
-            sessionStorage.setItem('allowedRoute', '/widget/statistics');
-            navigate('/widget/statistics', { replace: true });
+            sessionStorage.setItem('allowedRoute', '/dashboard');
+            navigate('/dashboard', { replace: true });
             /*For Coming Soon*/
             // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
             // navigate('/maintenance/coming-soon2', { replace: true });
@@ -253,6 +260,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             .required('OTP is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          onLoginLoadingChange(true);
           const registerData = {
             phoneNumber: values.phone,
             otp: values.otp,
@@ -260,6 +268,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
           };
           try {
             await login(registerData); // Replace with your OTP verification logic
+            onLoginLoadingChange(false);
             const storedData = localStorage.getItem('userData');
             const userData = storedData ? JSON.parse(storedData) : {};
             if (userData.created == false) {
@@ -286,6 +295,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
       >
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => {
           const getOTPAPI = async () => {
+            onOTPLoadingChange(true);
             const otpData = {
               phoneNumber: values.phone,
               countryCode: values.countryCode
@@ -293,6 +303,7 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             try {
               const response = await getOTP(otpData);
               const responseData = response.data as ResponseOTPData;
+              onOTPLoadingChange(false);
               openSnackbar({
                 open: true,
                 message: responseData.message,
@@ -313,155 +324,157 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
             }
           };
           return (
-            <form noValidate onSubmit={handleSubmit}>
-              <Grid container spacing={3} justifyContent="center">
-                <Grid item xs={12}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
-                    <OutlinedInput
-                      id="phone-input"
-                      type="tel"
-                      value={values.phone}
-                      name="phone"
-                      onBlur={handleBlur}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        const isValid = /^[0-9\b]*$/.test(newValue); // allow empty & digits
-
-                        if (isValid && newValue.length <= 10) {
-                          handleChange(e);
-                        }
-                      }}
-                      placeholder="Enter your phone number"
-                      fullWidth
-                      error={Boolean(touched.phone && errors.phone)}
-                      className="inputFieldLogin"
-                      startAdornment={
-                        <InputAdornment position="start">
-                          <Select
-                            value={values.countryCode}
-                            name="countryCode"
-                            onChange={(e) => {
-                              handleChange(e);
-                              // setCountryCode(e.target.value); // Optional
-                            }}
-                            variant="standard"
-                            disableUnderline
-                            sx={{ minWidth: 60, fontWeight: 500 }}
-                          >
-                            <MenuItem value="+91">+91</MenuItem>
-                            <MenuItem value="+1">+1</MenuItem>
-                            <MenuItem value="+44">+44</MenuItem>
-                            <MenuItem value="+61">+61</MenuItem>
-                          </Select>
-                        </InputAdornment>
-                      }
-                    />
-                  </Stack>
-                  {touched.phone && errors.phone && (
-                    <FormHelperText error id="helper-text-phone">
-                      {errors.phone}
-                    </FormHelperText>
-                  )}
-                </Grid>
-                {isOtpSent && (
+            <>
+              <form noValidate onSubmit={handleSubmit}>
+                <Grid container spacing={3} justifyContent="center">
                   <Grid item xs={12}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="otp">OTP</InputLabel>
-                      <Stack direction="row" spacing={1} justifyContent="center">
-                        {[0, 1, 2, 3].map((index) => (
-                          <OutlinedInput
-                            key={index}
-                            inputProps={{
-                              maxLength: 1,
-                              style: { textAlign: 'center', fontSize: 24 },
-                              autoComplete: 'one-time-code' // or use 'off' if you want to fully disable autofill
-                            }}
-                            type="text"
-                            value={values.otp[index] || ''}
-                            className="inputFieldLogin"
-                            onChange={(e) => {
-                              const val = e.target.value.replace(/\D/, '');
-                              const otpArr = values.otp.split('');
-                              otpArr[index] = val;
-                              const newOtp = otpArr.join('');
-                              handleChange({
-                                target: { name: 'otp', value: newOtp }
-                              });
+                      <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
+                      <OutlinedInput
+                        id="phone-input"
+                        type="tel"
+                        value={values.phone}
+                        name="phone"
+                        onBlur={handleBlur}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          const isValid = /^[0-9\b]*$/.test(newValue); // allow empty & digits
 
-                              // Auto move to next input
-                              if (val && e.target.nextSibling) {
-                                const nextInput = e.target.parentNode?.parentNode?.querySelector(
-                                  `input[name="otp${index + 1}"]`
-                                ) as HTMLInputElement;
-                                if (nextInput) nextInput.focus();
-                              }
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Backspace' && !values.otp[index] && index > 0) {
-                                const prevInput = e.currentTarget.parentNode?.parentNode?.querySelector(
-                                  `input[name="otp${index - 1}"]`
-                                ) as HTMLInputElement;
-                                if (prevInput) prevInput.focus();
-                              }
-                            }}
-                            name={`otp${index}`}
-                            sx={{ width: 60 }}
-                            error={Boolean(touched.otp && errors.otp)}
-                          />
-                        ))}
-                      </Stack>
-                      <input type="hidden" name="otp" value={values.otp} />
+                          if (isValid && newValue.length <= 10) {
+                            handleChange(e);
+                          }
+                        }}
+                        placeholder="Enter your phone number"
+                        fullWidth
+                        error={Boolean(touched.phone && errors.phone)}
+                        className="inputFieldLogin"
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <Select
+                              value={values.countryCode}
+                              name="countryCode"
+                              onChange={(e) => {
+                                handleChange(e);
+                                // setCountryCode(e.target.value); // Optional
+                              }}
+                              variant="standard"
+                              disableUnderline
+                              sx={{ minWidth: 60, fontWeight: 500 }}
+                            >
+                              <MenuItem value="+91">+91</MenuItem>
+                              <MenuItem value="+1">+1</MenuItem>
+                              <MenuItem value="+44">+44</MenuItem>
+                              <MenuItem value="+61">+61</MenuItem>
+                            </Select>
+                          </InputAdornment>
+                        }
+                      />
                     </Stack>
-                    {touched.otp && errors.otp && (
-                      <FormHelperText error id="helper-text-otp">
-                        {errors.otp}
+                    {touched.phone && errors.phone && (
+                      <FormHelperText error id="helper-text-phone">
+                        {errors.phone}
                       </FormHelperText>
                     )}
                   </Grid>
-                )}
-                {errors.submit && (
-                  <Grid item xs={12}>
-                    <FormHelperText error>{errors.submit}</FormHelperText>
-                  </Grid>
-                )}
+                  {isOtpSent && (
+                    <Grid item xs={12}>
+                      <Stack spacing={1}>
+                        <InputLabel htmlFor="otp">OTP</InputLabel>
+                        <Stack direction="row" spacing={1} justifyContent="center">
+                          {[0, 1, 2, 3].map((index) => (
+                            <OutlinedInput
+                              key={index}
+                              inputProps={{
+                                maxLength: 1,
+                                style: { textAlign: 'center', fontSize: 24 },
+                                autoComplete: 'one-time-code' // or use 'off' if you want to fully disable autofill
+                              }}
+                              type="text"
+                              value={values.otp[index] || ''}
+                              className="inputFieldLogin"
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/\D/, '');
+                                const otpArr = values.otp.split('');
+                                otpArr[index] = val;
+                                const newOtp = otpArr.join('');
+                                handleChange({
+                                  target: { name: 'otp', value: newOtp }
+                                });
 
-                <Grid item xs={12}>
-                  <Typography variant="body1" sx={{ mb: 1 }}>
-                    Login is allowed only with your WhatsApp number.
-                  </Typography>
-                  {!isOtpSent ? (
-                    <AnimateButton>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="buttonStyle"
-                        onClick={() => {
-                          if (/^\d{10}$/.test(values.phone)) {
-                            getOTPAPI();
-                          }
-                        }}
-                      >
-                        Send OTP
-                      </Button>
-                    </AnimateButton>
-                  ) : (
-                    <AnimateButton>
-                      <Button
-                        fullWidth
-                        variant="contained"
-                        type="submit"
-                        color="secondary"
-                        className="buttonStyle"
-                        disabled={isSubmitting || values.otp.length < 4}
-                      >
-                        Login
-                      </Button>
-                    </AnimateButton>
+                                // Auto move to next input
+                                if (val && e.target.nextSibling) {
+                                  const nextInput = e.target.parentNode?.parentNode?.querySelector(
+                                    `input[name="otp${index + 1}"]`
+                                  ) as HTMLInputElement;
+                                  if (nextInput) nextInput.focus();
+                                }
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Backspace' && !values.otp[index] && index > 0) {
+                                  const prevInput = e.currentTarget.parentNode?.parentNode?.querySelector(
+                                    `input[name="otp${index - 1}"]`
+                                  ) as HTMLInputElement;
+                                  if (prevInput) prevInput.focus();
+                                }
+                              }}
+                              name={`otp${index}`}
+                              sx={{ width: 60 }}
+                              error={Boolean(touched.otp && errors.otp)}
+                            />
+                          ))}
+                        </Stack>
+                        <input type="hidden" name="otp" value={values.otp} />
+                      </Stack>
+                      {touched.otp && errors.otp && (
+                        <FormHelperText error id="helper-text-otp">
+                          {errors.otp}
+                        </FormHelperText>
+                      )}
+                    </Grid>
                   )}
-                </Grid>
-                {/* <Grid item xs={12}>
+                  {errors.submit && (
+                    <Grid item xs={12}>
+                      <FormHelperText error>{errors.submit}</FormHelperText>
+                    </Grid>
+                  )}
+
+                  <Grid item xs={12}>
+                    <Typography variant="body1" sx={{ mb: 1 }}>
+                      Login is allowed only with your WhatsApp number.
+                    </Typography>
+                    {!isOtpSent ? (
+                      <AnimateButton>
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          className="buttonStyle"
+                          onClick={() => {
+                            if (/^\d{10}$/.test(values.phone)) {
+                              getOTPAPI();
+                            }
+                          }}
+                          disabled={isSubmitting || values.phone.length < 10}
+                        >
+                          Send OTP
+                        </Button>
+                      </AnimateButton>
+                    ) : (
+                      <AnimateButton>
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          type="submit"
+                          color="secondary"
+                          className="buttonStyle"
+                          disabled={isSubmitting || values.otp.length < 4}
+                        >
+                          Login
+                        </Button>
+                      </AnimateButton>
+                    )}
+                  </Grid>
+                  {/* <Grid item xs={12}>
                 <AnimateButton>
                   <Button
                     disableElevation
@@ -476,8 +489,9 @@ export default function AuthLogin({ forgot }: { forgot?: string }) {
                   </Button>
                 </AnimateButton>
               </Grid> */}
-              </Grid>
-            </form>
+                </Grid>
+              </form>
+            </>
           );
         }}
       </Formik>

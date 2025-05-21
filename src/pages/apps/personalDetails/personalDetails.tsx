@@ -12,7 +12,7 @@ import BackgroundWrapper from 'sections/auth/BackgroundWrapper';
 import 'assets/styles/styles.scss';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fi } from 'date-fns/locale';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
@@ -20,6 +20,7 @@ import { postUserStage, profileDetails } from 'apiServices/user';
 import { extractPDFData, getGeneralData } from 'apiServices/data';
 import { APP_VERSION } from 'config';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import LoadingOverlay from 'components/LoaderOverlay';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -53,6 +54,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 const PersonalDetails: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const skippedBiodata = location.state?.skippedBiodata;
   const [tabIndex, setTabIndex] = useState(0);
   //Tab 1
   const [fullName, setFullName] = useState('');
@@ -288,7 +291,6 @@ const PersonalDetails: React.FC = () => {
       setCompanyName(pdfData.occupationCompany || '');
       setWorkingWith(pdfData.workingWith || '');
       setMinAnnualIncome(pdfData.minAnnualIncomeIndividual || '');
-      console.log('maxAnnualIncome1', pdfData.maxAnnualIncomeIndividual);
       setMaxAnnualIncome(pdfData.maxAnnualIncomeIndividual || '');
       setGotra(pdfData.gotra || '');
       setHobbies(pdfData.hobbies || []);
@@ -355,7 +357,9 @@ const PersonalDetails: React.FC = () => {
     }
   };
   useEffect(() => {
-    extractPDFDataAPI();
+    if (!skippedBiodata) {
+      extractPDFDataAPI();
+    }
     postUserStageAPI();
     getGeneralDataAPI();
   }, []);
@@ -408,49 +412,14 @@ const PersonalDetails: React.FC = () => {
   return (
     <BackgroundWrapper>
       <>
-        {isLoading && ( // Show Loader When API is in Progress
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              height: '100vh',
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 9999
-            }}
-          >
-            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#f00757"
-              ariaLabel="ball-triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-              <Typography variant="h3" color={'#f00757'}>
-                Extracting PDF Data
-              </Typography>
-              <ThreeDots
-                visible={true}
-                height="20"
-                width="20"
-                color="#f00757"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{ marginBottom: '5px' }}
-                wrapperClass=""
-              />
-            </Stack>
-          </Box>
-        )}
+        <LoadingOverlay
+          loading={isLoading}
+          message={'Extracting PDF Data'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
         <>
           {/* Back Button */}
           <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
@@ -617,9 +586,16 @@ const PersonalDetails: React.FC = () => {
           {/* Buttons */}
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-              <Button variant="outlined" color="secondary" onClick={handlePrevious}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={handlePrevious}
+                disabled={tabIndex === 0}
+                className="buttonStyleOutlined"
+              >
                 Previous
               </Button>
+
               <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
                 Continue
               </Button>

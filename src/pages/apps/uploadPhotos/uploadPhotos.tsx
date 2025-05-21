@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Typography, Grid, IconButton, Link, CircularProgress, Stack } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -13,6 +13,7 @@ import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { APP_VERSION } from 'config';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import LoadingOverlay from 'components/LoaderOverlay';
 interface ErrorData {
   response: any;
 }
@@ -26,6 +27,7 @@ export default function UploadPhotos() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
   const onSubmit = (data: any) => {
@@ -59,6 +61,11 @@ export default function UploadPhotos() {
   const handleRemoveFile = (index: number) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    // Clear the file input value so the same file can be uploaded again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
   const uploadPhotosAPI = async () => {
     setIsLoading(true);
@@ -149,48 +156,14 @@ export default function UploadPhotos() {
   return (
     <BackgroundWrapper>
       <>
-        {isLoading && ( // Show Loader When API is in Progress
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100vh',
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 9999
-            }}
-          >
-            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#f00757"
-              ariaLabel="ball-triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-              <Typography variant="h3" color={'#f00757'}>
-                Uploading Photos
-              </Typography>
-              <ThreeDots
-                visible={true}
-                height="20"
-                width="20"
-                color="#f00757"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{ marginBottom: '5px' }}
-                wrapperClass=""
-              />
-            </Stack>
-          </Box>
-        )}
+        <LoadingOverlay
+          loading={isLoading}
+          message={' Uploading Photos'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
         <Grid container spacing={3} justifyContent="center">
           {/* Back Button */}
           <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
@@ -211,6 +184,8 @@ export default function UploadPhotos() {
             <Typography variant="h3">Upload Photos</Typography>
             <Typography variant="body1" sx={{ mt: 1, color: 'gray' }}>
               You must upload at least 2 photos and a maximum of 10 photos.
+              <br />
+              Only JPG, JPEG, PNG, and GIF formats are allowed.
             </Typography>
           </Grid>
 
@@ -232,7 +207,7 @@ export default function UploadPhotos() {
               className="buttonStyle"
             >
               Choose Files
-              <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
+              <input type="file" accept="image/*" multiple {...register('photos')} ref={fileInputRef} onChange={handleFileChange} hidden />
             </Button>
           </Grid>
 

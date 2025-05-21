@@ -27,7 +27,7 @@ const widget: NavItemType = {
       id: 'statistics',
       title: <FormattedMessage id="Latest Matches" />,
       type: 'item',
-      url: '/widget/statistics',
+      url: '/dashboard',
       icon: icons.statistics
     }
     // {

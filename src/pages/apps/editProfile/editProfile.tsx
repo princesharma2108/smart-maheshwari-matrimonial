@@ -9,6 +9,7 @@ import { openSnackbar } from 'api/snackbar';
 import { getUserDetails } from 'apiServices/data';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import { Box, Stack, Typography } from '@mui/material';
+import LoadingOverlay from 'components/LoaderOverlay';
 interface ResponseData {
   status: string;
   message: string;
@@ -66,49 +67,14 @@ export default function EditProfile() {
   return (
     <>
       <Breadcrumbs custom heading={'Edit Profile'} links={breadcrumbLinks} />
-      {isLoading && ( // Show Loader When API is in Progress
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '4px',
-            height: '100vh',
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 9999
-          }}
-        >
-          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-          <BallTriangle
-            height={100}
-            width={100}
-            radius={5}
-            color="#f00757"
-            ariaLabel="ball-triangle-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
-          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-            <Typography variant="h3" color={'#f00757'}>
-              Fetching User Details
-            </Typography>
-            <ThreeDots
-              visible={true}
-              height="20"
-              width="20"
-              color="#f00757"
-              radius="9"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{ marginBottom: '5px' }}
-              wrapperClass=""
-            />
-          </Stack>
-        </Box>
-      )}
+      <LoadingOverlay
+        loading={isLoading}
+        message={'Fetching User Details'}
+        IconComponent={
+          <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+        }
+        showSubLoader={true}
+      />
       <Grid container spacing={3}>
         <Grid item xs={12} md={3}>
           <ProfileDetails focusInput={focusInput} />

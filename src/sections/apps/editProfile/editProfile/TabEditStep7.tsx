@@ -241,7 +241,7 @@ export default function TabEditStep7({
                       Country<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'Country'}
                       //addressCountryFilters={['us']}
                       initialAddress={country}
                       handleAddressChange={handleHomeAddressChange}
@@ -267,7 +267,7 @@ export default function TabEditStep7({
                       State<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'State'}
                       //addressCountryFilters={['us']}
                       initialAddress={state}
                       handleAddressChange={handleHomeAddressChange}
@@ -293,7 +293,7 @@ export default function TabEditStep7({
                       City<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'City'}
                       //addressCountryFilters={['us']}
                       initialAddress={city}
                       handleAddressChange={handleHomeAddressChange}

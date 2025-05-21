@@ -123,7 +123,7 @@ export default function TabStep5({
     if (!highestQualification) newErrors.highestQualification = 'This field is required.';
     if (!occupation) newErrors.occupation = 'This field is required.';
     if (!annualIncome) newErrors.annualIncome = 'This field is required.';
-    if (!languagesKnown) newErrors.languagesKnown = 'This field is required.';
+    if (languagesKnown.length == 0) newErrors.languagesKnown = 'This field is required.';
     setErrors(newErrors);
     const isValid = Object.values(newErrors).every((err) => err === '');
     setIsStepValid(isValid); // Update parent state

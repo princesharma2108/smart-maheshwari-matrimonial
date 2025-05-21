@@ -13,6 +13,7 @@ import { getUserStage, postUserStage, uploadBiodata } from 'apiServices/user';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
 import { APP_VERSION } from 'config';
+import LoadingOverlay from 'components/LoaderOverlay';
 
 interface ErrorData {
   response: any;
@@ -165,49 +166,14 @@ export default function UploadBiodata() {
   return (
     <BackgroundWrapper>
       <>
-        {isLoading && ( // Show Loader When API is in Progress
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              height: '100vh',
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 9999
-            }}
-          >
-            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#f00757"
-              ariaLabel="ball-triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-              <Typography variant="h3" color={'#f00757'}>
-                Uploading Biodata
-              </Typography>
-              <ThreeDots
-                visible={true}
-                height="20"
-                width="20"
-                color="#f00757"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{ marginBottom: '5px' }}
-                wrapperClass=""
-              />
-            </Stack>
-          </Box>
-        )}
+        <LoadingOverlay
+          loading={isLoading}
+          message={'Uploading Biodata'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
         <Grid container spacing={3} justifyContent="center">
           {/* Back Button */}
           <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
@@ -294,6 +260,7 @@ export default function UploadBiodata() {
               <Link
                 component={RouterLink}
                 to="/personal-details"
+                state={{ skippedBiodata: true }}
                 replace={true}
                 onClick={() => sessionStorage.setItem('allowedRoute', '/personal-details')}
                 sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}

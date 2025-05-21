@@ -24,13 +24,13 @@ interface ErrorData {
 function getPathIndex(pathname: string) {
   let selectedTab = 0;
   switch (pathname) {
-    case '/apps/editProfile/editProfile/preferencesEdit':
+    case '/editProfile/preferencesEdit':
       selectedTab = 1;
       break;
-    case '/apps/editProfile/editProfile/editPhotos':
+    case '/editProfile/editPhotos':
       selectedTab = 2;
       break;
-    case '/apps/editProfile/editProfile/personalDetailsEdit':
+    case '/editProfile/personalDetailsEdit':
     default:
       selectedTab = 0;
   }
@@ -89,8 +89,8 @@ export default function ProfileTab({ profileDetails, preferenceDetails, photosUr
       <ListItemButton
         selected={selectedIndex === 0}
         onClick={() => {
-          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/personalDetailsEdit');
-          handleListItemClick(0, '/apps/editProfile/editProfile/personalDetailsEdit', profileDetails);
+          sessionStorage.setItem('allowedRoute', '/editProfile/personalDetailsEdit');
+          handleListItemClick(0, '/editProfile/personalDetailsEdit', profileDetails);
         }}
       >
         <ListItemIcon>
@@ -102,8 +102,8 @@ export default function ProfileTab({ profileDetails, preferenceDetails, photosUr
       <ListItemButton
         selected={selectedIndex === 1}
         onClick={() => {
-          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/preferencesEdit');
-          handleListItemClick(1, '/apps/editProfile/editProfile/preferencesEdit', preferenceDetails);
+          sessionStorage.setItem('allowedRoute', '/editProfile/preferencesEdit');
+          handleListItemClick(1, '/editProfile/preferencesEdit', preferenceDetails);
         }}
       >
         <ListItemIcon>
@@ -115,8 +115,8 @@ export default function ProfileTab({ profileDetails, preferenceDetails, photosUr
       <ListItemButton
         selected={selectedIndex === 2}
         onClick={() => {
-          sessionStorage.setItem('allowedRoute', '/apps/editProfile/editProfile/editPhotos');
-          handleListItemClick(2, '/apps/editProfile/editProfile/editPhotos', photosUrl);
+          sessionStorage.setItem('allowedRoute', '/editProfile/editPhotos');
+          handleListItemClick(2, '/editProfile/editPhotos', photosUrl);
         }}
       >
         <ListItemIcon>

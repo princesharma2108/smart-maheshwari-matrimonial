@@ -22,7 +22,7 @@ export default function BackgroundWrapper({ children, padding = 3 }: Props) {
     <Box
       sx={{
         minHeight: '100vh',
-        backgroundColor: '#FFE1E7',
+        backgroundColor: '#F2F2F2',
         // backgroundImage: `url(${loginBG2})`,
         // backgroundSize: 'cover',
         // backgroundPosition: 'center',
@@ -42,8 +42,13 @@ export default function BackgroundWrapper({ children, padding = 3 }: Props) {
           maxWidth: 800,
           mx: 'auto',
           bgcolor: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(10px)',
+          border: '1px solid #070C0026',
+          //backdropFilter: 'blur(10px)',
           borderRadius: 2
+          // display: 'flex',
+          // flexDirection: 'column',
+          // justifyContent: 'center'
+          // alignItems: 'center'
         }}
       >
         {children}

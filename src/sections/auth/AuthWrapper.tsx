@@ -20,7 +20,7 @@ export default function AuthWrapper({ children }: Props) {
     <Box
       sx={{
         height: '100dvh',
-        backgroundColor: '#FFE1E7',
+        backgroundColor: '#F2F2F2',
         display: 'flex',
         alignItems: 'start',
         justifyContent: 'center',
@@ -30,7 +30,8 @@ export default function AuthWrapper({ children }: Props) {
       <Card
         sx={{
           padding: 2,
-          boxShadow: 3,
+          //boxShadow: 3,
+          border: '1px solid #070C0026',
           borderRadius: 2,
           maxWidth: 900,
           width: '100%',

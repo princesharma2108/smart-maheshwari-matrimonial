@@ -32,6 +32,7 @@ import { useEffect, useState } from 'react';
 import { postUserStage } from 'apiServices/user';
 import { useLocation } from 'react-router';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import LoadingOverlay from 'components/LoaderOverlay';
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface ResponseData {
   status: string;
@@ -374,48 +375,14 @@ export default function LatestMatches() {
   const dataToRender = hasSearchResults ? searchResults : hasMatchProfiles ? matchProfilesData : [];
   return (
     <>
-      {isLoading && ( // Show Loader When API is in Progress
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: '100vh',
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 9999
-          }}
-        >
-          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-          <BallTriangle
-            height={100}
-            width={100}
-            radius={5}
-            color="#f00757"
-            ariaLabel="ball-triangle-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
-          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-            <Typography variant="h3" color={'#f00757'}>
-              Fetching Data
-            </Typography>
-            <ThreeDots
-              visible={true}
-              height="20"
-              width="20"
-              color="#f00757"
-              radius="9"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{ marginBottom: '5px' }}
-              wrapperClass=""
-            />
-          </Stack>
-        </Box>
-      )}
+      <LoadingOverlay
+        loading={isLoading}
+        message={'Fetching Data'}
+        IconComponent={
+          <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+        }
+        showSubLoader={true}
+      />
       <>
         <Grid container marginBottom={3} display="flex" justifyContent="space-between" alignItems="center">
           {/* Left side buttons */}

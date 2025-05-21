@@ -26,6 +26,7 @@ import { openSnackbar } from 'api/snackbar';
 import { profileDetails } from 'apiServices/user';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import EditIcon from '@mui/icons-material/Edit';
+import LoadingOverlay from 'components/LoaderOverlay';
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -54,11 +55,11 @@ const AdditionalInformation: React.FC = () => {
   const [editedText, setEditedText] = useState('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingSaveDetails, setIsLoadingSaveDetails] = useState<boolean>(false);
+  const isAnyEditing = isEditing !== null && isEditing !== -1;
   const navigate = useNavigate();
   const handleAboutMeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedAboutMe(event.target.value);
   };
-
   const getAboutMeAPI = async () => {
     setIsLoading(true);
     const storedData = localStorage.getItem('matrimonialDetails');
@@ -76,6 +77,10 @@ const AdditionalInformation: React.FC = () => {
       // Extract descriptions and update state
       const descriptions = responseData.response.map((item: any) => item.description);
       setAboutMeDescriptions(descriptions);
+      // ✅ Set the first option as selected by default
+      if (descriptions.length > 0) {
+        setSelectedAboutMe(descriptions[0]);
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -208,59 +213,28 @@ const AdditionalInformation: React.FC = () => {
     setIsEditing(index);
     setEditedText(aboutMeDescriptions[index]);
   };
-
   const handleSaveEdit = (index: number) => {
     const updatedDescriptions = [...aboutMeDescriptions];
     updatedDescriptions[index] = editedText;
     setAboutMeDescriptions(updatedDescriptions);
+
+    // Fix: If currently selected item was edited, update selectedAboutMe too
+    if (selectedAboutMe === aboutMeDescriptions[index]) {
+      setSelectedAboutMe(editedText);
+    }
     setIsEditing(null);
   };
   return (
     <BackgroundWrapper>
       <>
-        {isLoadingSaveDetails && ( // Show Loader When API is in Progress
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100vh',
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 9999
-            }}
-          >
-            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#f00757"
-              ariaLabel="ball-triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-              <Typography variant="h3" color={'#f00757'}>
-                {'Saving Profile Details'}
-              </Typography>
-              <ThreeDots
-                visible={true}
-                height="20"
-                width="20"
-                color="#f00757"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{ marginBottom: '5px' }}
-                wrapperClass=""
-              />
-            </Stack>
-          </Box>
-        )}
-        {}
+        <LoadingOverlay
+          loading={isLoadingSaveDetails}
+          message={'Saving Profile Details'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
         {/* Back Button */}
         <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
           <Button
@@ -339,7 +313,13 @@ const AdditionalInformation: React.FC = () => {
 
                             <Grid item>
                               {isEditing === index ? (
-                                <Button variant="contained" size="small" onClick={() => handleSaveEdit(index)} className="buttonStyle">
+                                <Button
+                                  variant="contained"
+                                  size="small"
+                                  onClick={() => handleSaveEdit(index)}
+                                  disabled={editedText.trim() === ''}
+                                  className="buttonStyle"
+                                >
                                   Save
                                 </Button>
                               ) : (
@@ -365,7 +345,7 @@ const AdditionalInformation: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-              <Button
+              {/* <Button
                 variant="outlined"
                 color="secondary"
                 onClick={() => {
@@ -373,13 +353,14 @@ const AdditionalInformation: React.FC = () => {
                 }}
               >
                 Previous
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 onClick={() => {
                   handleSaveProfileDetailsAPI();
                 }}
                 className="buttonStyle"
+                disabled={(isEditing !== null && isEditing !== -1) || selectedAboutMe.trim() === '' || isLoadingSaveDetails}
               >
                 Continue
               </Button>

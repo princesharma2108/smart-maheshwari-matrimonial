@@ -60,11 +60,6 @@ export default function TabStep7({
   });
   const [homeAddress, setSelectedHomeAddress] = useState('');
   const [zipCode, setSelectedZipCode] = useState('');
-  // Handlers
-  const handleResidentialAddressChange = (event: ChangeEvent<HTMLInputElement>) => setResidentialAddress(event.target.value);
-  const handleCountryChange = (event: SelectChangeEvent) => setCountry(event.target.value);
-  const handleStateChange = (event: SelectChangeEvent) => setState(event.target.value);
-  const handleCityChange = (event: SelectChangeEvent) => setCity(event.target.value);
   const validateStep = () => {
     let newErrors = {
       residentialAddress: '',
@@ -107,6 +102,11 @@ export default function TabStep7({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
+  console.log('Address1=>', homeAddress);
+  console.log('Address2=>', city);
+  console.log('Address3=>', state);
+  console.log('Address4=>', country);
+  console.log('Address5=>', zipCode);
   const handleHomeAddressChange = (homeAddress: any) => {
     setSelectedHomeAddress(homeAddress);
   };
@@ -245,7 +245,7 @@ export default function TabStep7({
                       Country<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'Country'}
                       //addressCountryFilters={['us']}
                       initialAddress={country}
                       handleAddressChange={handleHomeAddressChange}
@@ -271,7 +271,7 @@ export default function TabStep7({
                       State<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'State'}
                       //addressCountryFilters={['us']}
                       initialAddress={state}
                       handleAddressChange={handleHomeAddressChange}
@@ -297,7 +297,7 @@ export default function TabStep7({
                       City<span style={{ color: 'red' }}>*</span>
                     </InputLabel>
                     <Address
-                      fieldName={''}
+                      fieldName={'City'}
                       //addressCountryFilters={['us']}
                       initialAddress={city}
                       handleAddressChange={handleHomeAddressChange}

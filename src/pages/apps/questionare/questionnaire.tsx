@@ -9,6 +9,7 @@ import { openSnackbar } from 'api/snackbar';
 import { getQuestionDetails, getUserDetails, sendQuestionAnswers } from 'apiServices/data';
 import { postUserStage } from 'apiServices/user';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+import LoadingOverlay from 'components/LoaderOverlay';
 interface ResponseData {
   status: string;
   message: string;
@@ -26,7 +27,8 @@ interface ErrorData {
 export default function Questionnaire() {
   const [showQuestions, setShowQuestions] = useState(false);
   const [userGender, setUserGender] = useState('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaveLoading, setIsSaveLoading] = useState<boolean>(false);
+  const [isGetQuestionsLoading, setIsGetQuestionsLoading] = useState<boolean>(false);
   const [answers, setAnswers] = useState<{ [key: number]: string | number }>({});
   const [formattedAnswers, setFormattedAnswers] = useState<{ questionId: string; optionId: string }[]>([]);
   const [questionsData, setQuestionsData] = useState<
@@ -41,9 +43,11 @@ export default function Questionnaire() {
     sendQuestionAnswersAPI();
   };
   const getQuestionDetailsAPI = async () => {
+    setIsGetQuestionsLoading(true);
     try {
       const response = await getQuestionDetails(); // Pass the required userId argument
       const responseData = response.data as ResponseData;
+      setIsGetQuestionsLoading(false);
       setQuestionsData(responseData.Categories);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -59,7 +63,7 @@ export default function Questionnaire() {
     }
   };
   const sendQuestionAnswersAPI = async () => {
-    setIsLoading(true);
+    setIsSaveLoading(true);
     const userId = localStorage.getItem('userId');
     const formatted = Object.entries(answers).map(([questionId, optionId]) => ({
       questionId: questionId.toString(),
@@ -83,8 +87,8 @@ export default function Questionnaire() {
         }
       } as SnackbarProps);
       /*For Complete APP*/
-      sessionStorage.setItem('allowedRoute', '/widget/statistics');
-      navigate('/widget/statistics', { replace: true });
+      sessionStorage.setItem('allowedRoute', '/dashboard');
+      navigate('/dashboard', { replace: true });
       /*For Coming Soon*/
       // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
       // navigate('/maintenance/coming-soon2', { replace: true });
@@ -100,11 +104,10 @@ export default function Questionnaire() {
         }
       } as SnackbarProps);
     } finally {
-      setIsLoading(false); // Stop Loader
+      setIsSaveLoading(false); // Stop Loader
     }
   };
   const getUserDetailsAPI = async () => {
-    setIsLoading(true);
     const userId = localStorage.getItem('userId');
     try {
       const response = await getUserDetails(userId); // Pass the required userId argument
@@ -121,8 +124,6 @@ export default function Questionnaire() {
           color: 'error'
         }
       } as SnackbarProps);
-    } finally {
-      setIsLoading(false); // Stop Loader
     }
   };
   useEffect(() => {
@@ -147,52 +148,20 @@ export default function Questionnaire() {
   // Check if all questions in the current section are answered
   const isSectionComplete = currentSectionQuestions.every((q) => answers[Number(q.Id)] !== undefined);
   // if (!filteredQuestions.length || !filteredQuestions[section]) return null;
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [section]);
   return (
     <BackgroundWrapper padding={0}>
       <>
-        {isLoading && ( // Show Loader When API is in Progress
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              height: '100vh',
-              position: 'absolute',
-              width: '100%',
-              backgroundColor: 'rgba(255, 255, 255, 0.8)',
-              zIndex: 9999
-            }}
-          >
-            {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-            <BallTriangle
-              height={100}
-              width={100}
-              radius={5}
-              color="#f00757"
-              ariaLabel="ball-triangle-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-              visible={true}
-            />
-            <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-              <Typography variant="h3" color={'#f00757'}>
-                Saving Answers
-              </Typography>
-              <ThreeDots
-                visible={true}
-                height="20"
-                width="20"
-                color="#f00757"
-                radius="9"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{ marginBottom: '5px' }}
-                wrapperClass=""
-              />
-            </Stack>
-          </Box>
-        )}
+        <LoadingOverlay
+          loading={isGetQuestionsLoading || isSaveLoading}
+          message={isGetQuestionsLoading ? 'Fetching Questions' : 'Saving Answers'}
+          IconComponent={
+            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+          }
+          showSubLoader={true}
+        />
         <Grid container spacing={3} justifyContent="center">
           {/* Back Button */}
           <Grid item xs={12} sx={{ textAlign: 'left', ml: 2 }}>
@@ -200,8 +169,14 @@ export default function Questionnaire() {
               variant="outlined"
               color="primary"
               onClick={() => {
-                sessionStorage.setItem('allowedRoute', '/upload-photos');
-                navigate('/upload-photos', { replace: true });
+                if (showQuestions) {
+                  // Go back to questionnaire main screen
+                  setShowQuestions(false);
+                } else {
+                  // If on main screen, go back to upload-photos
+                  sessionStorage.setItem('allowedRoute', '/upload-photos');
+                  navigate('/upload-photos', { replace: true });
+                }
               }}
               className="buttonStyleOutlined"
             >
@@ -310,7 +285,10 @@ export default function Questionnaire() {
               >
                 {section > 0 && (
                   <Button
-                    onClick={() => setSection(section - 1)}
+                    onClick={() => {
+                      setSection(section - 1);
+                      //window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
                     sx={{
                       color: '#f00757',
                       paddingLeft: '35px!important',
@@ -324,7 +302,12 @@ export default function Questionnaire() {
 
                 {section < filteredQuestions.length - 1 ? (
                   <Button
-                    onClick={() => setSection(section + 1)}
+                    onClick={
+                      () => {
+                        setSection(section + 1);
+                        //window.scrollTo({ top: 0, behavior: 'smooth' });
+                      } // Scroll to top
+                    }
                     disabled={!isSectionComplete} // Disable if not all questions are answered
                     sx={{
                       color: !isSectionComplete ? 'gray' : '#f00757',
