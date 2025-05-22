@@ -140,7 +140,7 @@ export default function TabStep7({
                       placeholder="Enter Residential Address"
                       value={residentialAddress}
                       onChange={(e) => {
-                        const cleanedValue = e.target.value.replace(/[^a-zA-Z0-9\s]/g, '');
+                        const cleanedValue = e.target.value;
                         setResidentialAddress(cleanedValue);
                       }}
                       autoFocus

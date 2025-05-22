@@ -291,7 +291,11 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
           {profile?.isRequested ? (
             <Box sx={{ width: '100%' }}>
               <AnimateButton>
-                <Button variant="contained" sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}>
+                <Button
+                  href="https://play.google.com/store/apps/details?id=org.miiscollp.smartmatrimonialmaheshwari"
+                  variant="contained"
+                  sx={{ width: '100%', backgroundColor: '#F00757', '&:hover': { backgroundColor: '#F00757' } }}
+                >
                   Request Matchmaking
                 </Button>
               </AnimateButton>
@@ -384,36 +388,6 @@ export default function LatestMatches() {
         showSubLoader={true}
       />
       <>
-        <Grid container marginBottom={3} display="flex" justifyContent="space-between" alignItems="center">
-          {/* Left side buttons */}
-          <Grid container spacing={2} item xs="auto">
-            <Grid item>
-              <Button variant="contained" className="topButtons">
-                New
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" className="topButtons">
-                Nearby
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" className="topButtons">
-                Top Matches
-              </Button>
-            </Grid>
-            <Grid item>
-              <Button variant="contained" className="topButtons">
-                Requested Matches
-              </Button>
-            </Grid>
-          </Grid>
-
-          {/* Right side notification icon */}
-          <Grid item xs="auto">
-            <img src={notificationIcon} alt="Notifications" />
-          </Grid>
-        </Grid>
         {/* Display two profiles per row */}
         <Grid container spacing={3}>
           {/* {matchProfiles.data.map((profile, index) => ( */}
