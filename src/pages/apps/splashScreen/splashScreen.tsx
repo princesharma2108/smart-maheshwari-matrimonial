@@ -45,18 +45,18 @@ export default function SplashScreen() {
           //alignItems: 'center',
           justifyContent: 'center',
           position: 'absolute',
-          top: 0, // Adjust as needed
+          top: -15, // Adjust as needed
           left: '50%',
           transform: 'translateX(-50%)'
         }}
       >
-        <img src={SMMLogoWebIMG} alt="LOGO Image" style={{ width: 500, height: 300 }} />
+        <img src={SMMLogoWebIMG} alt="LOGO Image" style={{ width: 500, height: 400 }} />
       </motion.div>
       {/* Text Section (Between Logo and Bottom Image) */}
       <Box
         sx={{
           position: 'absolute',
-          top: '50%',
+          top: '57%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'right' // Align text to the right
@@ -103,13 +103,13 @@ export default function SplashScreen() {
         transition={{ duration: 1, ease: 'easeOut', delay: 0.5 }}
         style={{
           position: 'absolute',
-          bottom: 0,
+          bottom: 2,
           width: '100%',
           display: 'flex',
           justifyContent: 'center'
         }}
       >
-        <img src={splashBottomImage} alt="Bottom Image" style={{ width: '100%', maxWidth: 650, height: '300px' }} />
+        <img src={splashBottomImage} alt="Bottom Image" style={{ width: '100%', maxWidth: 550, height: '300px' }} />
       </motion.div>
     </Grid>
   );
