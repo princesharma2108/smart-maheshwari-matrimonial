@@ -196,8 +196,8 @@ export default function AdvancedSearch() {
           color: 'success'
         }
       } as SnackbarProps);
-      sessionStorage.setItem('allowedRoute', '/widget/statistics');
-      navigate('/widget/statistics', { state: { searchResults: responseData.data }, replace: true });
+      sessionStorage.setItem('allowedRoute', '/dashboard');
+      navigate('/dashboard', { state: { searchResults: responseData.data }, replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
