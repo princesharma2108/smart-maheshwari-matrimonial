@@ -14,8 +14,8 @@ export default function SplashScreen() {
     // Show blank screen for 1 second, then show content
     setTimeout(() => setLoading(false), 500);
     // Simulate loading and navigate after 3 seconds
-    //const timer = setTimeout(() => navigate('/login'), 4500);
-    //return () => clearTimeout(timer);
+    const timer = setTimeout(() => navigate('/login'), 4500);
+    return () => clearTimeout(timer);
   }, [navigate]);
   if (loading) {
     return <Box sx={{ width: '100vw', height: '100vh', backgroundColor: '#fff' }} />;
