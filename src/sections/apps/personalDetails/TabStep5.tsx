@@ -317,6 +317,12 @@ export default function TabStep5({
                       <MenuItem value="" disabled>
                         Select Languages Known
                       </MenuItem>
+                      {languagesKnown.map(
+  (lang) =>
+    !languageOptions.includes(lang) &&
+    lang && <MenuItem key={lang} value={lang}><Checkbox checked className="inputFieldCheckbox" />{lang}</MenuItem>
+)}
+
                       {languageOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           <Checkbox checked={languagesKnown.includes(option)} className="inputFieldCheckbox" />

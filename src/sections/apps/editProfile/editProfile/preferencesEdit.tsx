@@ -454,16 +454,20 @@ const PreferencesEdit: React.FC = () => {
             setIsStepValid={setIsStepValid}
           />
         </TabPanel>
-        <Grid item xs={12}>
-          <Stack direction="row" justifyContent="flex-end" spacing={2}>
-            <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
-              Previous
-            </Button>
-            <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
-              Continue
-            </Button>
-          </Stack>
-        </Grid>
+          {/* Buttons */}
+       <Grid item xs={12}>
+  <Stack direction="row" justifyContent="flex-end" spacing={2}>
+    {tabIndex > 0 && (
+      <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
+        Previous
+      </Button>
+    )}
+    <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
+      Continue
+    </Button>
+  </Stack>
+</Grid>
+
       </Paper>
     </>
   );
