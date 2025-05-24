@@ -21,7 +21,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ loading, message = 'Loa
         justifyContent: 'center',
         alignItems: 'center',
         gap: '4px',
-        height: '100dvh',
+        height: '100vh',
         width: '100%',
         position: 'absolute',
         top: 0,

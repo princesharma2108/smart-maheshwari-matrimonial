@@ -103,7 +103,7 @@ export default function AdditionalPreferences({
     if (!profession) newErrors.profession = 'This field is required.';
     if (!workingWith) newErrors.workingWith = 'This field is required.';
     if (!location) newErrors.location = 'This field is required.';
-    if (!hobbies) newErrors.hobbies = 'This field is required.';
+    if (hobbies.length == 0) newErrors.hobbies = 'This field is required.';
 
     setErrors(newErrors);
     const isValid = Object.values(newErrors).every((err) => err === '');

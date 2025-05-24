@@ -410,200 +410,202 @@ const PersonalDetails: React.FC = () => {
     }
   }, []);
   return (
-    <BackgroundWrapper>
-      <>
-        <LoadingOverlay
-          loading={isLoading}
-          message={'Extracting PDF Data'}
-          IconComponent={
-            <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
-          }
-          showSubLoader={true}
-        />
+    <>
+      <BackgroundWrapper>
         <>
-          {/* Back Button */}
-          <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => {
-                sessionStorage.setItem('allowedRoute', '/upload-biodata');
-                navigate('/upload-biodata', { replace: true });
-              }}
-              className="buttonStyleOutlined"
-            >
-              &lt; Back
-            </Button>
-          </Grid>
-          <Typography variant="h5" gutterBottom>
-            Personal Details
-          </Typography>
-          <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-            {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
-              <Tab
-                key={index}
-                label={label}
-                className="tabStyle"
-                disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
-              />
-            ))}
-          </Tabs>
-          <TabPanel value={tabIndex} index={0}>
-            <TabStep1
-              fullName={fullName}
-              setFullName={setFullName}
-              timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
-              setTimeOfBirth={(value) => setTimeOfBirth(value ? value.format('HH:mm') : null)}
-              dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
-              setDateOfBirth={(value) => setDateOfBirth(value ? value.format('YYYY-MM-DD') : null)}
-              placeOfBirth={placeOfBirth}
-              setPlaceOfBirth={setPlaceOfBirth}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={1}>
-            <TabStep2
-              weight={weight}
-              setWeight={setWeight}
-              height={height}
-              setHeight={setHeight}
-              gender={gender}
-              setGender={setGender}
-              hobbies={hobbies}
-              setHobbies={setHobbies}
-              disability={disability}
-              setDisability={setDisability}
-              bloodGroup={bloodGroup}
-              setBloodGroup={setBloodGroup}
-              complexion={complexion}
-              setComplexion={setComplexion}
-              maritalStatus={maritalStatus}
-              setMaritalStatus={setMaritalStatus}
-              heightOptions={heightData || []}
-              hobbiesOptions={hobbiesData || []}
-              disabilities={disabilitiesData || []}
-              bloodGroupOptions={bloodGroupsData || []}
-              complexionOptions={complexionData || []}
-              maritalOptions={maritalOptionsData || []}
-              setIsStepValid={setIsStepValid}
-              isStepValid={isStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={2}>
-            <TabStep3
-              drinking={drinking}
-              setDrinking={setDrinking}
-              smoking={smoking}
-              setSmoking={setSmoking}
-              dietaryHabits={dietaryHabits}
-              setDietaryHabits={setDietaryHabits}
-              drinkingOptions={drinkingOptionsData || []}
-              smokingOptions={smokingOptionsData || []}
-              dietaryOptions={dietaryOptionsData || []}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={3}>
-            <TabStep4
-              fatherName={fatherName}
-              setFatherName={setFatherName}
-              motherName={motherName}
-              setMotherName={setMotherName}
-              hometown={hometown}
-              setHometown={setHometown}
-              siblings={siblings}
-              setSiblings={setSiblings}
-              familyIncome={familyIncome}
-              setFamilyIncome={setFamilyIncome}
-              familyType={familyType}
-              setFamilyType={setFamilyType}
-              familyTypeOptions={familyTypeData || []}
-              siblingOptions={siblingOptionsData || []}
-              incomeOptions={incomeOptionsData || []}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={4}>
-            <TabStep5
-              highestQualification={highestQualification}
-              setHighestQualification={setHighestQualification}
-              additionalQualification={additionalQualification}
-              setAdditionalQualification={setAdditionalQualification}
-              occupation={occupation}
-              setOccupation={setOccupation}
-              companyName={companyName}
-              setCompanyName={setCompanyName}
-              workingWith={workingWith}
-              setWorkingWith={setWorkingWith}
-              minAnnualIncome={minAnnualIncome}
-              setMinAnnualIncome={setMinAnnualIncome}
-              maxAnnualIncome={maxAnnualIncome}
-              setMaxAnnualIncome={setMaxAnnualIncome}
-              languagesKnown={languagesKnown}
-              setLanguagesKnown={setLanguagesKnown}
-              qualificationOptions={qualificationData || []}
-              occupationOptions={occupationData || []}
-              workingWithOptions={workingWithOptionsData || []}
-              incomeOptions={incomeOptionsData || []}
-              languageOptions={languageData || []}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={5}>
-            <TabStep6
-              gotra={gotra}
-              setGotra={setGotra}
-              manglik={manglik}
-              setManglik={setManglik}
-              gunnMatchingImportant={gunnMatchingImportant}
-              setGunnMatchingImportant={setGunnMatchingImportant}
-              includeUnknownManglik={includeUnknownManglik}
-              setIncludeUnknownManglik={setIncludeUnknownManglik}
-              gotraOptions={gotraData || []}
-              manglikOptions={manglikOptionsData || []}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={6}>
-            <TabStep7
-              residentialAddress={residentialAddress}
-              setResidentialAddress={setResidentialAddress}
-              phoneNumber={phoneNumber}
-              setPhoneNumber={setPhoneNumber}
-              emailAddress={emailAddress}
-              setEmailAddress={setEmailAddress}
-              alternateContact={alternateContact}
-              setAlternateContact={setAlternateContact}
-              country={country}
-              setCountry={setCountry}
-              state={state}
-              setState={setState}
-              city={city}
-              setCity={setCity}
-              setIsStepValid={setIsStepValid}
-            />
-          </TabPanel>
-          {/* Buttons */}
-          <Grid item xs={12}>
-            <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+          <LoadingOverlay
+            loading={isLoading}
+            message={'Extracting PDF Data'}
+            IconComponent={
+              <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+            }
+            showSubLoader={true}
+          />
+          <>
+            {/* Back Button */}
+            <Grid item xs={12} sx={{ textAlign: 'left', mb: 2 }}>
               <Button
                 variant="outlined"
-                color="secondary"
-                onClick={handlePrevious}
-                disabled={tabIndex === 0}
+                color="primary"
+                onClick={() => {
+                  sessionStorage.setItem('allowedRoute', '/upload-biodata');
+                  navigate('/upload-biodata', { replace: true });
+                }}
                 className="buttonStyleOutlined"
               >
-                Previous
+                &lt; Back
               </Button>
+            </Grid>
+            <Typography variant="h5" gutterBottom>
+              Personal Details
+            </Typography>
+            <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
+              {['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'].map((label, index) => (
+                <Tab
+                  key={index}
+                  label={label}
+                  className="tabStyle"
+                  disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+                />
+              ))}
+            </Tabs>
+            <TabPanel value={tabIndex} index={0}>
+              <TabStep1
+                fullName={fullName}
+                setFullName={setFullName}
+                timeOfBirth={timeOfBirth ? dayjs(timeOfBirth, 'HH:mm') : null}
+                setTimeOfBirth={(value) => setTimeOfBirth(value ? value.format('HH:mm') : null)}
+                dateOfBirth={dateOfBirth ? dayjs(dateOfBirth) : null}
+                setDateOfBirth={(value) => setDateOfBirth(value ? value.format('YYYY-MM-DD') : null)}
+                placeOfBirth={placeOfBirth}
+                setPlaceOfBirth={setPlaceOfBirth}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={1}>
+              <TabStep2
+                weight={weight}
+                setWeight={setWeight}
+                height={height}
+                setHeight={setHeight}
+                gender={gender}
+                setGender={setGender}
+                hobbies={hobbies}
+                setHobbies={setHobbies}
+                disability={disability}
+                setDisability={setDisability}
+                bloodGroup={bloodGroup}
+                setBloodGroup={setBloodGroup}
+                complexion={complexion}
+                setComplexion={setComplexion}
+                maritalStatus={maritalStatus}
+                setMaritalStatus={setMaritalStatus}
+                heightOptions={heightData || []}
+                hobbiesOptions={hobbiesData || []}
+                disabilities={disabilitiesData || []}
+                bloodGroupOptions={bloodGroupsData || []}
+                complexionOptions={complexionData || []}
+                maritalOptions={maritalOptionsData || []}
+                setIsStepValid={setIsStepValid}
+                isStepValid={isStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={2}>
+              <TabStep3
+                drinking={drinking}
+                setDrinking={setDrinking}
+                smoking={smoking}
+                setSmoking={setSmoking}
+                dietaryHabits={dietaryHabits}
+                setDietaryHabits={setDietaryHabits}
+                drinkingOptions={drinkingOptionsData || []}
+                smokingOptions={smokingOptionsData || []}
+                dietaryOptions={dietaryOptionsData || []}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={3}>
+              <TabStep4
+                fatherName={fatherName}
+                setFatherName={setFatherName}
+                motherName={motherName}
+                setMotherName={setMotherName}
+                hometown={hometown}
+                setHometown={setHometown}
+                siblings={siblings}
+                setSiblings={setSiblings}
+                familyIncome={familyIncome}
+                setFamilyIncome={setFamilyIncome}
+                familyType={familyType}
+                setFamilyType={setFamilyType}
+                familyTypeOptions={familyTypeData || []}
+                siblingOptions={siblingOptionsData || []}
+                incomeOptions={incomeOptionsData || []}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={4}>
+              <TabStep5
+                highestQualification={highestQualification}
+                setHighestQualification={setHighestQualification}
+                additionalQualification={additionalQualification}
+                setAdditionalQualification={setAdditionalQualification}
+                occupation={occupation}
+                setOccupation={setOccupation}
+                companyName={companyName}
+                setCompanyName={setCompanyName}
+                workingWith={workingWith}
+                setWorkingWith={setWorkingWith}
+                minAnnualIncome={minAnnualIncome}
+                setMinAnnualIncome={setMinAnnualIncome}
+                maxAnnualIncome={maxAnnualIncome}
+                setMaxAnnualIncome={setMaxAnnualIncome}
+                languagesKnown={languagesKnown}
+                setLanguagesKnown={setLanguagesKnown}
+                qualificationOptions={qualificationData || []}
+                occupationOptions={occupationData || []}
+                workingWithOptions={workingWithOptionsData || []}
+                incomeOptions={incomeOptionsData || []}
+                languageOptions={languageData || []}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={5}>
+              <TabStep6
+                gotra={gotra}
+                setGotra={setGotra}
+                manglik={manglik}
+                setManglik={setManglik}
+                gunnMatchingImportant={gunnMatchingImportant}
+                setGunnMatchingImportant={setGunnMatchingImportant}
+                includeUnknownManglik={includeUnknownManglik}
+                setIncludeUnknownManglik={setIncludeUnknownManglik}
+                gotraOptions={gotraData || []}
+                manglikOptions={manglikOptionsData || []}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={6}>
+              <TabStep7
+                residentialAddress={residentialAddress}
+                setResidentialAddress={setResidentialAddress}
+                phoneNumber={phoneNumber}
+                setPhoneNumber={setPhoneNumber}
+                emailAddress={emailAddress}
+                setEmailAddress={setEmailAddress}
+                alternateContact={alternateContact}
+                setAlternateContact={setAlternateContact}
+                country={country}
+                setCountry={setCountry}
+                state={state}
+                setState={setState}
+                city={city}
+                setCity={setCity}
+                setIsStepValid={setIsStepValid}
+              />
+            </TabPanel>
+            {/* Buttons */}
+            <Grid item xs={12}>
+              <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={handlePrevious}
+                  disabled={tabIndex === 0}
+                  className="buttonStyleOutlined"
+                >
+                  Previous
+                </Button>
 
-              <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
-                Continue
-              </Button>
-            </Stack>
-          </Grid>
+                <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+                  Continue
+                </Button>
+              </Stack>
+            </Grid>
+          </>
         </>
-      </>
-    </BackgroundWrapper>
+      </BackgroundWrapper>
+    </>
   );
 };
 export default PersonalDetails;

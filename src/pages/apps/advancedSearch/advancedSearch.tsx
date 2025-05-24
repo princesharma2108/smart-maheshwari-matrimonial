@@ -185,8 +185,13 @@ export default function AdvancedSearch() {
             />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <AdvancedSearchTab tagsData={tagsData || []} tagCategories={tagCategories} setTagCategories={setTagCategories} 
-            selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
+            <AdvancedSearchTab
+              tagsData={tagsData || []}
+              tagCategories={tagCategories}
+              setTagCategories={setTagCategories}
+              selectedOptions={selectedOptions}
+              setSelectedOptions={setSelectedOptions}
+            />
           </TabPanel>
           {/* Buttons */}
           <Grid item xs={12}>
