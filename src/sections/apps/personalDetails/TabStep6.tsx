@@ -104,7 +104,7 @@ export default function TabStep6({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack spacing={1}>
+                  <Stack spacing={1} sx={{width:"fit-content"}}>
                     <FormControlLabel
                       control={
                         <Checkbox checked={gunnMatchingImportant} onChange={handleGunnMatchingChange} className="inputFieldCheckbox" />
@@ -146,7 +146,7 @@ export default function TabStep6({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack spacing={1}>
+                  <Stack spacing={1} sx={{width:"fit-content"}}>
                     <FormControlLabel
                       control={
                         <Checkbox
