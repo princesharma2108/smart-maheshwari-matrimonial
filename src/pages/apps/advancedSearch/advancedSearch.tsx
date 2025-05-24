@@ -32,90 +32,7 @@ interface ResponseSearchData {
   message: string;
   data: any;
 }
-const searchData = {
-  matrimonialId: 'M123456',
-  basicSearch: {
-    maritalStatusOptions: ['Single', 'Divorced', 'Widowed'],
-    ageOptions: [
-      '18',
-      '20',
-      '22',
-      '24',
-      '26',
-      '28',
-      '30',
-      '32',
-      '34',
-      '36',
-      '38',
-      '40',
-      '42',
-      '44',
-      '46',
-      '48',
-      '50',
-      '52',
-      '54',
-      '56',
-      '58',
-      '60'
-    ],
-    heightOptions: [
-      '4ft 6in - 137cm',
-      '4ft 7in - 140cm',
-      '4ft 8in - 142cm',
-      '4ft 9in - 145cm',
-      '4ft 10in - 147cm',
-      '4ft 11in - 150cm',
-      '5ft 0in - 152cm',
-      '5ft 1in - 155cm',
-      '5ft 2in - 157cm',
-      '5ft 3in - 160cm',
-      '5ft 4in - 163cm',
-      '5ft 5in - 165cm',
-      '5ft 6in - 168cm',
-      '5ft 7in - 170cm',
-      '5ft 8in - 173cm',
-      '5ft 9in - 175cm',
-      '5ft 10in - 178cm',
-      '5ft 11in - 180cm',
-      '6ft 0in - 183cm',
-      '6ft 1in - 185cm',
-      '6ft 2in - 188cm',
-      '6ft 3in - 191cm',
-      '6ft 4in - 193cm',
-      '6ft 5in - 196cm'
-    ],
-    locationOptions: [
-      'New York',
-      'Los Angeles',
-      'Ahmedabad',
-      'Jaipur',
-      'Phoenix',
-      'Philadelphia',
-      'San Antonio',
-      'San Diego',
-      'Dallas',
-      'San Jose'
-    ]
-  },
-  advancedSearch: {
-    tagCategories: [
-      {
-        name: 'Education and Profession',
-        tags: ["Bachelor's Degree", "Master's Degree", 'PhD', 'Engineer', 'Doctor', 'Teacher', 'Lawyer', 'Artist']
-      },
-      {
-        name: 'Lifestyle',
-        tags: ['Vegetarian', 'Non-Vegetarian', 'Vegan', 'Fitness Enthusiast', 'Yoga Practitioner', 'Travel Lover', 'Book Reader']
-      },
-      {
-        name: 'Family Background',
-        tags: ['Joint Family', 'Nuclear Family', 'Business Family', 'Service Family', 'Agricultural Family']
-      }
-    ]
-  }
-};
+
 const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
   return (
     <div role="tabpanel" hidden={value !== index} style={{ padding: '16px' }}>
@@ -129,6 +46,7 @@ export default function AdvancedSearch() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [tabIndex, setTabIndex] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, Record<string, string> | undefined>>({});
   //Basic Search
   const [maritalStatus, setMaritalStatus] = useState('');
   const [minAge, setMinAge] = useState('');
@@ -138,6 +56,7 @@ export default function AdvancedSearch() {
   const [location, setLocation] = useState('');
   //Advance Search
   const [tagCategories, setTagCategories] = useState<{ name: string; tags: string[] }[]>([]);
+
   //General Data
   const [ageOptions, setAgeOptions] = useState([]);
   const [heightData, setHeightData] = useState([]);
@@ -223,7 +142,8 @@ export default function AdvancedSearch() {
     setMinHeight('');
     setMaxHeight('');
     setLocation('');
-    setTagCategories([]);
+    setSelectedOptions({});
+    // setTagCategories([]);
     // Optionally reset tab to default
     // setTabIndex(0);
   };
@@ -265,7 +185,8 @@ export default function AdvancedSearch() {
             />
           </TabPanel>
           <TabPanel value={tabIndex} index={1}>
-            <AdvancedSearchTab tagsData={tagsData || []} tagCategories={tagCategories} setTagCategories={setTagCategories} />
+            <AdvancedSearchTab tagsData={tagsData || []} tagCategories={tagCategories} setTagCategories={setTagCategories} 
+            selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
           </TabPanel>
           {/* Buttons */}
           <Grid item xs={12}>

@@ -539,15 +539,17 @@ export default function PersonalDetailsEdit() {
         </TabPanel>
         {/* Buttons */}
         <Grid item xs={12}>
-          <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-            <Button variant="outlined" color="secondary" onClick={handlePrevious}>
-              Previous
-            </Button>
-            <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
-              Continue
-            </Button>
-          </Stack>
-        </Grid>
+  <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+    {tabIndex > 0 && (
+      <Button variant="outlined" color="secondary" onClick={handlePrevious}>
+        Previous
+      </Button>
+    )}
+    <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+      Continue
+    </Button>
+  </Stack>
+</Grid>
       </>
     </>
   );

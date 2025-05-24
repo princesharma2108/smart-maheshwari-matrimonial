@@ -120,7 +120,20 @@ export default function TabEditStep2({
                   type="number"
                   id="weight"
                   value={weight}
-                  onChange={handleWeightChange}
+                    onChange={(e) => {
+    const input = e.target.value;
+    // Allow only up to 3 digits (optionally with decimal, if needed) {handleWeightChange}
+
+    if (/^\d{0,3}$/.test(input)) {
+      setWeight(input);
+    }
+  }}
+  onKeyDown={(e) => {
+    // Block scientific keys and signs
+    if (['e', 'E', '+', '-'].includes(e.key)) {
+      e.preventDefault();
+    }
+  }}
                   placeholder="Enter weight"
                   className="inputField"
                   onBlur={validateStep}
@@ -206,6 +219,16 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Hobby
                   </MenuItem>
+                   {hobbies.map(
+                    (hobby) =>
+                      !hobbiesOptions.includes(hobby) &&
+                      hobby && (
+                        <MenuItem key={hobby} value={hobby}>
+                          <Checkbox checked className="inputFieldCheckbox" />
+                          {hobby}
+                        </MenuItem>
+                      )
+                  )}
                   {hobbiesOptions?.sort().map((option) => (
                     <MenuItem key={option} value={option}>
                       <Checkbox checked={hobbies.includes(option)} className="inputFieldCheckbox" />

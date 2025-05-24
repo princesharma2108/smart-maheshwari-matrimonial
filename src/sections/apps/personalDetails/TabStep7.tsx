@@ -186,25 +186,30 @@ export default function TabStep7({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack spacing={1}>
-                    <InputLabel htmlFor="email-address">
-                      Email Address<span style={{ color: 'red' }}>*</span>
-                    </InputLabel>
-                    <TextField
-                      fullWidth
-                      id="email-address"
-                      placeholder="Enter Email Address"
-                      value={emailAddress}
-                      onChange={(e) => {
-                        setEmailAddress(e.target.value);
-                      }}
-                      onBlur={validateStep} // ✅ Validate on blur
-                      className="inputField"
-                      error={!!errors.emailAddress}
-                      helperText={errors.emailAddress}
-                    />
-                  </Stack>
-                </Grid>
+  <Stack spacing={1}>
+    <InputLabel htmlFor="email-address">
+      Email Address<span style={{ color: 'red' }}>*</span>
+    </InputLabel>
+    <TextField
+      fullWidth
+      id="email-address"
+      placeholder="Enter Email Address"
+      value={emailAddress}
+      onChange={(e) => {
+        const cleanedEmail = e.target.value.replace(/\s+$/, ''); // Remove trailing whitespace
+        setEmailAddress(cleanedEmail);
+      }}
+    onBlur={() => {
+  setEmailAddress(emailAddress.trim());
+  validateStep();
+}}
+
+      className="inputField"
+      error={!!errors.emailAddress}
+      helperText={errors.emailAddress}
+    />
+  </Stack>
+</Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="alternate-contact">Alternate Contact (If Any)</InputLabel>

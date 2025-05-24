@@ -20,11 +20,13 @@ interface AdvancedSearchTabProps {
   tagsData: TagCategory[];
   tagCategories: { name: string; tags: string[] }[];
   setTagCategories: (value: { name: string; tags: string[] }[]) => void;
+selectedOptions: Record<string, Record<string, string> | undefined>;
+  setSelectedOptions: React.Dispatch<React.SetStateAction<Record<string, Record<string, string> | undefined>>>;
 }
 
-export default function AdvancedSearchTab({ tagsData, tagCategories, setTagCategories }: AdvancedSearchTabProps) {
+export default function AdvancedSearchTab({ tagsData, tagCategories, setTagCategories,selectedOptions,setSelectedOptions }: AdvancedSearchTabProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, Record<string, string> | undefined>>({});
+  // const [selectedOptions, setSelectedOptions] = useState<Record<string, Record<string, string> | undefined>>({});
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const handleToggle = (category: string) => {
     setExpandedSection(expandedSection === category ? null : category);
@@ -54,14 +56,17 @@ export default function AdvancedSearchTab({ tagsData, tagCategories, setTagCateg
   const handleImageError = (tagName: string) => {
     setImageErrors((prev) => ({ ...prev, [tagName]: true }));
   };
-  useEffect(() => {
-    const tagCategories = Object.entries(selectedOptions).map(([category, groups]) => ({
-      name: category,
-      tags: Object.values(groups || {}) // Extract only selected tag names
-    }));
+useEffect(() => {
+  if (!selectedOptions || typeof selectedOptions !== 'object') return;
 
-    setTagCategories(tagCategories);
-  }, [selectedOptions]);
+  const tagCategories = Object.entries(selectedOptions).map(([category, groups]) => ({
+    name: category,
+    tags: Object.values(groups || {})
+  }));
+
+  setTagCategories(tagCategories);
+}, [selectedOptions]);
+
   return (
     <Grid container spacing={3} sx={{ display: 'block' }}>
       <Grid item xs={12} sm={12}>
