@@ -272,15 +272,38 @@ const AdditionalInformation: React.FC = () => {
                         {aboutMeDescriptions.map((text, index) => (
                           <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
                             <Grid item>
-                              <Radio
-                                value={text}
-                                checked={selectedAboutMe === text}
-                                sx={{
-                                  color: '#FF4081',
-                                  '&.Mui-checked': { color: '#D81B60' },
-                                  '& .MuiSvgIcon-root': { fontSize: 28 }
-                                }}
-                              />
+<Radio
+  value={text}
+  checked={selectedAboutMe === text}
+  icon={
+    <span
+      style={{
+        border: '2px solid #FF4081',
+        borderRadius: '50%',
+        width: 20,
+        height: 20,
+        display: 'inline-block',
+      }}
+    />
+  }
+  checkedIcon={
+    <span
+      style={{
+        border: '2px solid #FF4081',
+        backgroundColor: '#FF4081',
+        borderRadius: '50%',
+        width: 20,
+        height: 20,
+        display: 'inline-block',
+        boxShadow: 'inset 0 0 0 4px white',
+      }}
+    />
+  }
+  sx={{
+    padding: '4px',
+  }}
+/>
+
                             </Grid>
 
                             <Grid item xs>

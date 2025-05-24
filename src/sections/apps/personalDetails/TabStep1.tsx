@@ -139,34 +139,41 @@ export default function TabStep1({
                 <InputLabel htmlFor="personal-full-name">
                   Full Name <span style={{ color: 'red' }}>*</span>
                 </InputLabel>
-                <TextField
-                  fullWidth
-                  id="personal-full-name"
-                  placeholder="Full Name"
-                  className="inputField"
-                  value={fullName}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    // Allow only letters and spaces
-                    value = value.replace(/[^A-Za-z ]/g, '');
-                    setFullName(value);
-                  }}
-                  onBlur={() => {
-                    // Regex: Exactly three words with a single space between them
-                    const regex = /^[A-Za-z]+ [A-Za-z]+ [A-Za-z]+$/;
-
-                    if (!regex.test(fullName)) {
+                  <TextField
+                fullWidth
+                id="personal-full-name"
+                placeholder="Full Name"
+                className="inputField"
+                value={fullName}
+                onChange={(e) => {
+                  let value = e.target.value;
+              
+                  // Allow only letters, hyphens, and spaces
+                  value = value.replace(/[^A-Za-z\- ]/g, '');
+                  setFullName(value);
+                }}
+                onBlur={() => {
+                  const wordCount = fullName.trim().split(/\s+/).length;
+              
+                  // Only validate if there are exactly 3 words
+                  if (wordCount === 3) {
+                    const regex = /^[A-Za-z\-]+ [A-Za-z\-]+ [A-Za-z\-]+$/;
+              
+                    if (!regex.test(fullName.trim())) {
                       setErrors((prev) => ({
                         ...prev,
-                        fullName: 'Enter exactly three words separated by single spaces.'
+                        fullName: 'Exactly three words (each can have hyphens), separated by a single space.'
                       }));
-                    } else {
-                      setErrors((prev) => ({ ...prev, fullName: '' }));
+                      return;
                     }
-                  }}
-                  error={!!errors.fullName}
-                  helperText={errors.fullName}
-                />
+                  }
+              
+                  // Clear error for < 3 words or valid 3-word input
+                  setErrors((prev) => ({ ...prev, fullName: '' }));
+                }}
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+              />
               </Stack>
             </Grid>
             <Grid item xs={12} sm={12}>

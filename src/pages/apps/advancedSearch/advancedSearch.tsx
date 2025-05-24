@@ -53,8 +53,8 @@ export default function AdvancedSearch() {
   const [maxAge, setMaxAge] = useState('');
   const [minHeight, setMinHeight] = useState('');
   const [maxHeight, setMaxHeight] = useState('');
-  const [location, setLocation] = useState('');
-  //Advance Search
+    const [location, setLocation] = useState('');
+      //Advance Search
   const [tagCategories, setTagCategories] = useState<{ name: string; tags: string[] }[]>([]);
 
   //General Data
@@ -64,6 +64,38 @@ export default function AdvancedSearch() {
   const [maritalOptionsData, setMaritalOptionsData] = useState([]);
   const [tagsData, setTagsData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+const handleMinAgeChange = (value: string) => {
+  setMinAge(value);
+
+  // Auto-fill maxAge only if it's empty
+  if (!maxAge) {
+    setMaxAge(value);
+  }
+};
+
+  const handleMinHeightChange = (value: string) => {
+  setMinHeight(value);
+
+  // Auto-fill maxHeight only if it's empty
+  if (!maxHeight) {
+    setMaxHeight(value);
+  }
+};
+
+
+
+  const isBasicFormValid =
+  maritalStatus.trim() &&
+  minAge.trim() &&
+  maxAge.trim() &&
+  minHeight.trim() &&
+  maxHeight.trim() &&
+  location.trim();
+  const isAdvancedFormValid = tabIndex === 1 &&
+  selectedOptions &&
+  Object.values(selectedOptions).some((group) => group && Object.keys(group).length > 0);
+
+
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
     setTabIndex(newIndex);
   };
@@ -169,11 +201,11 @@ export default function AdvancedSearch() {
               maritalStatus={maritalStatus}
               setMaritalStatus={setMaritalStatus}
               minAge={minAge}
-              setMinAge={setMinAge}
+              setMinAge={handleMinAgeChange}
               maxAge={maxAge}
               setMaxAge={setMaxAge}
               minHeight={minHeight}
-              setMinHeight={setMinHeight}
+              setMinHeight={handleMinHeightChange}
               maxHeight={maxHeight}
               setMaxHeight={setMaxHeight}
               location={location}
@@ -199,9 +231,18 @@ export default function AdvancedSearch() {
               <Button variant="outlined" color="secondary" onClick={handleReset}>
                 Reset
               </Button>
-              <Button variant="contained" className="buttonStyle" onClick={sendAdvancedSearchDataAPI}>
-                Apply Filters
-              </Button>
+              <Button
+  variant="contained"
+  className="buttonStyle"
+  onClick={sendAdvancedSearchDataAPI}
+  disabled={
+  (tabIndex === 0 && !isBasicFormValid) ||
+  (tabIndex === 1 && !isAdvancedFormValid)
+}// ✅ disable when form is incomplete
+>
+  Apply Filters
+</Button>
+
             </Stack>
           </Grid>
         </MainCard>

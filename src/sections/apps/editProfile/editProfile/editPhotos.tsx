@@ -45,24 +45,28 @@ export default function EditPhotos() {
     //navigate('/widget/statistics');
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (selectedImages.length + files.length > 10) {
-      alert('You can upload a maximum of 10 photos.');
-      return;
-    }
+  const files = Array.from(event.target.files || []);
 
-    // const validFiles = files.filter((file) => file.type.startsWith('image/'));
-    // if (validFiles.length !== files.length) {
-    //   alert('Only image files (JPEG, PNG) are allowed.');
-    //   return;
-    // }
+  const totalImagesCount = previews.length + files.length;
 
-    // setSelectedImages((prev) => [...prev, ...validFiles]);
-    // setPreviews((prev) => [...prev, ...validFiles.map((file) => URL.createObjectURL(file))]);
-    setSelectedImages((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...files.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
-    setSelectedFiles(files);
-  };
+  if (totalImagesCount > 10) {
+    openSnackbar({
+      open: true,
+      message: 'You can upload a maximum of 10 photos.',
+      variant: 'alert',
+      alert: {
+        color: 'error'
+      }
+    } as SnackbarProps);
+    return;
+  }
+
+  setSelectedImages((prev) => [...prev, ...files]);
+  setPreviews((prev) => [...prev, ...files.map((file) => file.type.startsWith('image/') ? URL.createObjectURL(file) : '')]);
+  setSelectedFiles(files);
+};
+
+  
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
     setMenuAnchor((prev) => {
       const newAnchors = [...prev];
@@ -328,16 +332,17 @@ export default function EditPhotos() {
               {/* Upload Button */}
               <Grid item xs={12} sx={{ textAlign: 'center' }}>
                 <Button
-                  variant="contained"
-                  component="label"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-                  disabled={selectedImages.length >= 10}
-                  className="buttonStyle"
-                >
-                  Choose Files
-                  <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
-                </Button>
+  variant="contained"
+  component="label"
+  startIcon={<CloudUploadIcon />}
+  sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+  disabled={(previews.length + selectedImages.length) >= 10}  // ✅ check sum here
+  className="buttonStyle"
+>
+  Choose Files
+  <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
+</Button>
+
               </Grid>
 
               {/* Selected Photos */}
