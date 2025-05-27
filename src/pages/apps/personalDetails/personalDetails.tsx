@@ -82,6 +82,7 @@ const PersonalDetails: React.FC = () => {
   const [siblings, setSiblings] = useState('');
   const [familyIncome, setFamilyIncome] = useState('');
   const [familyType, setFamilyType] = useState('');
+  const [selectedIncomeRange, setSelectedIncomRange] = useState('');
   //Tab 5
   const [highestQualification, setHighestQualification] = useState('');
   const [additionalQualification, setAdditionalQualification] = useState('');
@@ -128,19 +129,33 @@ const PersonalDetails: React.FC = () => {
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
   //Error State
   const [isStepValid, setIsStepValid] = useState(true); // Track validation status
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
+  // const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
+  //   // Allow moving back anytime
+  //   if (newIndex < tabIndex) {
+  //     setTabIndex(newIndex);
+  //     return;
+  //   }
+
+  //   // Allow moving forward only to the next step if isStepValid is true
+  //   if (newIndex === tabIndex + 1 && isStepValid) {
+  //     setTabIndex(newIndex);
+  //   }
+  // };
+
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    // Allow moving back anytime
-    if (newIndex < tabIndex) {
+    if (newIndex < tabIndex || completedSteps.includes(newIndex)) {
       setTabIndex(newIndex);
       return;
     }
 
-    // Allow moving forward only to the next step if isStepValid is true
     if (newIndex === tabIndex + 1 && isStepValid) {
+      setCompletedSteps((prev) => Array.from(new Set([...prev, tabIndex])));
       setTabIndex(newIndex);
     }
   };
+
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const matrimonialData = {
@@ -202,6 +217,8 @@ const PersonalDetails: React.FC = () => {
   const handleNext = () => {
     // navigate('/preferences');
     if (!isStepValid) return;
+    setCompletedSteps((prev) => Array.from(new Set([...prev, tabIndex]))); // mark current step completed
+
     if (tabIndex >= 0 && tabIndex < 6) {
       setTabIndex((prevIndex) => prevIndex + 1);
     } else if (tabIndex === 6) {
@@ -445,7 +462,7 @@ const PersonalDetails: React.FC = () => {
                   key={index}
                   label={label}
                   className="tabStyle"
-                  disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+                  disabled={!(index <= tabIndex || completedSteps.includes(index) || (index === tabIndex + 1 && isStepValid))}
                 />
               ))}
             </Tabs>
@@ -518,6 +535,8 @@ const PersonalDetails: React.FC = () => {
                 setFamilyIncome={setFamilyIncome}
                 familyType={familyType}
                 setFamilyType={setFamilyType}
+                selectedIncomeRange={selectedIncomeRange}
+                setSelectedIncomRange={setSelectedIncomRange}
                 familyTypeOptions={familyTypeData || []}
                 siblingOptions={siblingOptionsData || []}
                 incomeOptions={incomeOptionsData || []}
@@ -582,6 +601,7 @@ const PersonalDetails: React.FC = () => {
                 city={city}
                 setCity={setCity}
                 setIsStepValid={setIsStepValid}
+                setCompletedSteps={setCompletedSteps}
               />
             </TabPanel>
             {/* Buttons */}
@@ -597,7 +617,7 @@ const PersonalDetails: React.FC = () => {
                   Previous
                 </Button>
 
-                <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+                <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={isLoading || !isStepValid}>
                   Continue
                 </Button>
               </Stack>

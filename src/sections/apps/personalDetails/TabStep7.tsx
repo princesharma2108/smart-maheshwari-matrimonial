@@ -30,6 +30,8 @@ interface TabStep7Props {
   city: string;
   setCity: (value: string) => void;
   setIsStepValid: (value: boolean) => void;
+  setCompletedSteps: React.Dispatch<React.SetStateAction<number[]>>;
+  completedSteps?: number[];
 }
 export default function TabStep7({
   residentialAddress,
@@ -46,7 +48,8 @@ export default function TabStep7({
   setState,
   city,
   setCity,
-  setIsStepValid
+  setIsStepValid,
+  setCompletedSteps
 }: TabStep7Props) {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -102,11 +105,7 @@ export default function TabStep7({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
-  console.log('Address1=>', homeAddress);
-  console.log('Address2=>', city);
-  console.log('Address3=>', state);
-  console.log('Address4=>', country);
-  console.log('Address5=>', zipCode);
+
   const handleHomeAddressChange = (homeAddress: any) => {
     setSelectedHomeAddress(homeAddress);
   };
@@ -122,6 +121,16 @@ export default function TabStep7({
   const handleZipAddressChange = (zip: any) => {
     setSelectedZipCode(zip);
   };
+  useEffect(() => {
+    const allFilled = residentialAddress && phoneNumber && emailAddress && country && state && city;
+
+    if (allFilled) {
+      setCompletedSteps(
+        (prev) => (prev.includes(6) ? prev : [...prev, 6]) // 6 is index for Step 7
+      );
+    }
+  }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -186,30 +195,29 @@ export default function TabStep7({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-  <Stack spacing={1}>
-    <InputLabel htmlFor="email-address">
-      Email Address<span style={{ color: 'red' }}>*</span>
-    </InputLabel>
-    <TextField
-      fullWidth
-      id="email-address"
-      placeholder="Enter Email Address"
-      value={emailAddress}
-      onChange={(e) => {
-        const cleanedEmail = e.target.value.replace(/\s+$/, ''); // Remove trailing whitespace
-        setEmailAddress(cleanedEmail);
-      }}
-    onBlur={() => {
-  setEmailAddress(emailAddress.trim());
-  validateStep();
-}}
-
-      className="inputField"
-      error={!!errors.emailAddress}
-      helperText={errors.emailAddress}
-    />
-  </Stack>
-</Grid>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="email-address">
+                      Email Address<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <TextField
+                      fullWidth
+                      id="email-address"
+                      placeholder="Enter Email Address"
+                      value={emailAddress}
+                      onChange={(e) => {
+                        const cleanedEmail = e.target.value.replace(/\s+$/, ''); // Remove trailing whitespace
+                        setEmailAddress(cleanedEmail);
+                      }}
+                      onBlur={() => {
+                        setEmailAddress(emailAddress.trim());
+                        validateStep();
+                      }}
+                      className="inputField"
+                      error={!!errors.emailAddress}
+                      helperText={errors.emailAddress}
+                    />
+                  </Stack>
+                </Grid>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="alternate-contact">Alternate Contact (If Any)</InputLabel>
@@ -253,6 +261,7 @@ export default function TabStep7({
                       fieldName={'Country'}
                       //addressCountryFilters={['us']}
                       initialAddress={country}
+                      placeholder="Enter Country"
                       handleAddressChange={handleHomeAddressChange}
                       handleCityChange={handleCityAddressChange}
                       handleStateChange={handleStateAddressChange}
@@ -279,6 +288,7 @@ export default function TabStep7({
                       fieldName={'State'}
                       //addressCountryFilters={['us']}
                       initialAddress={state}
+                      placeholder="Enter State"
                       handleAddressChange={handleHomeAddressChange}
                       handleCityChange={handleCityAddressChange}
                       handleStateChange={handleStateAddressChange}
@@ -305,6 +315,7 @@ export default function TabStep7({
                       fieldName={'City'}
                       //addressCountryFilters={['us']}
                       initialAddress={city}
+                      placeholder="Enter City"
                       handleAddressChange={handleHomeAddressChange}
                       handleCityChange={handleCityAddressChange}
                       handleStateChange={handleStateAddressChange}

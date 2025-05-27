@@ -27,6 +27,8 @@ interface TabStep4Props {
   setFamilyIncome: (value: string) => void;
   familyType: string;
   setFamilyType: (value: string) => void;
+  selectedIncomeRange: string;
+  setSelectedIncomRange: (value: string) => void;
   familyTypeOptions: any;
   siblingOptions: any;
   incomeOptions: any;
@@ -45,6 +47,8 @@ export default function TabStep4({
   setFamilyIncome,
   familyType,
   setFamilyType,
+  selectedIncomeRange,
+  setSelectedIncomRange,
   familyTypeOptions = [],
   siblingOptions = [],
   //incomeOptions = []
@@ -56,7 +60,7 @@ export default function TabStep4({
     familyIncome: '',
     familyType: ''
   });
-  const [selectedIncomeRange, setSelectedIncomRange] = useState('');
+  // const [selectedIncomeRange, setSelectedIncomRange] = useState('');
   // Handlers
   const handleSiblingsChange = (event: SelectChangeEvent) => setSiblings(event.target.value);
   const handleFamilyIncomeChange = (event: SelectChangeEvent) => {

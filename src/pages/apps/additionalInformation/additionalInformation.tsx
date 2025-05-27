@@ -161,8 +161,8 @@ const AdditionalInformation: React.FC = () => {
       familyType: preferenceStoredData.familyType,
       familyBackground: preferenceStoredData.familyBackground,
       qualification: preferenceStoredData.qualification,
-      preferredLocation: '',
-      locationType: preferenceStoredData.location,
+      preferredLocation: preferenceStoredData.preferredLocation,
+      locationType: preferenceStoredData.preferredLocation,
       minAnnualIncome: 0,
       maxAnnualIncome: 0,
       profession: preferenceStoredData.profession,
@@ -272,38 +272,37 @@ const AdditionalInformation: React.FC = () => {
                         {aboutMeDescriptions.map((text, index) => (
                           <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
                             <Grid item>
-<Radio
-  value={text}
-  checked={selectedAboutMe === text}
-  icon={
-    <span
-      style={{
-        border: '2px solid #FF4081',
-        borderRadius: '50%',
-        width: 20,
-        height: 20,
-        display: 'inline-block',
-      }}
-    />
-  }
-  checkedIcon={
-    <span
-      style={{
-        border: '2px solid #FF4081',
-        backgroundColor: '#FF4081',
-        borderRadius: '50%',
-        width: 20,
-        height: 20,
-        display: 'inline-block',
-        boxShadow: 'inset 0 0 0 4px white',
-      }}
-    />
-  }
-  sx={{
-    padding: '4px',
-  }}
-/>
-
+                              <Radio
+                                value={text}
+                                checked={selectedAboutMe === text}
+                                icon={
+                                  <span
+                                    style={{
+                                      border: '2px solid #FF4081',
+                                      borderRadius: '50%',
+                                      width: 20,
+                                      height: 20,
+                                      display: 'inline-block'
+                                    }}
+                                  />
+                                }
+                                checkedIcon={
+                                  <span
+                                    style={{
+                                      border: '2px solid #FF4081',
+                                      backgroundColor: '#FF4081',
+                                      borderRadius: '50%',
+                                      width: 20,
+                                      height: 20,
+                                      display: 'inline-block',
+                                      boxShadow: 'inset 0 0 0 4px white'
+                                    }}
+                                  />
+                                }
+                                sx={{
+                                  padding: '4px'
+                                }}
+                              />
                             </Grid>
 
                             <Grid item xs>

@@ -221,7 +221,7 @@ const Preferences: React.FC = () => {
       familyType: familyType,
       familyBackground: familyBackground,
       qualification: qualification,
-      preferredLocation: '',
+      preferredLocation: location,
       locationType: location,
       minAnnualIncome: 0,
       maxAnnualIncome: 0,

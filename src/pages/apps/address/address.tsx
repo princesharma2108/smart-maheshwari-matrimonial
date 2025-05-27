@@ -26,6 +26,7 @@ interface AddressProps {
   borderColor?: string;
   error?: boolean;
   helperText?: string;
+  placeholder?: string;
 }
 
 const Address: React.FC<AddressProps> = ({
@@ -47,7 +48,8 @@ const Address: React.FC<AddressProps> = ({
   labelColor,
   borderColor,
   error,
-  helperText
+  helperText,
+  placeholder
 }) => {
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string>(initialAddress);
@@ -86,6 +88,11 @@ const Address: React.FC<AddressProps> = ({
       //setSelectedAddress('');
       handleCountryChange('');
     }
+    if (fieldName == 'Place of Birth') {
+      //setSelectedState('');
+      // setSelectedAddress('');
+      handleAddressChange('');
+    }
     setLocationAddress(value);
     setPlaceSearchValue(value);
   };
@@ -123,19 +130,23 @@ const Address: React.FC<AddressProps> = ({
         setSelectedCountry(res.country || '');
         handleCountryChange(res.country);
       }
+      const completeAddress = `${res.street_address || ''}${res.city || res.state || res.country || res.postal_code ? ', ' : ''}${res.city || ''}${res.state || res.country || res.postal_code ? ', ' : ''}${res.state || ''}${res.country || res.postal_code ? ', ' : ''} ${res.country || ''}${res.country || res.postal_code ? ', ' : ''} ${res.postal_code || ''}`;
+
+      if (fieldName == 'Place of Birth') {
+        setSelectedAddress(completeAddress || '');
+        handleAddressChange(completeAddress);
+      }
       setSelectedZip(res.postal_code || '');
       setSelectedLatitude(res.location.coordinates[0]);
       setSelectedLongitude(res.location.coordinates[1]);
 
-      const completeAddress = `${res.street_address || ''}${res.city || res.state || res.postal_code ? ',' : ''} ${res.city || ''}${res.state || res.postal_code ? ',' : ''} ${res.state || ''}${res.postal_code ? ',' : ''} ${res.postal_code || ''}`;
-      setSelectedAddress(completeAddress);
       setLocationAddress(
         pageName === 'Education Details'
           ? `${res.city || ''}, ${res.state || ''}, ${res.postal_code || ''}`
           : `${res.city || ''}${res.state ? ', ' : ''}${res.state || ''}`
       );
       // handleAddressChange(res.street_address);
-      handleAddressChange(completeAddress);
+      // handleAddressChange(completeAddress);
       handleZipChange(res.postal_code);
       handleLatitudeChange(res.location.coordinates[0]);
       handleLongitudeChange(res.location.coordinates[1]);
@@ -171,7 +182,7 @@ const Address: React.FC<AddressProps> = ({
           onChange={handleInputChange}
           onFocus={onFocus}
           onBlur={onBlur}
-          placeholder={'Enter Place of Birth'}
+          placeholder={placeholder}
           autoComplete="off"
           className="inputField"
           error={error}

@@ -207,7 +207,15 @@ export default function UploadPhotos() {
               className="buttonStyle"
             >
               Choose Files
-              <input type="file" accept="image/*" multiple {...register('photos')} ref={fileInputRef} onChange={handleFileChange} hidden />
+              <input
+                type="file"
+                accept="image/jpeg, image/jpg, image/png, image/gif"
+                multiple
+                {...register('photos')}
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                hidden
+              />{' '}
             </Button>
           </Grid>
 
