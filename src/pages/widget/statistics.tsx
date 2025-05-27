@@ -33,6 +33,10 @@ import { postUserStage } from 'apiServices/user';
 import { useLocation } from 'react-router';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import LoadingOverlay from 'components/LoaderOverlay';
+
+import useMediaQuery from '@mui/material/useMediaQuery';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+
 // ===========================|| WIDGET - STATISTICS ||=========================== //
 interface ResponseData {
   status: string;
@@ -308,6 +312,20 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
 };
 
 export default function LatestMatches() {
+
+// ✅ ADD THIS at the start of LatestMatches function
+const isMobile = useMediaQuery('(max-width:768px)');
+const [showMobileNotice, setShowMobileNotice] = useState(false);
+
+useEffect(() => {
+  if (isMobile) {
+    setShowMobileNotice(true);
+  } else {
+    setShowMobileNotice(false);
+  }
+}, [isMobile]);
+
+
   const theme = useTheme();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -377,6 +395,94 @@ export default function LatestMatches() {
   const hasMatchProfiles = Array.isArray(matchProfilesData) && matchProfilesData.length > 0;
   const hasSearchResults = Array.isArray(searchResults) && searchResults.length > 0;
   const dataToRender = hasSearchResults ? searchResults : hasMatchProfiles ? matchProfilesData : [];
+  
+
+return (
+  <>
+    <LoadingOverlay
+      loading={isLoading}
+      message={'Fetching Data'}
+      IconComponent={
+        <BallTriangle
+          height={100}
+          width={100}
+          radius={5}
+          color="#f00757"
+          ariaLabel="ball-triangle-loading"
+          visible={true}
+        />
+      }
+      showSubLoader={true}
+    />
+
+    {/* ✅ IF MOBILE: Show warning and Play Store button */}
+    {showMobileNotice ? (
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          bgcolor: 'white',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          padding: 3
+        }}
+      >
+        <Typography variant="h5" fontWeight="bold" color="#F00757" mb={2}>
+          Our website is only for desktop/laptop users.
+        </Typography>
+        <Typography variant="h6" color="text.secondary" mb={4}>
+          Please download our app for the best experience on mobile phones.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<PlayArrowIcon />}
+          href="https://play.google.com/store/apps/details?id=org.miiscollp.smartmatrimonialmaheshwari"
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{ backgroundColor: '#F00757', '&:hover': { backgroundColor: '#d0064c' } }}
+        >
+          Download on Play Store
+        </Button>
+      </Box>
+    ) : (
+      // ✅ IF NOT MOBILE: Show normal content
+      <Grid container spacing={3}>
+        {dataToRender.length > 0 ? (
+          dataToRender.map((profile: any, index: any) => (
+            <Grid item xs={12} md={6} key={index}>
+              <MatchProfile profile={profile} />
+            </Grid>
+          ))
+        ) : (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <img src={searchMatches} height={'200px'} width={'350px'} />
+            <Typography variant="h1">Looking for matches as per your preferences...</Typography>
+          </Grid>
+        )}
+      </Grid>
+    )}
+  </>
+);
+
+
+  {/*
   return (
     <>
       <LoadingOverlay
@@ -389,8 +495,10 @@ export default function LatestMatches() {
       />
       <>
         {/* Display two profiles per row */}
-        <Grid container spacing={3}>
+       // <Grid container spacing={3}>
           {/* {matchProfiles.data.map((profile, index) => ( */}
+
+          {/*
           {dataToRender.length > 0 ? (
             dataToRender.map((profile: any, index: any) => (
               <Grid item xs={12} md={6} key={index}>
@@ -407,4 +515,6 @@ export default function LatestMatches() {
       </>
     </>
   );
-}
+}  */}
+
+          }
