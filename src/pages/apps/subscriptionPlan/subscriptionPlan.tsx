@@ -132,15 +132,36 @@ export default function SubscriptionPlan() {
       <Grid container justifyContent="center">
         <MainCard xs={12} md={12} sx={{ width: '100%' }}>
           {/* Title Section */}
-          <Grid xs={12} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          {/* <Grid xs={12} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
             <Typography variant="h2">Simple and Transparent</Typography>
             <Typography variant="h5" sx={{ mt: 1 }}>
               Simple pricing with no hidden fees to start - no trial, no contract, no risk.
             </Typography>
-          </Grid>
+          </Grid> */}
 
+          {/* 🎉 Promo Banner */}
+          <Grid
+            xs={12}
+            sx={{
+              mt: 2,
+              mb: 2,
+              backgroundColor: '#e6f4ea',
+              border: '1px solid #66bb6a',
+              borderRadius: '8px',
+              padding: '16px',
+              textAlign: 'center'
+            }}
+          >
+            <Typography variant="h5" sx={{ color: '#2e7d32', fontWeight: 600 }}>
+              🎉 Smart Matrimony is <strong>FREE</strong> for the <strong>first 1000 users</strong> and for the
+              <strong> first 6 months</strong>!
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: '#388e3c' }}>
+              Join now and enjoy all premium features at no cost — limited time only.
+            </Typography>
+          </Grid>
           {/* Plans Section */}
-          <Grid container display="flex" justifyContent="center" gap="32px" sx={{ mt: '32px' }}>
+          {/* <Grid container display="flex" justifyContent="center" gap="32px" sx={{ mt: '32px' }}>
             {subscriptionPlansData.length > 0 ? (
               subscriptionPlansData.map((plan, index) => (
                 <Grid
@@ -165,7 +186,6 @@ export default function SubscriptionPlan() {
                     {plan.planDescription || 'No description available'}
                   </Typography>
 
-                  {/* Price Section */}
                   <Grid item display="flex" flexDirection="column" alignItems="center">
                     <Typography variant="h1">
                       {plan.currency || 'USD'} {plan.price !== undefined ? plan.price : 'N/A'}
@@ -173,7 +193,6 @@ export default function SubscriptionPlan() {
                     <Typography variant="body1">for {plan.duration || 'N/A'} months</Typography>
                   </Grid>
 
-                  {/* Benefits List */}
                   <Grid item display="flex" flexDirection="column" gap="12px">
                     {(plan.benefits && plan.benefits.length > 0 ? plan.benefits : ['No benefits listed']).map(
                       (benefit: string, idx: number) => (
@@ -185,7 +204,6 @@ export default function SubscriptionPlan() {
                     )}
                   </Grid>
 
-                  {/* Choose Plan Button */}
                   <Button
                     variant="contained"
                     onClick={() => {
@@ -213,7 +231,7 @@ export default function SubscriptionPlan() {
                 No subscription plans available.
               </Typography>
             )}
-          </Grid>
+          </Grid> */}
         </MainCard>
       </Grid>
     </>
