@@ -64,33 +64,60 @@ export default function AdvancedSearch() {
   const [maritalOptionsData, setMaritalOptionsData] = useState([]);
   const [tagsData, setTagsData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+
 const handleMinAgeChange = (value: string) => {
   setMinAge(value);
 
-  // Auto-fill maxAge only if it's empty
-  if (!maxAge) {
+  // If maxAge is empty OR minAge > maxAge, sync maxAge to minAge
+  if (!maxAge || parseInt(value) > parseInt(maxAge)) {
     setMaxAge(value);
   }
 };
 
-  const handleMinHeightChange = (value: string) => {
+const handleMaxAgeChange = (value: string) => {
+  setMaxAge(value);
+
+  // Auto-fill minAge only if it's empty
+  if (!minAge) {
+    setMinAge(value);
+  }
+};
+
+
+const handleMinHeightChange = (value: string) => {
   setMinHeight(value);
 
-  // Auto-fill maxHeight only if it's empty
-  if (!maxHeight) {
+  const min = parseInt(value);
+  const max = parseInt(maxHeight);
+
+  if (!maxHeight || isNaN(max) || min > max) {
     setMaxHeight(value);
+  }
+};
+
+const handleMaxHeightChange = (value: string) => {
+  setMaxHeight(value);
+
+  const max = parseInt(value);
+  const min = parseInt(minHeight);
+
+  if (!minHeight || isNaN(min) || max < min) {
+    setMinHeight(value);
   }
 };
 
 
 
+
+
   const isBasicFormValid =
-  maritalStatus.trim() &&
-  minAge.trim() &&
-  maxAge.trim() &&
-  minHeight.trim() &&
-  maxHeight.trim() &&
-  location.trim();
+  maritalStatus.trim() !== '' ||
+  minAge.trim() !== '' ||
+  maxAge.trim() !== '' ||
+  minHeight.trim() !== '' ||
+  maxHeight.trim() !== '' ||
+  location.trim() !== '';
+
   const isAdvancedFormValid = tabIndex === 1 &&
   selectedOptions &&
   Object.values(selectedOptions).some((group) => group && Object.keys(group).length > 0);
@@ -203,11 +230,11 @@ const handleMinAgeChange = (value: string) => {
               minAge={minAge}
               setMinAge={handleMinAgeChange}
               maxAge={maxAge}
-              setMaxAge={setMaxAge}
+              setMaxAge={handleMaxAgeChange}
               minHeight={minHeight}
               setMinHeight={handleMinHeightChange}
               maxHeight={maxHeight}
-              setMaxHeight={setMaxHeight}
+              setMaxHeight={handleMaxHeightChange}
               location={location}
               setLocation={setLocation}
               ageOptions={ageOptions}

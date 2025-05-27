@@ -221,7 +221,7 @@ const Preferences: React.FC = () => {
       familyType: familyType,
       familyBackground: familyBackground,
       qualification: qualification,
-      preferredLocation: '',
+      preferredLocation: location,
       locationType: location,
       minAnnualIncome: 0,
       maxAnnualIncome: 0,
@@ -254,6 +254,7 @@ const Preferences: React.FC = () => {
       setFamilyType(preferenceData.familyType || '');
       setFamilyBackground(preferenceData.familyBackground || '');
       setQualification(preferenceData.qualification || '');
+      setLocation(preferenceData.preferredLocation || '');
       setLocation(preferenceData.locationType || '');
       setProfession(preferenceData.profession || '');
       setHobbies(preferenceData.hobbies || []);

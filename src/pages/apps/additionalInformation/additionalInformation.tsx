@@ -161,8 +161,8 @@ const AdditionalInformation: React.FC = () => {
       familyType: preferenceStoredData.familyType,
       familyBackground: preferenceStoredData.familyBackground,
       qualification: preferenceStoredData.qualification,
-      preferredLocation: '',
-      locationType: preferenceStoredData.location,
+      preferredLocation: preferenceStoredData.preferredLocation,
+      locationType: preferenceStoredData.preferredLocation,
       minAnnualIncome: 0,
       maxAnnualIncome: 0,
       profession: preferenceStoredData.profession,
@@ -193,7 +193,7 @@ const AdditionalInformation: React.FC = () => {
         }
       } as SnackbarProps);
       sessionStorage.setItem('allowedRoute', '/upload-photos');
-      navigate('/upload-photos', { replace: true });
+     navigate('/upload-photos', { replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
