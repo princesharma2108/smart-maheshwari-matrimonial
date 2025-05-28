@@ -20,6 +20,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import EditIcon from '@mui/icons-material/Edit';
 
 // third-party
 import * as Yup from 'yup';
@@ -84,8 +85,9 @@ type AuthLoginProps = {
   forgot?: string;
   onLoginLoadingChange: (loading: boolean) => void;
   onOTPLoadingChange: (loading: boolean) => void;
+  onOTPSent: (value: boolean) => void;
 };
-export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange }: AuthLoginProps) {
+export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange, onOTPSent }: AuthLoginProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
@@ -313,6 +315,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                 alert: { color: 'success' }
               } as SnackbarProps);
               setIsOtpSent(true);
+              onOTPSent(true);
             } catch (error) {
               const errorData = error as ErrorData;
               openSnackbar({
@@ -331,7 +334,19 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                 <Grid container spacing={3} justifyContent="center">
                   <Grid item xs={12}>
                     <Stack spacing={1}>
-                      <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
+                      <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
+                        {isOtpSent && (
+                          <EditIcon
+                            onClick={() => {
+                              setIsOtpSent(false);
+                              onOTPSent(false);
+                            }}
+                            sx={{ color: '#f00757', cursor: 'pointer' }}
+                          />
+                        )}
+                      </Box>
+
                       <OutlinedInput
                         id="phone-input"
                         type="tel"
@@ -350,6 +365,9 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                         fullWidth
                         error={Boolean(touched.phone && errors.phone)}
                         className="inputFieldLogin"
+                        inputProps={{
+                          readOnly: isOtpSent && true // ✅ This makes the field read-only
+                        }}
                         startAdornment={
                           <InputAdornment position="start">
                             <Select
@@ -441,9 +459,11 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                   )}
 
                   <Grid item xs={12}>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      Login is allowed only with your WhatsApp number.
-                    </Typography>
+                    {!isOtpSent && (
+                      <Typography variant="body1" sx={{ mb: 1 }}>
+                        Login is allowed only with your WhatsApp number.
+                      </Typography>
+                    )}
                     {!isOtpSent ? (
                       <AnimateButton>
                         <Button

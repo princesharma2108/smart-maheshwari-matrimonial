@@ -195,7 +195,7 @@ export default function TabStep4({
                       <MenuItem value="" disabled>
                         Select Number of Siblings
                       </MenuItem>
-                      {siblingOptions?.sort().map((option: string) => (
+                      {siblingOptions?.map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>
