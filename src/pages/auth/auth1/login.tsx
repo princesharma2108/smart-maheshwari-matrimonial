@@ -72,6 +72,8 @@ export default function Login() {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [isOTPLoading, setIsOTPLoading] = useState<boolean>(false);
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
+  const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
+
   function googleLogin() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
@@ -199,6 +201,11 @@ export default function Login() {
       loginUserAPI(userEmail, userId);
     }
   }, [userEmail, userId]);
+
+  const handleOTPSent = (value: boolean) => {
+    setIsOtpSent(value);
+    console.log('value', value);
+  };
   return (
     <AuthWrapper>
       <>
@@ -215,7 +222,12 @@ export default function Login() {
             <Logo />
           </Grid>
           <Grid item xs={12} sx={{ pt: '20px !important' }}>
-            <AuthLogin forgot="/auth/forgot-password" onLoginLoadingChange={setIsLoginLoading} onOTPLoadingChange={setIsOTPLoading} />
+            <AuthLogin
+              forgot="/auth/forgot-password"
+              onLoginLoadingChange={setIsLoginLoading}
+              onOTPLoadingChange={setIsOTPLoading}
+              onOTPSent={handleOTPSent} // ✅ new prop
+            />
           </Grid>
           <Grid
             item
@@ -232,7 +244,7 @@ export default function Login() {
               </AuthSocButton>
             </Grid> */}
               <Grid item xs={12}>
-                <AuthSocButton onClick={googleLogin}>
+                <AuthSocButton onClick={googleLogin} disabled={isOtpSent}>
                   <img src={imgGoogle} alt="Google" style={{ margin: '0 10px' }} /> Sign In with Google
                 </AuthSocButton>
               </Grid>

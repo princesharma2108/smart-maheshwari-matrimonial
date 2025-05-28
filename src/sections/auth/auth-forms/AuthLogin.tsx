@@ -85,8 +85,9 @@ type AuthLoginProps = {
   forgot?: string;
   onLoginLoadingChange: (loading: boolean) => void;
   onOTPLoadingChange: (loading: boolean) => void;
+  onOTPSent: (value: boolean) => void;
 };
-export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange }: AuthLoginProps) {
+export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange, onOTPSent }: AuthLoginProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
@@ -312,6 +313,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                 alert: { color: 'success' }
               } as SnackbarProps);
               setIsOtpSent(true);
+              onOTPSent(true);
             } catch (error) {
               const errorData = error as ErrorData;
               openSnackbar({
@@ -332,7 +334,15 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                     <Stack spacing={1}>
                       <Box display="flex" justifyContent="space-between" alignItems="center">
                         <InputLabel htmlFor="phone-input">Phone Number</InputLabel>
-                        {isOtpSent && <EditIcon onClick={() => setIsOtpSent(false)} sx={{ color: '#f00757', cursor: 'pointer' }} />}
+                        {isOtpSent && (
+                          <EditIcon
+                            onClick={() => {
+                              setIsOtpSent(false);
+                              onOTPSent(false);
+                            }}
+                            sx={{ color: '#f00757', cursor: 'pointer' }}
+                          />
+                        )}
                       </Box>
 
                       <OutlinedInput
@@ -452,7 +462,6 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                         Login is allowed only with your WhatsApp number.
                       </Typography>
                     )}
-
                     {!isOtpSent ? (
                       <AnimateButton>
                         <Button
