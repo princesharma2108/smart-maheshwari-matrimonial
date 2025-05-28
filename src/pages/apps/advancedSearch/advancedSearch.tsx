@@ -53,8 +53,8 @@ export default function AdvancedSearch() {
   const [maxAge, setMaxAge] = useState('');
   const [minHeight, setMinHeight] = useState('');
   const [maxHeight, setMaxHeight] = useState('');
-    const [location, setLocation] = useState('');
-      //Advance Search
+  const [location, setLocation] = useState('');
+  //Advance Search
   const [tagCategories, setTagCategories] = useState<{ name: string; tags: string[] }[]>([]);
 
   //General Data
@@ -65,63 +65,60 @@ export default function AdvancedSearch() {
   const [tagsData, setTagsData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
 
-const handleMinAgeChange = (value: string) => {
-  setMinAge(value);
-
-  // If maxAge is empty OR minAge > maxAge, sync maxAge to minAge
-  if (!maxAge || parseInt(value) > parseInt(maxAge)) {
-    setMaxAge(value);
-  }
-};
-
-const handleMaxAgeChange = (value: string) => {
-  setMaxAge(value);
-
-  // Auto-fill minAge only if it's empty
-  if (!minAge) {
+  const handleMinAgeChange = (value: string) => {
     setMinAge(value);
-  }
-};
 
+    // If maxAge is empty OR minAge > maxAge, sync maxAge to minAge
+    if (!maxAge || parseInt(value) > parseInt(maxAge)) {
+      setMaxAge(value);
+    }
+  };
 
-const handleMinHeightChange = (value: string) => {
-  setMinHeight(value);
+  const handleMaxAgeChange = (value: string) => {
+    setMaxAge(value);
 
-  const min = parseInt(value);
-  const max = parseInt(maxHeight);
+    // Auto-fill minAge only if it's empty
+    if (!minAge) {
+      setMinAge(value);
+    }
+  };
 
-  if (!maxHeight || isNaN(max) || min > max) {
-    setMaxHeight(value);
-  }
-};
-
-const handleMaxHeightChange = (value: string) => {
-  setMaxHeight(value);
-
-  const max = parseInt(value);
-  const min = parseInt(minHeight);
-
-  if (!minHeight || isNaN(min) || max < min) {
+  const handleMinHeightChange = (value: string) => {
     setMinHeight(value);
-  }
-};
 
+    const min = extractCm(value);
+    const max = extractCm(maxHeight);
 
+    if (!maxHeight || min > max) {
+      setMaxHeight(value);
+    }
+  };
 
+  const handleMaxHeightChange = (value: string) => {
+    setMaxHeight(value);
 
+    const max = extractCm(value);
+    const min = extractCm(minHeight);
+
+    if (!minHeight || max < min) {
+      setMinHeight(value);
+    }
+  };
+  const extractCm = (value: string): number => {
+    const match = value.match(/(\d+)cm$/);
+    return match ? parseInt(match[1]) : 0;
+  };
 
   const isBasicFormValid =
-  maritalStatus.trim() !== '' ||
-  minAge.trim() !== '' ||
-  maxAge.trim() !== '' ||
-  minHeight.trim() !== '' ||
-  maxHeight.trim() !== '' ||
-  location.trim() !== '';
+    maritalStatus.trim() !== '' ||
+    minAge.trim() !== '' ||
+    maxAge.trim() !== '' ||
+    minHeight.trim() !== '' ||
+    maxHeight.trim() !== '' ||
+    location.trim() !== '';
 
-  const isAdvancedFormValid = tabIndex === 1 &&
-  selectedOptions &&
-  Object.values(selectedOptions).some((group) => group && Object.keys(group).length > 0);
-
+  const isAdvancedFormValid =
+    tabIndex === 1 && selectedOptions && Object.values(selectedOptions).some((group) => group && Object.keys(group).length > 0);
 
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
     setTabIndex(newIndex);
@@ -259,17 +256,13 @@ const handleMaxHeightChange = (value: string) => {
                 Reset
               </Button>
               <Button
-  variant="contained"
-  className="buttonStyle"
-  onClick={sendAdvancedSearchDataAPI}
-  disabled={
-  (tabIndex === 0 && !isBasicFormValid) ||
-  (tabIndex === 1 && !isAdvancedFormValid)
-}// ✅ disable when form is incomplete
->
-  Apply Filters
-</Button>
-
+                variant="contained"
+                className="buttonStyle"
+                onClick={sendAdvancedSearchDataAPI}
+                disabled={(tabIndex === 0 && !isBasicFormValid) || (tabIndex === 1 && !isAdvancedFormValid)} // ✅ disable when form is incomplete
+              >
+                Apply Filters
+              </Button>
             </Stack>
           </Grid>
         </MainCard>

@@ -27,9 +27,12 @@ interface TabEditStep4Props {
   setFamilyIncome: (value: string) => void;
   familyType: string;
   setFamilyType: (value: string) => void;
+  familyBackground: string;
+  setFamilyBackground: (value: string) => void;
   familyTypeOptions: any;
   siblingOptions: any;
   incomeOptions: any;
+  familyBackgroundData?: string[];
   setIsStepValid: (value: boolean) => void;
 }
 export default function TabEditStep4({
@@ -45,12 +48,14 @@ export default function TabEditStep4({
   setFamilyIncome,
   familyType,
   setFamilyType,
+  familyBackground,
+  setFamilyBackground,
   familyTypeOptions = [],
   siblingOptions = [],
+  familyBackgroundData = [],
   //incomeOptions = []
   setIsStepValid
 }: TabEditStep4Props) {
-  console.log('familyIncome', familyIncome);
   const theme = useTheme();
   const [selectedIncomeRange, setSelectedIncomRange] = useState(familyIncome || '');
   const [errors, setErrors] = useState({
@@ -73,6 +78,8 @@ export default function TabEditStep4({
     setter(lettersOnly);
   };
   const handleFamilyTypeChange = (event: SelectChangeEvent) => setFamilyType(event.target.value);
+  const handleFamilyBackgroundChange = (event: SelectChangeEvent) => setFamilyBackground(event.target.value);
+
   const incomeOptions = Array.from({ length: 20 }, (_, i) => {
     const start = String(i * 5).padStart(2, '0');
     const end = String((i + 1) * 5).padStart(2, '0');
@@ -215,6 +222,31 @@ export default function TabEditStep4({
                         Select Family Type
                       </MenuItem>
                       {familyTypeOptions?.sort().map((option: string) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="family-type">
+                      Family Background<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      value={familyBackground}
+                      onChange={handleFamilyBackgroundChange}
+                      displayEmpty
+                      className="inputFieldLogin"
+                      onBlur={validateStep}
+                      error={!!errors.familyType}
+                    >
+                      <MenuItem value="" disabled>
+                        Select Family Background
+                      </MenuItem>
+                      {familyBackgroundData?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
                         </MenuItem>

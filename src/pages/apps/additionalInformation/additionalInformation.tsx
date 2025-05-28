@@ -128,6 +128,7 @@ const AdditionalInformation: React.FC = () => {
       siblingCount: matrimonialStoredData.siblingCount,
       familyIncomeINR: matrimonialStoredData.familyIncomeINR,
       familyType: matrimonialStoredData.familyType,
+      familyBackground: matrimonialStoredData.familyBackground,
       qualification: matrimonialStoredData.qualification,
       additionalQualification: matrimonialStoredData.additionalQualification,
       occupation: matrimonialStoredData.occupation,
@@ -193,7 +194,7 @@ const AdditionalInformation: React.FC = () => {
         }
       } as SnackbarProps);
       sessionStorage.setItem('allowedRoute', '/upload-photos');
-     navigate('/upload-photos', { replace: true });
+      navigate('/upload-photos', { replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

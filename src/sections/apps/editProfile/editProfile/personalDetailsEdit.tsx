@@ -81,6 +81,7 @@ export default function PersonalDetailsEdit() {
   const [siblings, setSiblings] = useState('');
   const [familyIncome, setFamilyIncome] = useState('');
   const [familyType, setFamilyType] = useState('');
+  const [familyBackground, setFamilyBackground] = useState('');
   //Tab 5
   const [highestQualification, setHighestQualification] = useState('');
   const [additionalQualification, setAdditionalQualification] = useState('');
@@ -116,6 +117,7 @@ export default function PersonalDetailsEdit() {
   const [disabilitiesData, setDisabilitiesData] = useState([]);
   const [drinkingOptionsData, setDrinkingOptionsData] = useState([]);
   const [familyTypeData, setFamilyTypeData] = useState([]);
+  const [familyBackgroundData, setFamilyBackgroundData] = useState([]);
   const [heightData, setHeightData] = useState([]);
   const [incomeOptionsData, setIncomeOptionsData] = useState([]);
   const [languageData, setLanguageData] = useState([]);
@@ -126,15 +128,15 @@ export default function PersonalDetailsEdit() {
   const [smokingOptionsData, setSmokingOptionsData] = useState([]);
   const [workingWithOptionsData, setWorkingWithOptionsData] = useState([]);
   const [isStepValid, setIsStepValid] = useState(true); // Track validation status
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-    // Allow moving back anytime
-    if (newIndex < tabIndex) {
+    if (newIndex < tabIndex || completedSteps.includes(newIndex)) {
       setTabIndex(newIndex);
       return;
     }
 
-    // Allow moving forward only to the next step if isStepValid is true
     if (newIndex === tabIndex + 1 && isStepValid) {
+      setCompletedSteps((prev) => Array.from(new Set([...prev, tabIndex])));
       setTabIndex(newIndex);
     }
   };
@@ -161,6 +163,7 @@ export default function PersonalDetailsEdit() {
       siblingCount: siblings,
       familyIncomeINR: familyIncome,
       familyType: familyType,
+      familyBackground: familyBackground,
       qualification: highestQualification,
       additionalQualification: additionalQualification,
       occupation: occupation,
@@ -226,6 +229,7 @@ export default function PersonalDetailsEdit() {
   const handleNext = () => {
     // navigate('/preferences');
     if (!isStepValid) return;
+    setCompletedSteps((prev) => Array.from(new Set([...prev, tabIndex]))); // mark current step completed
     if (tabIndex >= 0 && tabIndex < 6) {
       setTabIndex((prevIndex) => prevIndex + 1);
     } else if (tabIndex === 6) {
@@ -253,6 +257,7 @@ export default function PersonalDetailsEdit() {
       setDisabilitiesData(responseData.generalData.disabilities);
       setDrinkingOptionsData(responseData.generalData.drikingOptions);
       setFamilyTypeData(responseData.generalData.familyTypeOptions);
+      setFamilyBackgroundData(responseData.generalData.familyBackgroundOptions);
       setHeightData(responseData.generalData.heightOptions);
       setIncomeOptionsData(responseData.generalData.incomeOptions);
       setLanguageData(responseData.generalData.language);
@@ -301,6 +306,7 @@ export default function PersonalDetailsEdit() {
       const convertedIncome = profileDetailsData.income.replace('Lac/Year', ' Lakhs').replace(/\.0/g, '').replace('-', ' - ');
       console.log('convertedIncome', convertedIncome);
       setFamilyIncome(convertedIncome || '');
+      setFamilyBackground(profileDetailsData.familyBackground || '');
       setFamilyType(profileDetailsData.familyType || '');
       setHighestQualification(profileDetailsData.qualification || '');
       setAdditionalQualification(profileDetailsData.additionalQualification || '');
@@ -399,7 +405,16 @@ export default function PersonalDetailsEdit() {
               key={index}
               label={label}
               className="tabStyle"
-              disabled={index > tabIndex + 1 || (index === tabIndex + 1 && !isStepValid)}
+              disabled={
+                !(
+                  (
+                    index === tabIndex || // current tab
+                    index < tabIndex || // previous tabs
+                    completedSteps.includes(index) || // already completed tabs
+                    (index === tabIndex + 1 && isStepValid)
+                  ) // immediate next step if current is valid
+                )
+              }
             />
           ))}
         </Tabs>
@@ -471,8 +486,11 @@ export default function PersonalDetailsEdit() {
             setFamilyIncome={setFamilyIncome}
             familyType={familyType}
             setFamilyType={setFamilyType}
+            familyBackground={familyBackground}
+            setFamilyBackground={setFamilyBackground}
             familyTypeOptions={familyTypeData || []}
             siblingOptions={siblingOptionsData || []}
+            familyBackgroundData={familyBackgroundData || []}
             incomeOptions={incomeOptionsData || []}
             setIsStepValid={setIsStepValid}
           />
@@ -535,21 +553,22 @@ export default function PersonalDetailsEdit() {
             city={city}
             setCity={setCity}
             setIsStepValid={setIsStepValid}
+            setCompletedSteps={setCompletedSteps}
           />
         </TabPanel>
         {/* Buttons */}
         <Grid item xs={12}>
-  <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-    {tabIndex > 0 && (
-      <Button variant="outlined" color="secondary" onClick={handlePrevious}>
-        Previous
-      </Button>
-    )}
-    <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
-      Continue
-    </Button>
-  </Stack>
-</Grid>
+          <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
+            {tabIndex > 0 && (
+              <Button variant="outlined" color="secondary" onClick={handlePrevious}>
+                Previous
+              </Button>
+            )}
+            <Button variant="contained" className="buttonStyle" onClick={handleNext} disabled={!isStepValid}>
+              Continue
+            </Button>
+          </Stack>
+        </Grid>
       </>
     </>
   );

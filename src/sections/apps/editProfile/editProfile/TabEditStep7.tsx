@@ -30,6 +30,7 @@ interface TabEditStep7Props {
   city: string;
   setCity: (value: string) => void;
   setIsStepValid: (value: boolean) => void;
+  setCompletedSteps: React.Dispatch<React.SetStateAction<number[]>>;
 }
 export default function TabEditStep7({
   residentialAddress,
@@ -46,7 +47,8 @@ export default function TabEditStep7({
   setState,
   city,
   setCity,
-  setIsStepValid
+  setIsStepValid,
+  setCompletedSteps
 }: TabEditStep7Props) {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -118,6 +120,15 @@ export default function TabEditStep7({
   const handleZipAddressChange = (zip: any) => {
     setSelectedZipCode(zip);
   };
+  useEffect(() => {
+    const allFilled = residentialAddress && phoneNumber && emailAddress && country && state && city;
+
+    if (allFilled) {
+      setCompletedSteps(
+        (prev) => (prev.includes(6) ? prev : [...prev, 6]) // 6 is index for Step 7
+      );
+    }
+  }, [residentialAddress, phoneNumber, emailAddress, country, state, city]);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -182,31 +193,29 @@ export default function TabEditStep7({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-  <Stack spacing={1}>
-    <InputLabel htmlFor="email-address">
-      Email Address<span style={{ color: 'red' }}>*</span>
-    </InputLabel>
-    <TextField
-      fullWidth
-      id="email-address"
-      placeholder="Enter Email Address"
-      value={emailAddress}
-      onChange={(e) => {
-        const cleanedEmail = e.target.value.replace(/\s+$/, ''); // Remove trailing whitespace
-        setEmailAddress(cleanedEmail);
-      }}
-    onBlur={() => {
-  setEmailAddress(emailAddress.trim());
-  validateStep();
-}}
-
-      className="inputField"
-      error={!!errors.emailAddress}
-      helperText={errors.emailAddress}
-    />
-  </Stack>
-</Grid>
-
+                  <Stack spacing={1}>
+                    <InputLabel htmlFor="email-address">
+                      Email Address<span style={{ color: 'red' }}>*</span>
+                    </InputLabel>
+                    <TextField
+                      fullWidth
+                      id="email-address"
+                      placeholder="Enter Email Address"
+                      value={emailAddress}
+                      onChange={(e) => {
+                        const cleanedEmail = e.target.value.replace(/\s+$/, ''); // Remove trailing whitespace
+                        setEmailAddress(cleanedEmail);
+                      }}
+                      onBlur={() => {
+                        setEmailAddress(emailAddress.trim());
+                        validateStep();
+                      }}
+                      className="inputField"
+                      error={!!errors.emailAddress}
+                      helperText={errors.emailAddress}
+                    />
+                  </Stack>
+                </Grid>
 
                 <Grid item xs={12}>
                   <Stack spacing={1}>

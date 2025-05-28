@@ -76,8 +76,8 @@ export default function Login() {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider).then(async (result) => {
       // Clear local and session storage BEFORE proceeding
-      // localStorage.clear();
-      // sessionStorage.clear();
+      localStorage.clear();
+      sessionStorage.clear();
       const user = result.user;
       setUserId(user.uid);
       setUserEmail(user.email);

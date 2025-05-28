@@ -260,6 +260,8 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
             .required('OTP is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          localStorage.clear();
+          sessionStorage.clear();
           onLoginLoadingChange(true);
           const registerData = {
             phoneNumber: values.phone,

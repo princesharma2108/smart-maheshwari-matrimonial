@@ -29,11 +29,7 @@ export default function EditProfile() {
   const focusInput = () => {
     inputRef.current?.focus();
   };
-  let breadcrumbLinks = [
-    { title: 'Home', to: APP_DEFAULT_PATH },
-    { title: 'Edit Profile', to: '/apps/profiles/account/step1' },
-    { title: 'Edit Profile' }
-  ];
+  let breadcrumbLinks = [{ title: 'Home', to: '/dashboard' }, { title: 'Edit Profile' }];
   const getUserDetailsAPI = async () => {
     setIsLoading(true);
     const userId = localStorage.getItem('userId');

@@ -36,6 +36,8 @@ interface TabStep5Props {
   incomeOptions: any;
   languageOptions: any;
   setIsStepValid: (value: boolean) => void;
+  setAnnualIncome: (value: string) => void;
+  annualIncome: string;
 }
 export default function TabStep5({
   highestQualification,
@@ -54,6 +56,8 @@ export default function TabStep5({
   setMaxAnnualIncome,
   languagesKnown,
   setLanguagesKnown,
+  setAnnualIncome,
+  annualIncome,
   qualificationOptions = [],
   occupationOptions = [],
   workingWithOptions = [],
@@ -70,7 +74,7 @@ export default function TabStep5({
     annualIncome: '',
     languagesKnown: ''
   });
-  const [annualIncome, setAnnualIncome] = useState('');
+  // const [annualIncome, setAnnualIncome] = useState('');
   // Handlers
   const handleHighestQualificationChange = (event: SelectChangeEvent) => setHighestQualification(event.target.value);
   const handleAdditionalQualificationChange = (event: SelectChangeEvent) => setAdditionalQualification(event.target.value);
@@ -318,10 +322,15 @@ export default function TabStep5({
                         Select Languages Known
                       </MenuItem>
                       {languagesKnown.map(
-  (lang) =>
-    !languageOptions.includes(lang) &&
-    lang && <MenuItem key={lang} value={lang}><Checkbox checked className="inputFieldCheckbox" />{lang}</MenuItem>
-)}
+                        (lang) =>
+                          !languageOptions.includes(lang) &&
+                          lang && (
+                            <MenuItem key={lang} value={lang}>
+                              <Checkbox checked className="inputFieldCheckbox" />
+                              {lang}
+                            </MenuItem>
+                          )
+                      )}
 
                       {languageOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>

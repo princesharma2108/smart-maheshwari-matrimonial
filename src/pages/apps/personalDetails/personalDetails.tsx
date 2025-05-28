@@ -56,6 +56,7 @@ const PersonalDetails: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const skippedBiodata = location.state?.skippedBiodata;
+  const backPreferences = location.state?.fromPreferences;
   const [tabIndex, setTabIndex] = useState(0);
   //Tab 1
   const [fullName, setFullName] = useState('');
@@ -82,6 +83,7 @@ const PersonalDetails: React.FC = () => {
   const [siblings, setSiblings] = useState('');
   const [familyIncome, setFamilyIncome] = useState('');
   const [familyType, setFamilyType] = useState('');
+  const [familyBackground, setFamilyBackground] = useState('');
   const [selectedIncomeRange, setSelectedIncomRange] = useState('');
   //Tab 5
   const [highestQualification, setHighestQualification] = useState('');
@@ -89,6 +91,7 @@ const PersonalDetails: React.FC = () => {
   const [occupation, setOccupation] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [workingWith, setWorkingWith] = useState('');
+  const [annualIncome, setAnnualIncome] = useState('');
   const [minAnnualIncome, setMinAnnualIncome] = useState('');
   const [maxAnnualIncome, setMaxAnnualIncome] = useState('');
   const [languagesKnown, setLanguagesKnown] = useState<string[]>([]);
@@ -118,6 +121,7 @@ const PersonalDetails: React.FC = () => {
   const [disabilitiesData, setDisabilitiesData] = useState([]);
   const [drinkingOptionsData, setDrinkingOptionsData] = useState([]);
   const [familyTypeData, setFamilyTypeData] = useState([]);
+  const [familyBackgroundData, setFamilyBackgroundData] = useState([]);
   const [heightData, setHeightData] = useState([]);
   const [incomeOptionsData, setIncomeOptionsData] = useState([]);
   const [languageData, setLanguageData] = useState([]);
@@ -131,18 +135,6 @@ const PersonalDetails: React.FC = () => {
   const [isStepValid, setIsStepValid] = useState(true); // Track validation status
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
-  // const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
-  //   // Allow moving back anytime
-  //   if (newIndex < tabIndex) {
-  //     setTabIndex(newIndex);
-  //     return;
-  //   }
-
-  //   // Allow moving forward only to the next step if isStepValid is true
-  //   if (newIndex === tabIndex + 1 && isStepValid) {
-  //     setTabIndex(newIndex);
-  //   }
-  // };
 
   const handleChange = (_event: React.SyntheticEvent, newIndex: number) => {
     if (newIndex < tabIndex || completedSteps.includes(newIndex)) {
@@ -155,7 +147,6 @@ const PersonalDetails: React.FC = () => {
       setTabIndex(newIndex);
     }
   };
-
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const matrimonialData = {
@@ -178,6 +169,7 @@ const PersonalDetails: React.FC = () => {
       siblingCount: siblings,
       familyIncomeINR: familyIncome,
       familyType: familyType,
+      familyBackground: familyBackground,
       qualification: highestQualification,
       additionalQualification: additionalQualification,
       occupation: occupation,
@@ -247,6 +239,7 @@ const PersonalDetails: React.FC = () => {
       setDisabilitiesData(responseData.generalData.disabilities);
       setDrinkingOptionsData(responseData.generalData.drikingOptions);
       setFamilyTypeData(responseData.generalData.familyTypeOptions);
+      setFamilyBackgroundData(responseData.generalData.familyBackgroundOptions);
       setHeightData(responseData.generalData.heightOptions);
       setIncomeOptionsData(responseData.generalData.incomeOptions);
       setLanguageData(responseData.generalData.language);
@@ -374,17 +367,17 @@ const PersonalDetails: React.FC = () => {
     }
   };
   useEffect(() => {
-    if (!skippedBiodata) {
+    if (!skippedBiodata && !backPreferences) {
       extractPDFDataAPI();
     }
     postUserStageAPI();
     getGeneralDataAPI();
-  }, []);
+  }, [skippedBiodata, backPreferences]);
   useEffect(() => {
     const storedData = localStorage.getItem('matrimonialDetails');
     if (storedData) {
       const matrimonialData = JSON.parse(storedData);
-      if (matrimonialData) {
+      if ((backPreferences || !skippedBiodata) && matrimonialData) {
         setFullName(matrimonialData.firstName || '');
         setTimeOfBirth(matrimonialData.birthTime || '');
         setDateOfBirth(matrimonialData.dateOfBirth || '');
@@ -402,6 +395,7 @@ const PersonalDetails: React.FC = () => {
         setSiblings(matrimonialData.siblingCount || '');
         setFamilyIncome(matrimonialData.familyIncomeINR || '');
         setFamilyType(matrimonialData.familyType || '');
+        setFamilyBackground(matrimonialData.familyBackground || '');
         setHighestQualification(matrimonialData.qualification || '');
         setAdditionalQualification(matrimonialData.additionalQualification || '');
         setOccupation(matrimonialData.occupation || '');
@@ -425,7 +419,7 @@ const PersonalDetails: React.FC = () => {
         setSmoking(matrimonialData.smoking || '');
       }
     }
-  }, []);
+  }, [backPreferences, skippedBiodata]);
   return (
     <>
       <BackgroundWrapper>
@@ -462,7 +456,16 @@ const PersonalDetails: React.FC = () => {
                   key={index}
                   label={label}
                   className="tabStyle"
-                  disabled={!(index <= tabIndex || completedSteps.includes(index) || (index === tabIndex + 1 && isStepValid))}
+                  disabled={
+                    !(
+                      (
+                        index === tabIndex || // current tab
+                        index < tabIndex || // previous tabs
+                        completedSteps.includes(index) || // already completed tabs
+                        (index === tabIndex + 1 && isStepValid)
+                      ) // immediate next step if current is valid
+                    )
+                  }
                 />
               ))}
             </Tabs>
@@ -535,9 +538,12 @@ const PersonalDetails: React.FC = () => {
                 setFamilyIncome={setFamilyIncome}
                 familyType={familyType}
                 setFamilyType={setFamilyType}
+                familyBackground={familyBackground}
+                setFamilyBackground={setFamilyBackground}
                 selectedIncomeRange={selectedIncomeRange}
                 setSelectedIncomRange={setSelectedIncomRange}
                 familyTypeOptions={familyTypeData || []}
+                familyBackgroundData={familyBackgroundData || []}
                 siblingOptions={siblingOptionsData || []}
                 incomeOptions={incomeOptionsData || []}
                 setIsStepValid={setIsStepValid}
@@ -567,6 +573,8 @@ const PersonalDetails: React.FC = () => {
                 incomeOptions={incomeOptionsData || []}
                 languageOptions={languageData || []}
                 setIsStepValid={setIsStepValid}
+                setAnnualIncome={setAnnualIncome}
+                annualIncome={annualIncome}
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={5}>

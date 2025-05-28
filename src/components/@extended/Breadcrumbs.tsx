@@ -165,8 +165,9 @@ export default function Breadcrumbs({
             <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
               <Typography
                 component={Link}
-                to="/"
+                to="/dashboard"
                 variant="body1"
+                onClick={() => sessionStorage.setItem('allowedRoute', '/dashboard')}
                 sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
                 color="text.primary"
               >
@@ -206,9 +207,10 @@ export default function Breadcrumbs({
       <MuiBreadcrumbs aria-label="breadcrumb" maxItems={maxItems || 8} separator={separatorIcon}>
         <Typography
           component={Link}
-          to="/"
+          to="/dashboard"
           color="text.secondary"
           variant="h6"
+          onClick={() => sessionStorage.setItem('allowedRoute', '/dashboard')}
           sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
         >
           {icons && <Home3 style={iconSX} />}
@@ -230,6 +232,11 @@ export default function Breadcrumbs({
               <Typography
                 key={index}
                 {...(link.to && { component: Link, to: link.to })}
+                onClick={() => {
+                  if (link.to) {
+                    sessionStorage.setItem('allowedRoute', link.to);
+                  }
+                }}
                 variant="body1"
                 sx={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}
                 color={link.to ? 'text.primary' : 'text.secondary'}

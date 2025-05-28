@@ -349,7 +349,7 @@ const Preferences: React.FC = () => {
             color="primary"
             onClick={() => {
               sessionStorage.setItem('allowedRoute', '/personal-details');
-              navigate('/personal-details', { replace: true });
+              navigate('/personal-details', { replace: true, state: { fromPreferences: true } });
             }}
             className="buttonStyleOutlined"
           >
