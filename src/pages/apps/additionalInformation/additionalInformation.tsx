@@ -49,6 +49,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 };
 
 const AdditionalInformation: React.FC = () => {
+  const [customAboutMe, setCustomAboutMe] = useState('');
+
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
   const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState<number | null>(null);
@@ -70,7 +72,8 @@ const AdditionalInformation: React.FC = () => {
       preference: preferenceData,
       matrimonial: matrimonialData
     };
-    const data = { userProfileDetails: profileDetailsData };
+    // const data = { userProfileDetails: profileDetailsData };
+    const data = { userProfileDetails: {} };
     try {
       const response = await getAboutMe(data);
       const responseData = response.data as ResponseData;
@@ -142,7 +145,8 @@ const AdditionalInformation: React.FC = () => {
       email: matrimonialStoredData.email,
       alternateContact: matrimonialStoredData.alternateContact,
       languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
-      aboutMe: selectedAboutMe,
+      aboutMe: aboutMeDescriptions.length === 0 ? customAboutMe : selectedAboutMe,
+
       countryCode: 'IN', // If this is dynamic, you may need a variable for it
       city: matrimonialStoredData.city,
       state: matrimonialStoredData.state,
@@ -193,7 +197,7 @@ const AdditionalInformation: React.FC = () => {
         }
       } as SnackbarProps);
       sessionStorage.setItem('allowedRoute', '/upload-photos');
-     navigate('/upload-photos', { replace: true });
+      navigate('/upload-photos', { replace: true });
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -269,6 +273,24 @@ const AdditionalInformation: React.FC = () => {
                   <Grid item container xs={12}>
                     <FormControl component="fieldset" sx={{ display: 'flex', width: '100%' }}>
                       <RadioGroup value={selectedAboutMe} onChange={handleAboutMeChange}>
+                        {aboutMeDescriptions.length === 0 && (
+                          <Box sx={{ mt: 2 }}>
+                            <Typography variant="body2" gutterBottom>
+                              No suggestions found. Please write your own:
+                            </Typography>
+                            <TextField
+                              value={customAboutMe}
+                              onChange={(e) => setCustomAboutMe(e.target.value)}
+                              size="medium"
+                              variant="outlined"
+                              multiline
+                              minRows={3}
+                              fullWidth
+                              className="inputField"
+                            />
+                          </Box>
+                        )}
+
                         {aboutMeDescriptions.map((text, index) => (
                           <Grid container key={index} spacing={1} sx={{ mt: 1 }}>
                             <Grid item>
@@ -382,7 +404,11 @@ const AdditionalInformation: React.FC = () => {
                   handleSaveProfileDetailsAPI();
                 }}
                 className="buttonStyle"
-                disabled={(isEditing !== null && isEditing !== -1) || selectedAboutMe.trim() === '' || isLoadingSaveDetails}
+                disabled={
+                  (isEditing !== null && isEditing !== -1) ||
+                  (aboutMeDescriptions.length === 0 ? customAboutMe.trim() === '' : selectedAboutMe.trim() === '') ||
+                  isLoadingSaveDetails
+                }
               >
                 Continue
               </Button>
