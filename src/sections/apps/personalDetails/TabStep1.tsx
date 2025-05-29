@@ -113,11 +113,6 @@ export default function TabStep1({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [fullName, timeOfBirth, dateOfBirth, placeOfBirth]);
-  console.log('Address1=>', placeOfBirth);
-  console.log('Address2=>', city);
-  console.log('Address3=>', state);
-  console.log('Address4=>', country);
-  console.log('Address5=>', zipCode);
   const handleHomeAddressChange = (homeAddress: any) => {
     setPlaceOfBirth(homeAddress);
   };

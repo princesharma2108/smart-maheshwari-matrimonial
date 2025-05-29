@@ -77,9 +77,9 @@ export default function Login() {
   function googleLogin() {
     setGoogleLoginOpen(true);
     const provider = new GoogleAuthProvider();
-
     signInWithPopup(auth, provider)
       .then(async (result) => {
+        console.log('GoogleResult', result);
         localStorage.clear();
         sessionStorage.clear();
         const user = result.user;
@@ -95,15 +95,18 @@ export default function Login() {
         }
       })
       .catch((error) => {
+        console.log('GoogleResult2', error);
         if (error.code === 'auth/popup-closed-by-user') {
           console.log('User closed the popup.');
           setGoogleLoginOpen(false);
+          setIsLoginLoading(false);
         } else {
           console.error('Google login error:', error);
         }
       })
       .finally(() => {
         // Always reset
+        setGoogleLoginOpen(false);
       });
   }
 
@@ -221,18 +224,17 @@ export default function Login() {
 
   const handleOTPSent = (value: boolean) => {
     setIsOtpSent(value);
-    console.log('value', value);
   };
   return (
     <AuthWrapper>
       <>
         <LoadingOverlay
-          loading={isOTPLoading || isLoginLoading}
-          message={isOTPLoading ? 'Fetching OTP' : 'Logging in'}
+          loading={isOTPLoading || isLoginLoading || googleLoginOpen}
+          message={isOTPLoading ? 'Fetching OTP' : isLoginLoading ? 'Logging in' : ''}
           IconComponent={
             <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
           }
-          showSubLoader={true}
+          showSubLoader={!googleLoginOpen && true}
         />
         <Grid container spacing={3}>
           <Grid item xs={12} sx={{ textAlign: 'center', pt: '0px !important' }}>

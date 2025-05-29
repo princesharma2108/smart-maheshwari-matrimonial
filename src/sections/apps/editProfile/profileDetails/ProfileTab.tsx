@@ -49,7 +49,6 @@ export default function ProfileTab({ profileDetails, preferenceDetails, photosUr
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [selectedIndex, setSelectedIndex] = useState(getPathIndex(pathname));
-  console.log('profileDetails', profileDetails);
   const handleListItemClick = (index: number, route: string, data: any) => {
     setSelectedIndex(index);
     navigate(route, { replace: true, state: data });

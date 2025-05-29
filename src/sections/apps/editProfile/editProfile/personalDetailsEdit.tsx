@@ -52,7 +52,6 @@ export default function PersonalDetailsEdit() {
   const location = useLocation();
   const { pathname } = useLocation();
   const data = location.state;
-  console.log('ProfileData', data);
   const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
   const [tabIndex, setTabIndex] = useState(0);
@@ -304,7 +303,6 @@ export default function PersonalDetailsEdit() {
       setHometown(profileDetailsData.nativePlace || '');
       setSiblings(profileDetailsData.siblingCount || '');
       const convertedIncome = profileDetailsData.income.replace('Lac/Year', ' Lakhs').replace(/\.0/g, '').replace('-', ' - ');
-      console.log('convertedIncome', convertedIncome);
       setFamilyIncome(convertedIncome || '');
       setFamilyBackground(profileDetailsData.familyBackground || '');
       setFamilyType(profileDetailsData.familyType || '');

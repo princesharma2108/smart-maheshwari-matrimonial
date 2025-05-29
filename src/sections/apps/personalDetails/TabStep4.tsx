@@ -75,7 +75,6 @@ export default function TabStep4({
     setSelectedIncomRange(selectedRange);
     const [, maxIncome] = selectedRange.split(' - '); // Extract the second number (upper bound)
     const numericIncome = Number(parseInt(maxIncome, 10)) * 100000; // Convert to INR
-    console.log('Income4', numericIncome);
     setFamilyIncome(numericIncome.toString()); // Store as a string
   };
   const handleTextChange = (setter: (value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => {

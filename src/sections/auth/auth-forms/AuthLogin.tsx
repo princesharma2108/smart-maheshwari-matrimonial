@@ -140,11 +140,6 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
       window.phoneEmailListener = null; // Cleanup
     };
   }, []);
-  // useEffect(() => {
-  //   if (phoneNumber) {
-  //     loginUserAPI(phoneNumber);
-  //   }
-  // }, [phoneNumber]);
   const loginUserAPI = async (phoneNumber: string) => {
     // Clear local and session storage BEFORE proceeding
     localStorage.clear();
@@ -244,7 +239,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
       } as SnackbarProps);
     }
   };
-
+  console.log('googleLoginOpen', googleLoginOpen);
   return (
     <>
       <Formik

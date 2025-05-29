@@ -104,10 +104,8 @@ const Address: React.FC<AddressProps> = ({
     getPlaceDetails(placeData.place_id, (res: any) => {
       // if (res.country !== 'India') return; // ✅ Ensure selection is from India
       // setSelectedAddress(res.street_address || '');
-      console.log('Residense', res);
       setSelectedAddress('');
       if (fieldName == 'City') {
-        console.log('Residense2', res.city);
         if (res.city == null) {
           setSelectedCity(res.street_address || '');
           handleCityChange(res.street_address.split(',')[0].trim());

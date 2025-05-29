@@ -66,7 +66,6 @@ export default function TabStep5({
   setIsStepValid
 }: TabStep5Props) {
   const theme = useTheme();
-  console.log('maxAnnualIncome', maxAnnualIncome);
   const [errors, setErrors] = useState({
     highestQualification: '',
     occupation: '',

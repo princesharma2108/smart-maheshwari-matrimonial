@@ -44,7 +44,6 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 const PreferencesEdit: React.FC = () => {
   const locationPreferenceData = useLocation();
   const data = locationPreferenceData.state;
-  console.log('locationPreferenceData', data);
   const [tabIndex, setTabIndex] = useState(0);
   const [isLoadingGetDetails, setIsLoadingGetDetails] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loader State
@@ -454,20 +453,19 @@ const PreferencesEdit: React.FC = () => {
             setIsStepValid={setIsStepValid}
           />
         </TabPanel>
-          {/* Buttons */}
-       <Grid item xs={12}>
-  <Stack direction="row" justifyContent="flex-end" spacing={2}>
-    {tabIndex > 0 && (
-      <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
-        Previous
-      </Button>
-    )}
-    <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
-      Continue
-    </Button>
-  </Stack>
-</Grid>
-
+        {/* Buttons */}
+        <Grid item xs={12}>
+          <Stack direction="row" justifyContent="flex-end" spacing={2}>
+            {tabIndex > 0 && (
+              <Button variant="outlined" color="secondary" onClick={() => handlePrevious()}>
+                Previous
+              </Button>
+            )}
+            <Button variant="contained" onClick={() => handleNext()} className="buttonStyle">
+              Continue
+            </Button>
+          </Stack>
+        </Grid>
       </Paper>
     </>
   );
