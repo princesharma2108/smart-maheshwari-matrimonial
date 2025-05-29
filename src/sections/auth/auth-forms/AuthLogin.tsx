@@ -341,6 +341,9 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                             onClick={() => {
                               setIsOtpSent(false);
                               onOTPSent(false);
+                              handleChange({
+                                target: { name: 'otp', value: '' }
+                              });
                             }}
                             sx={{ color: '#f00757', cursor: 'pointer' }}
                           />
