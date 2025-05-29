@@ -4,8 +4,8 @@ import Grid from '@mui/material/Grid';
 import Avatar from '@mui/material/Avatar';
 import { Tabs, Tab, Box, Typography, Paper, Stack, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
-import BasicSearchTab from 'sections/apps/advabcedSearch/basicSearchTab';
-import AdvancedSearchTab from 'sections/apps/advabcedSearch/advancedSearchTab';
+import BasicSearchTab from 'sections/apps/advancedSearch/basicSearchTab';
+import AdvancedSearchTab from 'sections/apps/advancedSearch/advancedSearchTab';
 import MainCard from 'components/MainCard';
 import { SnackbarProps } from 'types/snackbar';
 import { openSnackbar } from 'api/snackbar';
@@ -213,42 +213,44 @@ export default function AdvancedSearch() {
         }
         showSubLoader={true}
       />
-      <Grid container spacing={3}>
+      <Grid container spacing={3} xs={12}>
         <MainCard>
-          <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
-            {['Basic Search', 'Advanced Search'].map((label, index) => (
-              <Tab key={index} label={label} className="tabStyle" />
-            ))}
-          </Tabs>
-          <TabPanel value={tabIndex} index={0}>
-            <BasicSearchTab
-              maritalStatus={maritalStatus}
-              setMaritalStatus={setMaritalStatus}
-              minAge={minAge}
-              setMinAge={handleMinAgeChange}
-              maxAge={maxAge}
-              setMaxAge={handleMaxAgeChange}
-              minHeight={minHeight}
-              setMinHeight={handleMinHeightChange}
-              maxHeight={maxHeight}
-              setMaxHeight={handleMaxHeightChange}
-              location={location}
-              setLocation={setLocation}
-              ageOptions={ageOptions}
-              heightData={heightData}
-              locationData={locationData}
-              maritalOptionsData={maritalOptionsData}
-            />
-          </TabPanel>
-          <TabPanel value={tabIndex} index={1}>
-            <AdvancedSearchTab
-              tagsData={tagsData || []}
-              tagCategories={tagCategories}
-              setTagCategories={setTagCategories}
-              selectedOptions={selectedOptions}
-              setSelectedOptions={setSelectedOptions}
-            />
-          </TabPanel>
+          <Grid xs={12}>
+            <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
+              {['Basic Search', 'Advanced Search'].map((label, index) => (
+                <Tab key={index} label={label} className="tabStyle" />
+              ))}
+            </Tabs>
+            <TabPanel value={tabIndex} index={0}>
+              <BasicSearchTab
+                maritalStatus={maritalStatus}
+                setMaritalStatus={setMaritalStatus}
+                minAge={minAge}
+                setMinAge={handleMinAgeChange}
+                maxAge={maxAge}
+                setMaxAge={handleMaxAgeChange}
+                minHeight={minHeight}
+                setMinHeight={handleMinHeightChange}
+                maxHeight={maxHeight}
+                setMaxHeight={handleMaxHeightChange}
+                location={location}
+                setLocation={setLocation}
+                ageOptions={ageOptions}
+                heightData={heightData}
+                locationData={locationData}
+                maritalOptionsData={maritalOptionsData}
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={1}>
+              <AdvancedSearchTab
+                tagsData={tagsData || []}
+                tagCategories={tagCategories}
+                setTagCategories={setTagCategories}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+              />
+            </TabPanel>
+          </Grid>
           {/* Buttons */}
           <Grid item xs={12}>
             <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
