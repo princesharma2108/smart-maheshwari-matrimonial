@@ -72,8 +72,8 @@ const AdditionalInformation: React.FC = () => {
       preference: preferenceData,
       matrimonial: matrimonialData
     };
-    // const data = { userProfileDetails: profileDetailsData };
-    const data = { userProfileDetails: {} };
+    const data = { userProfileDetails: profileDetailsData };
+    // const data = { userProfileDetails: {} };
     try {
       const response = await getAboutMe(data);
       const responseData = response.data as ResponseData;
@@ -147,7 +147,6 @@ const AdditionalInformation: React.FC = () => {
       alternateContact: matrimonialStoredData.alternateContact,
       languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
       aboutMe: aboutMeDescriptions.length === 0 ? customAboutMe : selectedAboutMe,
-
       countryCode: 'IN', // If this is dynamic, you may need a variable for it
       city: matrimonialStoredData.city,
       state: matrimonialStoredData.state,
