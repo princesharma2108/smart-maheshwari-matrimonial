@@ -374,12 +374,12 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                               value={values.countryCode}
                               name="countryCode"
                               onChange={(e) => {
-                                handleChange(e);
-                                // setCountryCode(e.target.value); // Optional
+                                if (!isOtpSent) handleChange(e); // prevent change when OTP is sent
                               }}
                               variant="standard"
                               disableUnderline
                               sx={{ minWidth: 60, fontWeight: 500 }}
+                              disabled={isOtpSent} // makes the dropdown read-only
                             >
                               <MenuItem value="+91">+91</MenuItem>
                               <MenuItem value="+1">+1</MenuItem>
