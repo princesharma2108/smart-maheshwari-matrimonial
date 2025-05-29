@@ -152,7 +152,7 @@ export default function BasicSearchTab({
                       </MenuItem>
                       {heightData.map((height, index) => (
                         <MenuItem key={index} value={height}>
-                          {height} cm
+                          {height}
                         </MenuItem>
                       ))}
                     </Select>
@@ -171,7 +171,7 @@ export default function BasicSearchTab({
                         .filter((height) => minHeight === '' || height >= minHeight) // Filter max height options
                         .map((height, index) => (
                           <MenuItem key={index} value={height}>
-                            {height} cm
+                            {height}
                           </MenuItem>
                         ))}
                     </Select>

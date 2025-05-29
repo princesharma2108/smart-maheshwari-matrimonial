@@ -86,8 +86,9 @@ type AuthLoginProps = {
   onLoginLoadingChange: (loading: boolean) => void;
   onOTPLoadingChange: (loading: boolean) => void;
   onOTPSent: (value: boolean) => void;
+  googleLoginOpen?: boolean;
 };
-export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange, onOTPSent }: AuthLoginProps) {
+export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingChange, onOTPSent, googleLoginOpen }: AuthLoginProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [checked, setChecked] = useState(false);
   const navigate = useNavigate();
@@ -371,6 +372,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                         inputProps={{
                           readOnly: isOtpSent && true // ✅ This makes the field read-only
                         }}
+                        disabled={googleLoginOpen} // makes the field read-only
                         startAdornment={
                           <InputAdornment position="start">
                             <Select
@@ -382,7 +384,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                               variant="standard"
                               disableUnderline
                               sx={{ minWidth: 60, fontWeight: 500 }}
-                              disabled={isOtpSent} // makes the dropdown read-only
+                              disabled={isOtpSent || googleLoginOpen} // makes the dropdown read-only
                             >
                               <MenuItem value="+91">+91</MenuItem>
                               <MenuItem value="+1">+1</MenuItem>

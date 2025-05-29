@@ -73,27 +73,42 @@ export default function Login() {
   const [isOTPLoading, setIsOTPLoading] = useState<boolean>(false);
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
   const [isOtpSent, setIsOtpSent] = useState<boolean>(false);
-
+  const [googleLoginOpen, setGoogleLoginOpen] = useState<boolean>(false);
   function googleLogin() {
+    setGoogleLoginOpen(true);
     const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider).then(async (result) => {
-      // Clear local and session storage BEFORE proceeding
-      localStorage.clear();
-      sessionStorage.clear();
-      const user = result.user;
-      setUserId(user.uid);
-      setUserEmail(user.email);
-      if (result.user) {
-        await setDoc(doc(db, 'Users', user.uid), {
-          email: user.email,
-          firstName: user.displayName,
-          photo: user.photoURL,
-          lastName: ''
-        });
-      }
-    });
+
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        localStorage.clear();
+        sessionStorage.clear();
+        const user = result.user;
+        setUserId(user.uid);
+        setUserEmail(user.email);
+        if (user) {
+          await setDoc(doc(db, 'Users', user.uid), {
+            email: user.email,
+            firstName: user.displayName,
+            photo: user.photoURL,
+            lastName: ''
+          });
+        }
+      })
+      .catch((error) => {
+        if (error.code === 'auth/popup-closed-by-user') {
+          console.log('User closed the popup.');
+          setGoogleLoginOpen(false);
+        } else {
+          console.error('Google login error:', error);
+        }
+      })
+      .finally(() => {
+        // Always reset
+      });
   }
+
   const loginUserAPI = async (userEmail: string, userId: string) => {
+    setIsLoginLoading(true);
     const loginData = {
       user: userEmail,
       password: '12345'
@@ -130,6 +145,8 @@ export default function Login() {
         sessionStorage.setItem('allowedRoute', '/upload-biodata');
         navigate('/upload-biodata', { replace: true });
       }
+      setIsLoginLoading(false);
+      setGoogleLoginOpen(false);
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -227,6 +244,7 @@ export default function Login() {
               onLoginLoadingChange={setIsLoginLoading}
               onOTPLoadingChange={setIsOTPLoading}
               onOTPSent={handleOTPSent} // ✅ new prop
+              googleLoginOpen={googleLoginOpen}
             />
           </Grid>
           <Grid
