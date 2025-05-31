@@ -75,6 +75,7 @@ export default function LifestylePreferencesEdit({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [drinking, smoking, dietaryHabits]);
+  console.log('DrinkingCheckbox', nonNegotiableDrinking);
   useEffect(() => {
     if (drinking === 'No Preference') setNonNegotiableDrinking('');
     if (smoking === 'No Preference') setNonNegotiableSmoking('');

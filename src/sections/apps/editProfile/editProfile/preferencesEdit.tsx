@@ -245,13 +245,14 @@ const PreferencesEdit: React.FC = () => {
       setSmoking(preferenceDetailsData.smoking || '');
       setDietaryHabits(preferenceDetailsData.dietaryHabits || '');
       setWorkingWith(preferenceDetailsData.workingWith || '');
+      console.log('NonNegotaibales:', preferenceDetailsData.nonNegotiables);
       if (preferenceDetailsData.nonNegotiables) {
         // Update non-negotiable state variables based on stored nonNegotiables
-        if (preferenceDetailsData.nonNegotiables.includes('Drinking')) {
-          setNonNegotiableDrinking('Drinking');
+        if (preferenceDetailsData.nonNegotiables.includes('drinking')) {
+          setNonNegotiableDrinking('drinking');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Smoking')) {
-          setNonNegotiableSmoking('Smoking');
+        if (preferenceDetailsData.nonNegotiables.includes('smoking')) {
+          setNonNegotiableSmoking('smoking');
         }
         if (preferenceDetailsData.nonNegotiables.includes('DietaryHabits')) {
           setNonNegotiableDietary('DietaryHabits');
@@ -303,6 +304,7 @@ const PreferencesEdit: React.FC = () => {
     getGeneralDataAPI();
     getUserDetailsAPI();
   }, []);
+  console.log('DrinkingCheckboxParent', nonNegotiableDrinking);
   return (
     <>
       {(isLoadingGetDetails || isLoading) && ( // Show Loader When API is in Progress
@@ -363,7 +365,6 @@ const PreferencesEdit: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Preferences
         </Typography>
-
         <Tabs value={tabIndex} onChange={handleChange} variant="scrollable" scrollButtons="auto" className="activeTabStyle">
           {['Lifestyle Preferences', 'Personal Preferences', 'Additional Preferences'].map((label, index) => (
             <Tab
