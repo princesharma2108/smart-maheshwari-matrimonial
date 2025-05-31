@@ -16,6 +16,9 @@ import { editProfileDetails, profileDetails } from 'apiServices/user';
 import { getGeneralData, getUserDetails } from 'apiServices/data';
 import dayjs, { Dayjs } from 'dayjs';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
+
+import LoadingOverlay from 'components/LoaderOverlay';
+
 // ==============================|| PROFILE - ACCOUNT ||============================== //
 
 interface TabPanelProps {
@@ -350,49 +353,14 @@ export default function PersonalDetailsEdit() {
   }, []);
   return (
     <>
-      {(isLoadingGetDetails || isLoading) && ( // Show Loader When API is in Progress
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'left',
-            gap: '4px',
-            height: '100vh',
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 9999
-          }}
-        >
-          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-          <BallTriangle
-            height={100}
-            width={100}
-            radius={5}
-            color="#f00757"
-            ariaLabel="ball-triangle-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
-          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-            <Typography variant="h3" color={'#f00757'}>
-              {isLoading ? 'Updating Profile Details' : ' Fetching User Details'}
-            </Typography>
-            <ThreeDots
-              visible={true}
-              height="20"
-              width="20"
-              color="#f00757"
-              radius="9"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{ marginBottom: '5px' }}
-              wrapperClass=""
-            />
-          </Stack>
-        </Box>
-      )}
+      <LoadingOverlay
+        loading={isLoadingGetDetails || isLoading}
+        message={isLoadingGetDetails ? 'Fetching User Details ...' : isLoading ? 'Logging in' : ''}
+        IconComponent={
+          <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+        }
+      />
+
       <>
         <Typography variant="h5" gutterBottom>
           Personal Details
