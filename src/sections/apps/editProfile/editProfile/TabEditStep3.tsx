@@ -92,6 +92,11 @@ export default function TabEditStep3({
                       {option}
                     </MenuItem>
                   ))}
+                  {drinkingOptions?.sort().map((option: string) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>
@@ -114,6 +119,7 @@ export default function TabEditStep3({
                   <MenuItem value="" disabled>
                     Select Smoking Habits
                   </MenuItem>
+                  {!smokingOptions.includes(smoking) && smoking && <MenuItem value={smoking}>{smoking}</MenuItem>}
                   {smokingOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -141,6 +147,7 @@ export default function TabEditStep3({
                   <MenuItem value="" disabled>
                     Select Dietary Habits
                   </MenuItem>
+                  {!dietaryOptions.includes(dietaryHabits) && dietaryHabits && <MenuItem value={dietaryHabits}>{dietaryHabits}</MenuItem>}
                   {dietaryOptions?.sort().map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}

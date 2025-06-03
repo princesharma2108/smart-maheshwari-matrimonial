@@ -109,7 +109,6 @@ export default function Login() {
         setGoogleLoginOpen(false);
       });
   }
-
   const loginUserAPI = async (userEmail: string, userId: string) => {
     setIsLoginLoading(true);
     const loginData = {
@@ -187,6 +186,10 @@ export default function Login() {
             navigate('/upload-photos', { replace: true });
             break;
           case 5:
+            sessionStorage.setItem('allowedRoute', '/questionare');
+            navigate('/questionare', { replace: true });
+            break;
+          case 6:
             /*For Complete APP*/
             sessionStorage.setItem('allowedRoute', '/dashboard');
             navigate('/dashboard', { replace: true });

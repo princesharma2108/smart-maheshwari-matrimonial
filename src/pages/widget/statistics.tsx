@@ -33,7 +33,7 @@ import { postUserStage } from 'apiServices/user';
 import { useLocation } from 'react-router';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import LoadingOverlay from 'components/LoaderOverlay';
-
+import Breadcrumbs from 'components/@extended/Breadcrumbs';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
@@ -99,62 +99,7 @@ const profiles = [
   }
 ];
 
-const matchProfiles = {
-  count: 2,
-  data: [
-    {
-      age: 23,
-      degree: 'Graduation',
-      distance: 0,
-      employment: 'Employed',
-      gunScore: 23,
-      height: '5ft 6in - 167cm',
-      income: '1.0-10.0Lac/Year',
-      liked: null,
-      location: 'Aligarh',
-      maritalStatus: 'Never Married',
-      matchScore: 78,
-      matchedAt: '2025-02-19T17:54:24',
-      matchedUserID: 'U491737982139',
-      matrimonialId: 'MP831737982139',
-      name: 'Agtaja Maheshwari',
-      aboutMe: 'djbfbakbvjkbvjkdabvoijdfbvkjfdbvfiuvbkfbvk',
-      profilePic: {
-        compressed: '',
-        original: 'https://smartmatrimony.s3.amazonaws.com/MP831737982139_8685491086.jpg'
-      },
-      requestMatch: true,
-      isManglik: true
-    },
-    {
-      age: 24,
-      degree: "Bachelor's of Design",
-      distance: 0,
-      employment: 'Employed',
-      gunScore: 23,
-      height: '4ft 8in - 142cm',
-      income: '1.0-12.0Lac/Year',
-      liked: null,
-      location: 'Hathras',
-      maritalStatus: 'Never Married',
-      matchScore: 90,
-      matchedAt: '2025-02-19T17:54:24',
-      matchedUserID: 'U781737980499',
-      matrimonialId: 'MP271737980499',
-      name: 'Adit Maheshw',
-      aboutMe: 'djbfbakbvjkbvjkdabvoijdfbvkjfdbvfiuvbkfbvk',
-      profilePic: {
-        compressed: '',
-        original: 'https://smartmatrimony.s3.amazonaws.com/MP271737980499_1814267079.jpg'
-      },
-      isRequested: true,
-      isManglik: false
-    }
-  ],
-  message: 'Matchmaking data retrieved successfully',
-  status: 'success'
-};
-const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) => {
+const MatchProfile = ({ profile }: { profile: any }) => {
   const getMatchScoreImage = () => {
     if (profile.matchScore >= 85) return matchScoreGreen;
     if (profile.matchScore >= 60 && profile.matchScore < 85) return matchScoreOrange;
@@ -174,7 +119,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
           style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px 0 0 16px' }}
         />
         {/* Overlay Content */}
-        <Box
+        {/* <Box
           sx={{
             position: 'absolute',
             top: 0,
@@ -191,7 +136,6 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
             borderBottomRightRadius: '16px'
           }}
         >
-          {/* <img src={gunnIcon} /> */}
           <Typography>{profile.gunScore || 0}/36 Gunn Matched</Typography>
         </Box>
         <Box
@@ -201,12 +145,8 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
             right: 8
           }}
         >
-          {/* Stack-like Container */}
           <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {/* Background SVG */}
             <img src={getMatchScoreImage()} alt="Match Score" width={getMatchScoreImageWidth()} />
-
-            {/* Overlay Percentage & Match Text */}
             <Box
               sx={{
                 position: 'absolute',
@@ -222,7 +162,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
               <Typography sx={{ fontSize: '7px', fontWeight: 500, color: '#fff' }}>Match</Typography>
             </Box>
           </Box>
-        </Box>
+        </Box> */}
       </Grid>
       <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '0 16px 16px 0' }}>
         <Paper
@@ -292,7 +232,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
 
           {/* Match Request Button */}
           <Box sx={{ flexGrow: 1 }} />
-          {profile?.isRequested ? (
+          {/* {profile?.isRequested ? (
             <Box sx={{ width: '100%' }}>
               <AnimateButton>
                 <Button
@@ -304,7 +244,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
                 </Button>
               </AnimateButton>
             </Box>
-          ) : null}
+          ) : null} */}
         </Paper>
       </Grid>
     </Grid>
@@ -360,7 +300,7 @@ export default function LatestMatches() {
     const userId = localStorage.getItem('userId');
     const stageData = {
       userId: userId,
-      registrationStage: 5
+      registrationStage: 6
     };
     try {
       const response = await postUserStage(stageData);
@@ -392,7 +332,12 @@ export default function LatestMatches() {
   const hasMatchProfiles = Array.isArray(matchProfilesData) && matchProfilesData.length > 0;
   const hasSearchResults = Array.isArray(searchResults) && searchResults.length > 0;
   const dataToRender = hasSearchResults ? searchResults : hasMatchProfiles ? matchProfilesData : [];
-
+  let breadcrumbLinks: { title: string; to?: string }[] = [];
+  if (searchResults) {
+    breadcrumbLinks = [{ title: 'Home', to: '/dashboard' }, { title: 'Search Results' }];
+  } else {
+    breadcrumbLinks = [{ title: 'Home', to: '/dashboard' }, { title: 'Latest Matches' }];
+  }
   return (
     <>
       <LoadingOverlay
@@ -403,7 +348,7 @@ export default function LatestMatches() {
         }
         showSubLoader={true}
       />
-
+      <Breadcrumbs custom heading={searchResults ? 'Search Results' : 'Latest Matches'} links={breadcrumbLinks} />
       {/* ✅ IF MOBILE: Show warning and Play Store button */}
       {showMobileNotice ? (
         <Box

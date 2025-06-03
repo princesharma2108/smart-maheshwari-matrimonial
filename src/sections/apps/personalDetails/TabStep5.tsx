@@ -264,6 +264,7 @@ export default function TabStep5({
                       <MenuItem value="" disabled>
                         Select Work Type
                       </MenuItem>
+                      {!workingWithOptions.includes(workingWith) && workingWith && <MenuItem value={workingWith}>{workingWith}</MenuItem>}
                       {workingWithOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -290,6 +291,7 @@ export default function TabStep5({
                       <MenuItem value="" disabled>
                         Select Annual Income
                       </MenuItem>
+                      {!incomeOptions.includes(annualIncome) && annualIncome && <MenuItem value={annualIncome}>{annualIncome}</MenuItem>}
                       {incomeOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}

@@ -28,7 +28,8 @@ const widget: NavItemType = {
       title: <FormattedMessage id="Latest Matches" />,
       type: 'item',
       url: '/dashboard',
-      icon: icons.statistics
+      icon: icons.statistics,
+      breadcrumbs: false
     }
     // {
     //   id: 'data',

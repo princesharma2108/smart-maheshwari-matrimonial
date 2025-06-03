@@ -127,20 +127,20 @@ export default function TabStep2({
                   type="number"
                   id="weight"
                   value={weight}
-                   onChange={(e) => {
-    const input = e.target.value;
-    // Allow only up to 3 digits (optionally with decimal, if needed) {handleWeightChange}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    // Allow only up to 3 digits (optionally with decimal, if needed) {handleWeightChange}
 
-    if (/^\d{0,3}$/.test(input)) {
-      setWeight(input);
-    }
-  }}
-  onKeyDown={(e) => {
-    // Block scientific keys and signs
-    if (['e', 'E', '+', '-'].includes(e.key)) {
-      e.preventDefault();
-    }
-  }}
+                    if (/^\d{0,3}$/.test(input)) {
+                      setWeight(input);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Block scientific keys and signs
+                    if (['e', 'E', '+', '-'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="Enter weight"
                   className="inputField"
                   onBlur={validateStep}
@@ -199,6 +199,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Gender
                   </MenuItem>
+                  {/* {!heightOptions.includes(height) && height && <MenuItem value={height}>{height}</MenuItem>} */}
                   {['Male', 'Female', 'Other'].sort().map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -231,15 +232,15 @@ export default function TabStep2({
                     Select Hobby
                   </MenuItem>
                   {hobbies.map(
-  (hobby) =>
-    !hobbiesOptions.includes(hobby) &&
-    hobby && (
-      <MenuItem key={hobby} value={hobby}>
-        <Checkbox checked className="inputFieldCheckbox" />
-        {hobby}
-      </MenuItem>
-    )
-)}
+                    (hobby) =>
+                      !hobbiesOptions.includes(hobby) &&
+                      hobby && (
+                        <MenuItem key={hobby} value={hobby}>
+                          <Checkbox checked className="inputFieldCheckbox" />
+                          {hobby}
+                        </MenuItem>
+                      )
+                  )}
                   {hobbiesOptions?.sort().map((option) => (
                     <MenuItem key={option} value={option}>
                       <Checkbox checked={hobbies.includes(option)} className="inputFieldCheckbox" />
@@ -265,6 +266,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Disability
                   </MenuItem>
+                  {!disabilities.includes(disability) && disability && <MenuItem value={disability}>{disability}</MenuItem>}
                   {disabilities?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -282,6 +284,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Blood Group
                   </MenuItem>
+                  {!bloodGroupOptions.includes(bloodGroup) && bloodGroup && <MenuItem value={bloodGroup}>{bloodGroup}</MenuItem>}
                   {bloodGroupOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -309,6 +312,7 @@ export default function TabStep2({
                   <MenuItem value="" disabled>
                     Select Complexion
                   </MenuItem>
+                  {!complexionOptions.includes(complexion) && complexion && <MenuItem value={complexion}>{complexion}</MenuItem>}
                   {complexionOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

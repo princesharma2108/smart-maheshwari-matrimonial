@@ -129,7 +129,7 @@ export default function PersonalPreferencesEdit({
                     control={
                       <Checkbox
                         checked={!!nonNegotiableAge}
-                        onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'Age', nonNegotiableAge)}
+                        onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'age', nonNegotiableAge)}
                         className="inputFieldCheckbox"
                         disabled={!age[0] && !age[1]}
                       />

@@ -15,9 +15,12 @@ import axios from 'axios';
 import { KeyedObject } from 'types/root';
 import { AuthProps, JWTContextType } from 'types/auth';
 import { apiUrl } from 'apiServices/apiUrl';
-
+import { SnackbarProps } from 'types/snackbar';
+import { openSnackbar } from 'api/snackbar';
 const chance = new Chance();
-
+interface ErrorData {
+  response: any;
+}
 // constant
 const initialState: AuthProps = {
   isLoggedIn: false,
@@ -86,20 +89,51 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
 
   // const login = async (email?: string, password?: string, registerData?: any) => {
   const login = async (registerData: any) => {
-    // const response = await axios.post(`${apiUrl}/login`, { user, password });
-    const response = await axios.post(`${apiUrl}/register`, registerData);
-    const { token, matrimonialId, username, userId, message } = response.data;
-    localStorage.setItem('userData', JSON.stringify(response.data));
-    localStorage.setItem('token', token);
-    localStorage.setItem('userId', userId);
-    localStorage.setItem('matrimonialId', matrimonialId);
-    setSession(token);
-    dispatch({
-      type: LOGIN,
-      payload: {
-        isLoggedIn: true
+    try {
+      const response = await axios.post(`${apiUrl}/register`, registerData);
+      const { token, matrimonialId, username, userId, message, status } = response.data;
+
+      console.log('LoginResponse', response.data);
+      console.log('Loginstatus', status);
+
+      if (status === 'success') {
+        localStorage.setItem('userData', JSON.stringify(response.data));
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('matrimonialId', matrimonialId);
+        setSession(token);
+        dispatch({
+          type: LOGIN,
+          payload: {
+            isLoggedIn: true
+          }
+        });
+        openSnackbar({
+          open: true,
+          message: 'Logged in successfully!',
+          variant: 'alert',
+          alert: { color: 'success' }
+        } as SnackbarProps);
+      } else {
+        openSnackbar({
+          open: true,
+          message: message,
+          variant: 'alert',
+          alert: { color: 'error' }
+        } as SnackbarProps);
       }
-    });
+    } catch (error: any) {
+      console.error('Login error:', error);
+
+      const errorMessage = error?.response?.data?.message || error?.message || 'Something went wrong during login. Please try again.';
+
+      openSnackbar({
+        open: true,
+        message: errorMessage,
+        variant: 'alert',
+        alert: { color: 'error' }
+      } as SnackbarProps);
+    }
   };
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {

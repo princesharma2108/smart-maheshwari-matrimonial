@@ -120,20 +120,20 @@ export default function TabEditStep2({
                   type="number"
                   id="weight"
                   value={weight}
-                    onChange={(e) => {
-    const input = e.target.value;
-    // Allow only up to 3 digits (optionally with decimal, if needed) {handleWeightChange}
+                  onChange={(e) => {
+                    const input = e.target.value;
+                    // Allow only up to 3 digits (optionally with decimal, if needed) {handleWeightChange}
 
-    if (/^\d{0,3}$/.test(input)) {
-      setWeight(input);
-    }
-  }}
-  onKeyDown={(e) => {
-    // Block scientific keys and signs
-    if (['e', 'E', '+', '-'].includes(e.key)) {
-      e.preventDefault();
-    }
-  }}
+                    if (/^\d{0,3}$/.test(input)) {
+                      setWeight(input);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Block scientific keys and signs
+                    if (['e', 'E', '+', '-'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
                   placeholder="Enter weight"
                   className="inputField"
                   onBlur={validateStep}
@@ -219,7 +219,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Hobby
                   </MenuItem>
-                   {hobbies.map(
+                  {hobbies.map(
                     (hobby) =>
                       !hobbiesOptions.includes(hobby) &&
                       hobby && (
@@ -254,6 +254,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Disability
                   </MenuItem>
+                  {!disabilities.includes(disability) && disability && <MenuItem value={disability}>{disability}</MenuItem>}
                   {disabilities?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -271,6 +272,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Blood Group
                   </MenuItem>
+                  {!bloodGroupOptions.includes(bloodGroup) && bloodGroup && <MenuItem value={bloodGroup}>{bloodGroup}</MenuItem>}
                   {bloodGroupOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -298,6 +300,7 @@ export default function TabEditStep2({
                   <MenuItem value="" disabled>
                     Select Complexion
                   </MenuItem>
+                  {!complexionOptions.includes(complexion) && complexion && <MenuItem value={complexion}>{complexion}</MenuItem>}
                   {complexionOptions?.sort().map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}

@@ -254,35 +254,35 @@ const PreferencesEdit: React.FC = () => {
         if (preferenceDetailsData.nonNegotiables.includes('smoking')) {
           setNonNegotiableSmoking('smoking');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('DietaryHabits')) {
-          setNonNegotiableDietary('DietaryHabits');
+        if (preferenceDetailsData.nonNegotiables.includes('dietaryHabits')) {
+          setNonNegotiableDietary('dietaryHabits');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Age')) {
-          setNonNegotiableAge('Age');
+        if (preferenceDetailsData.nonNegotiables.includes('age')) {
+          setNonNegotiableAge('age');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('FamilyType')) {
-          setNonNegotiableFamilyType('FamilyType');
+        if (preferenceDetailsData.nonNegotiables.includes('familyType')) {
+          setNonNegotiableFamilyType('familyType');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('FamilyBackground')) {
-          setNonNegotiableFamilyBackground('FamilyBackground');
+        if (preferenceDetailsData.nonNegotiables.includes('familyBackground')) {
+          setNonNegotiableFamilyBackground('familyBackground');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('MaritalStatus')) {
-          setNonNegotiableMaritalStatus('MaritalStatus');
+        if (preferenceDetailsData.nonNegotiables.includes('maritalStatus')) {
+          setNonNegotiableMaritalStatus('maritalStatus');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Qualification')) {
-          setNonNegotiableQualification('Qualification');
+        if (preferenceDetailsData.nonNegotiables.includes('qualification')) {
+          setNonNegotiableQualification('qualification');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Profession')) {
-          setNonNegotiableProfession('Profession');
+        if (preferenceDetailsData.nonNegotiables.includes('profession')) {
+          setNonNegotiableProfession('profession');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('WorkingWith')) {
-          setNonNegotiableWorkingWith('WorkingWith');
+        if (preferenceDetailsData.nonNegotiables.includes('workingWith')) {
+          setNonNegotiableWorkingWith('workingWith');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Location')) {
-          setNonNegotiableLocation('Location');
+        if (preferenceDetailsData.nonNegotiables.includes('location')) {
+          setNonNegotiableLocation('location');
         }
-        if (preferenceDetailsData.nonNegotiables.includes('Hobbies')) {
-          setNonNegotiableHobbies('Hobbies');
+        if (preferenceDetailsData.nonNegotiables.includes('hobbies')) {
+          setNonNegotiableHobbies('hobbies');
         }
       }
     } catch (error) {

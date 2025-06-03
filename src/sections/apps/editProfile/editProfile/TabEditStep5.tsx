@@ -243,6 +243,7 @@ export default function TabEditStep5({
                       <MenuItem value="" disabled>
                         Select Work Type
                       </MenuItem>
+                      {!workingWithOptions.includes(workingWith) && workingWith && <MenuItem value={workingWith}>{workingWith}</MenuItem>}
                       {workingWithOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -269,6 +270,7 @@ export default function TabEditStep5({
                       <MenuItem value="" disabled>
                         Select Annual Income
                       </MenuItem>
+                      {!incomeOptions.includes(annualIncome) && annualIncome && <MenuItem value={annualIncome}>{annualIncome}</MenuItem>}
                       {incomeOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -299,10 +301,15 @@ export default function TabEditStep5({
                       <MenuItem value="" disabled>
                         Select Languages Known
                       </MenuItem>
-                                            {languagesKnown.map(
+                      {languagesKnown.map(
                         (lang) =>
                           !languageOptions.includes(lang) &&
-                          lang && <MenuItem key={lang} value={lang}><Checkbox checked className="inputFieldCheckbox" />{lang}</MenuItem>
+                          lang && (
+                            <MenuItem key={lang} value={lang}>
+                              <Checkbox checked className="inputFieldCheckbox" />
+                              {lang}
+                            </MenuItem>
+                          )
                       )}
                       {languageOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>

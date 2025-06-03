@@ -105,6 +105,8 @@ const Address: React.FC<AddressProps> = ({
       // if (res.country !== 'India') return; // ✅ Ensure selection is from India
       // setSelectedAddress(res.street_address || '');
       setSelectedAddress('');
+      const completeAddress = `${res.street_address || ''}${res.city || res.state || res.country || res.postal_code ? ', ' : ''}${res.city || ''}${res.state || res.country || res.postal_code ? ', ' : ''}${res.state || ''}${res.country || res.postal_code ? ', ' : ''} ${res.country || ''}${res.country || res.postal_code ? ', ' : ''} ${res.postal_code || ''}`;
+      console.log('completeAddress', completeAddress);
       if (fieldName == 'City') {
         if (res.city == null) {
           setSelectedCity(res.street_address || '');
@@ -128,16 +130,14 @@ const Address: React.FC<AddressProps> = ({
         setSelectedCountry(res.country || '');
         handleCountryChange(res.country);
       }
-      const completeAddress = `${res.street_address || ''}${res.city || res.state || res.country || res.postal_code ? ', ' : ''}${res.city || ''}${res.state || res.country || res.postal_code ? ', ' : ''}${res.state || ''}${res.country || res.postal_code ? ', ' : ''} ${res.country || ''}${res.country || res.postal_code ? ', ' : ''} ${res.postal_code || ''}`;
-
       if (fieldName == 'Place of Birth') {
+        console.log('completeAddress2', completeAddress);
         setSelectedAddress(completeAddress || '');
         handleAddressChange(completeAddress);
       }
       setSelectedZip(res.postal_code || '');
       setSelectedLatitude(res.location.coordinates[0]);
       setSelectedLongitude(res.location.coordinates[1]);
-
       setLocationAddress(
         pageName === 'Education Details'
           ? `${res.city || ''}, ${res.state || ''}, ${res.postal_code || ''}`

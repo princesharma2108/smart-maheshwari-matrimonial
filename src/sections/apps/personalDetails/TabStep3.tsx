@@ -87,6 +87,7 @@ export default function TabStep3({
                   <MenuItem value="" disabled>
                     Select Drinking Habits
                   </MenuItem>
+                  {!drinkingOptions.includes(drinking) && drinking && <MenuItem value={drinking}>{drinking}</MenuItem>}
                   {drinkingOptions?.map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -114,6 +115,7 @@ export default function TabStep3({
                   <MenuItem value="" disabled>
                     Select Smoking Habits
                   </MenuItem>
+                  {!smokingOptions.includes(smoking) && smoking && <MenuItem value={smoking}>{smoking}</MenuItem>}
                   {smokingOptions?.map((option: string) => (
                     <MenuItem key={option} value={option}>
                       {option}
@@ -141,6 +143,7 @@ export default function TabStep3({
                   <MenuItem value="" disabled>
                     Select Dietary Habits
                   </MenuItem>
+                  {!dietaryOptions.includes(dietaryHabits) && dietaryHabits && <MenuItem value={dietaryHabits}>{dietaryHabits}</MenuItem>}
                   {dietaryOptions?.map((option) => (
                     <MenuItem key={option} value={option}>
                       {option}

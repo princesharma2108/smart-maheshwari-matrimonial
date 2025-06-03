@@ -135,41 +135,40 @@ export default function TabEditStep1({
                   Full Name <span style={{ color: 'red' }}>*</span>
                 </InputLabel>
                 <TextField
-  fullWidth
-  id="personal-full-name"
-  placeholder="Full Name"
-  className="inputField"
-  value={fullName}
-  onChange={(e) => {
-    let value = e.target.value;
+                  fullWidth
+                  id="personal-full-name"
+                  placeholder="Full Name"
+                  className="inputField"
+                  value={fullName}
+                  onChange={(e) => {
+                    let value = e.target.value;
 
-    // Allow only letters, hyphens, and spaces
-    value = value.replace(/[^A-Za-z\- ]/g, '');
-    setFullName(value);
-  }}
-  onBlur={() => {
-    const wordCount = fullName.trim().split(/\s+/).length;
+                    // Allow only letters, hyphens, and spaces
+                    value = value.replace(/[^A-Za-z\- ]/g, '');
+                    setFullName(value);
+                  }}
+                  onBlur={() => {
+                    const wordCount = fullName.trim().split(/\s+/).length;
 
-    // Only validate if there are exactly 3 words
-    if (wordCount === 3) {
-      const regex = /^[A-Za-z\-]+ [A-Za-z\-]+ [A-Za-z\-]+$/;
+                    // Only validate if there are exactly 3 words
+                    if (wordCount === 3) {
+                      const regex = /^[A-Za-z\-]+ [A-Za-z\-]+ [A-Za-z\-]+$/;
 
-      if (!regex.test(fullName.trim())) {
-        setErrors((prev) => ({
-          ...prev,
-          fullName: 'Exactly three words (each can have hyphens), separated by a single space.'
-        }));
-        return;
-      }
-    }
+                      if (!regex.test(fullName.trim())) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          fullName: 'Exactly three words (each can have hyphens), separated by a single space.'
+                        }));
+                        return;
+                      }
+                    }
 
-    // Clear error for < 3 words or valid 3-word input
-    setErrors((prev) => ({ ...prev, fullName: '' }));
-  }}
-  error={!!errors.fullName}
-  helperText={errors.fullName}
-/>
-
+                    // Clear error for < 3 words or valid 3-word input
+                    setErrors((prev) => ({ ...prev, fullName: '' }));
+                  }}
+                  error={!!errors.fullName}
+                  helperText={errors.fullName}
+                />
               </Stack>
             </Grid>
             <Grid item xs={12} sm={12}>
@@ -258,9 +257,10 @@ export default function TabEditStep1({
                   Place of Birth <span style={{ color: 'red' }}>*</span>
                 </InputLabel>
                 <Address
-                  fieldName={''}
+                  fieldName={'Place of Birth'}
                   //addressCountryFilters={['us']}
                   initialAddress={placeOfBirth}
+                  placeholder="Place of Birth"
                   handleAddressChange={handleHomeAddressChange}
                   handleCityChange={handleCityAddressChange}
                   handleStateChange={handleStateAddressChange}

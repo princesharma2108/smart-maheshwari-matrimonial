@@ -104,7 +104,7 @@ export default function TabStep6({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack spacing={1} sx={{width:"fit-content"}}>
+                  <Stack spacing={1} sx={{ width: 'fit-content' }}>
                     <FormControlLabel
                       control={
                         <Checkbox checked={gunnMatchingImportant} onChange={handleGunnMatchingChange} className="inputFieldCheckbox" />
@@ -137,6 +137,7 @@ export default function TabStep6({
                       <MenuItem value="" disabled>
                         Select Manglik Status
                       </MenuItem>
+                      {!manglikOptions.includes(manglik) && manglik && <MenuItem value={manglik}>{manglik}</MenuItem>}
                       {manglikOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -146,7 +147,7 @@ export default function TabStep6({
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
-                  <Stack spacing={1} sx={{width:"fit-content"}}>
+                  <Stack spacing={1} sx={{ width: 'fit-content' }}>
                     <FormControlLabel
                       control={
                         <Checkbox

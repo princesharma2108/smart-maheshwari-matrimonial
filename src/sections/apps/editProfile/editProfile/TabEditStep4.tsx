@@ -171,6 +171,7 @@ export default function TabEditStep4({
                       <MenuItem value="" disabled>
                         Select Number of Siblings
                       </MenuItem>
+                      {!siblingOptions.includes(siblings) && siblings && <MenuItem value={siblings}>{siblings}</MenuItem>}
                       {siblingOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -196,6 +197,9 @@ export default function TabEditStep4({
                       <MenuItem value="" disabled>
                         Select Family Income Range
                       </MenuItem>
+                      {!incomeOptions.includes(selectedIncomeRange) && selectedIncomeRange && (
+                        <MenuItem value={selectedIncomeRange}>{selectedIncomeRange}</MenuItem>
+                      )}
                       {incomeOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -221,6 +225,7 @@ export default function TabEditStep4({
                       <MenuItem value="" disabled>
                         Select Family Type
                       </MenuItem>
+                      {!familyTypeOptions.includes(familyType) && familyType && <MenuItem value={familyType}>{familyType}</MenuItem>}
                       {familyTypeOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}
@@ -246,6 +251,9 @@ export default function TabEditStep4({
                       <MenuItem value="" disabled>
                         Select Family Background
                       </MenuItem>
+                      {!familyBackgroundData.includes(familyBackground) && familyBackground && (
+                        <MenuItem value={familyBackground}>{familyBackground}</MenuItem>
+                      )}
                       {familyBackgroundData?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}

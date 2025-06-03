@@ -54,6 +54,7 @@ export default function AdvancedSearch() {
   const [minHeight, setMinHeight] = useState('');
   const [maxHeight, setMaxHeight] = useState('');
   const [location, setLocation] = useState('');
+  const [manglik, setManglik] = useState('');
   //Advance Search
   const [tagCategories, setTagCategories] = useState<{ name: string; tags: string[] }[]>([]);
 
@@ -62,6 +63,7 @@ export default function AdvancedSearch() {
   const [heightData, setHeightData] = useState([]);
   const [locationData, setLocationData] = useState([]);
   const [maritalOptionsData, setMaritalOptionsData] = useState([]);
+  const [manglikOptionsData, setManglikOptionsData] = useState([]);
   const [tagsData, setTagsData] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
 
@@ -115,7 +117,8 @@ export default function AdvancedSearch() {
     maxAge.trim() !== '' ||
     minHeight.trim() !== '' ||
     maxHeight.trim() !== '' ||
-    location.trim() !== '';
+    location.trim() !== '' ||
+    manglik.trim() !== '';
 
   const isAdvancedFormValid =
     tabIndex === 1 && selectedOptions && Object.values(selectedOptions).some((group) => group && Object.keys(group).length > 0);
@@ -131,6 +134,7 @@ export default function AdvancedSearch() {
       setLocationData(responseData.data.locationOptions);
       setMaritalOptionsData(responseData.data.maritalOptions);
       setAgeOptions(responseData.data.ageOptions);
+      setManglikOptionsData(responseData.data.manglik);
       setTagsData(responseData.data.tags);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -155,7 +159,8 @@ export default function AdvancedSearch() {
         maritalStatusOptions: [maritalStatus],
         ageOptions: [minAge, maxAge],
         heightOptions: [minHeight, maxHeight],
-        locationOptions: [location]
+        locationOptions: [location],
+        manglik: [manglik]
       },
       advancedSearch: isTagCategoriesEmpty ? null : { tagCategories: tagCategories }
     };
@@ -198,6 +203,7 @@ export default function AdvancedSearch() {
     setMinHeight('');
     setMaxHeight('');
     setLocation('');
+    setManglik('');
     setSelectedOptions({});
     // setTagCategories([]);
     // Optionally reset tab to default
@@ -235,10 +241,13 @@ export default function AdvancedSearch() {
                 setMaxHeight={handleMaxHeightChange}
                 location={location}
                 setLocation={setLocation}
+                manglik={manglik}
+                setManglik={setManglik}
                 ageOptions={ageOptions}
                 heightData={heightData}
                 locationData={locationData}
                 maritalOptionsData={maritalOptionsData}
+                manglikOptionsData={manglikOptionsData}
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={1}>

@@ -26,10 +26,13 @@ interface BasicSearchTabProps {
   setMaxHeight: (value: string) => void;
   location: string;
   setLocation: (value: string) => void;
+  manglik: string;
+  setManglik: (value: string) => void;
   ageOptions: string[];
   heightData: string[];
   locationData: string[];
   maritalOptionsData: string[];
+  manglikOptionsData?: string[];
 }
 
 export default function BasicSearchTab({
@@ -45,10 +48,13 @@ export default function BasicSearchTab({
   setMaxHeight,
   location,
   setLocation,
+  manglik,
+  setManglik,
   ageOptions,
   heightData,
   locationData,
-  maritalOptionsData
+  maritalOptionsData,
+  manglikOptionsData
 }: BasicSearchTabProps) {
   const theme = useTheme();
 
@@ -170,9 +176,22 @@ export default function BasicSearchTab({
                       {loc}
                     </MenuItem>
                   ))}
-                  <MenuItem value="No Preference" sx={{ whiteSpace: 'nowrap' }}>
-                    No Preference
+                </Select>
+              </Stack>
+            </Grid>
+            {/* Manglik */}
+            <Grid item xs={12}>
+              <Stack spacing={1}>
+                <InputLabel htmlFor="location">Manglik</InputLabel>
+                <Select value={manglik} onChange={(e) => setManglik(e.target.value)} {...commonSelectProps}>
+                  <MenuItem value="" disabled sx={{ whiteSpace: 'nowrap' }}>
+                    Select Option
                   </MenuItem>
+                  {manglikOptionsData?.map((option, index) => (
+                    <MenuItem key={index} value={option} sx={{ whiteSpace: 'nowrap' }}>
+                      {option}
+                    </MenuItem>
+                  ))}
                 </Select>
               </Stack>
             </Grid>

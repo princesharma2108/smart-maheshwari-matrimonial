@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { Box, Button, Typography, Grid, IconButton, Link, Menu, MenuItem, Stack } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -38,6 +38,7 @@ export default function EditPhotos() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]); // Store old photos
   const [menuAnchor, setMenuAnchor] = useState<(null | HTMLElement)[]>(Array(10).fill(null));
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const navigate = useNavigate();
   const onSubmit = (data: any) => {
@@ -45,28 +46,27 @@ export default function EditPhotos() {
     //navigate('/widget/statistics');
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  const files = Array.from(event.target.files || []);
+    const files = Array.from(event.target.files || []);
 
-  const totalImagesCount = previews.length + files.length;
+    const totalImagesCount = previews.length + files.length;
 
-  if (totalImagesCount > 10) {
-    openSnackbar({
-      open: true,
-      message: 'You can upload a maximum of 10 photos.',
-      variant: 'alert',
-      alert: {
-        color: 'error'
-      }
-    } as SnackbarProps);
-    return;
-  }
+    if (totalImagesCount > 10) {
+      openSnackbar({
+        open: true,
+        message: 'You can upload a maximum of 10 photos.',
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+      return;
+    }
 
-  setSelectedImages((prev) => [...prev, ...files]);
-  setPreviews((prev) => [...prev, ...files.map((file) => file.type.startsWith('image/') ? URL.createObjectURL(file) : '')]);
-  setSelectedFiles(files);
-};
+    setSelectedImages((prev) => [...prev, ...files]);
+    setPreviews((prev) => [...prev, ...files.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
+    setSelectedFiles(files);
+  };
 
-  
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, index: number) => {
     setMenuAnchor((prev) => {
       const newAnchors = [...prev];
@@ -152,8 +152,14 @@ export default function EditPhotos() {
   const handleRemoveFile = (index: number, preview: string) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
+    setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
+    setExistingPhotos(existingPhotos.filter((_, i) => i !== index));
     deletePhotoAPI(preview);
     handleMenuClose(index);
+    // Clear the file input value so the same file can be uploaded again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
   const deletePhotoAPI = async (preview: string) => {
     setIsLoadingDeletePhoto(true);
@@ -246,9 +252,13 @@ export default function EditPhotos() {
       setPreviews(updatedPhotos);
       setExistingPhotos(updatedPhotos);
       //navigate('/questionare');
-      //reset();
-      // setSelectedImages([]);
-      // setPreviews([]);
+      reset();
+      setSelectedImages([]);
+      setSelectedFiles([]); // important
+      //setPreviews([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -332,17 +342,24 @@ export default function EditPhotos() {
               {/* Upload Button */}
               <Grid item xs={12} sx={{ textAlign: 'center' }}>
                 <Button
-  variant="contained"
-  component="label"
-  startIcon={<CloudUploadIcon />}
-  sx={{ backgroundColor: '#1976d2', color: '#fff' }}
-  disabled={(previews.length + selectedImages.length) >= 10}  // ✅ check sum here
-  className="buttonStyle"
->
-  Choose Files
-  <input type="file" accept="image/*" multiple {...register('photos')} onChange={handleFileChange} hidden />
-</Button>
-
+                  variant="contained"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ backgroundColor: '#1976d2', color: '#fff' }}
+                  disabled={previews.length + selectedImages.length >= 10} // ✅ check sum here
+                  className="buttonStyle"
+                >
+                  Choose Files
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    {...register('photos')}
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    hidden
+                  />
+                </Button>
               </Grid>
 
               {/* Selected Photos */}

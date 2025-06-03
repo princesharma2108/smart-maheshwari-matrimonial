@@ -210,6 +210,10 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
             navigate('/upload-photos', { replace: true });
             break;
           case 5:
+            sessionStorage.setItem('allowedRoute', '/questionare');
+            navigate('/questionare', { replace: true });
+            break;
+          case 6:
             /*For Complete APP*/
             sessionStorage.setItem('allowedRoute', '/dashboard');
             navigate('/dashboard', { replace: true });
@@ -239,7 +243,6 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
       } as SnackbarProps);
     }
   };
-  console.log('googleLoginOpen', googleLoginOpen);
   return (
     <>
       <Formik
@@ -268,9 +271,11 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
           };
           try {
             await login(registerData); // Replace with your OTP verification logic
-            onLoginLoadingChange(false);
             const storedData = localStorage.getItem('userData');
+            const message = localStorage.getItem('message');
+            const status = localStorage.getItem('status');
             const userData = storedData ? JSON.parse(storedData) : {};
+
             if (userData.created == false) {
               getUserStageAPI();
             } else {
@@ -290,6 +295,8 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
               setErrors({ submit: err.message });
               setSubmitting(false);
             }
+          } finally {
+            onLoginLoadingChange(false);
           }
         }}
       >
@@ -303,7 +310,6 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
             try {
               const response = await getOTP(otpData);
               const responseData = response.data as ResponseOTPData;
-              onOTPLoadingChange(false);
               openSnackbar({
                 open: true,
                 message: responseData.message,
@@ -314,6 +320,7 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
               onOTPSent(true);
             } catch (error) {
               const errorData = error as ErrorData;
+              console.error('ErrorfetchingOTP:', errorData.response.data.message);
               openSnackbar({
                 open: true,
                 message: errorData.response.data.message,
@@ -322,6 +329,8 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
                   color: 'error'
                 }
               } as SnackbarProps);
+            } finally {
+              onOTPLoadingChange(false);
             }
           };
           return (

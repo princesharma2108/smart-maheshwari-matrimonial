@@ -34,7 +34,6 @@ export default function UploadPhotos() {
     uploadPhotosAPI();
     //navigate('/widget/statistics');
   };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const maxSize = 10 * 1024 * 1024; // 10MB in bytes
@@ -57,7 +56,6 @@ export default function UploadPhotos() {
     setPreviews((prev) => [...prev, ...validFiles.map((file) => (file.type.startsWith('image/') ? URL.createObjectURL(file) : ''))]);
     setSelectedFiles(validFiles);
   };
-
   const handleRemoveFile = (index: number) => {
     setSelectedImages(selectedImages.filter((_, i) => i !== index));
     setPreviews(previews.filter((_, i) => i !== index));
@@ -105,7 +103,11 @@ export default function UploadPhotos() {
       navigate('/questionare', { replace: true });
       reset();
       setSelectedImages([]);
-      setPreviews([]);
+      //setPreviews([]);
+      setSelectedFiles([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;
@@ -188,15 +190,12 @@ export default function UploadPhotos() {
               Only JPG, JPEG, PNG, and GIF formats are allowed.
             </Typography>
           </Grid>
-
           {/* Divider */}
           <Grid item xs={12}>
             <AuthDivider>
               <Typography variant="body1">Select Your Photos</Typography>
             </AuthDivider>
           </Grid>
-
-          {/* Upload Button */}
           <Grid item xs={12} sx={{ textAlign: 'center' }}>
             <Button
               variant="contained"
@@ -218,7 +217,6 @@ export default function UploadPhotos() {
               />{' '}
             </Button>
           </Grid>
-
           {/* Selected Photos */}
           {previews.length > 0 && (
             <Grid item xs={12}>
@@ -242,7 +240,6 @@ export default function UploadPhotos() {
               </Grid>
             </Grid>
           )}
-
           {/* Upload Button */}
           <Grid item xs={6} md={6} sx={{ textAlign: 'center' }}>
             <Button
@@ -257,7 +254,6 @@ export default function UploadPhotos() {
               Upload
             </Button>
           </Grid>
-
           {/* Skip Link */}
           <>
             {/* <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>

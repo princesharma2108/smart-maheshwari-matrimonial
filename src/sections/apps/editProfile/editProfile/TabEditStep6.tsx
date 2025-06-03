@@ -136,6 +136,7 @@ export default function TabEditStep6({
                       <MenuItem value="" disabled>
                         Select Manglik Status
                       </MenuItem>
+                      {!manglikOptions.includes(manglik) && manglik && <MenuItem value={manglik}>{manglik}</MenuItem>}
                       {manglikOptions?.sort().map((option: string) => (
                         <MenuItem key={option} value={option}>
                           {option}

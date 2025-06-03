@@ -126,9 +126,39 @@ export default function Questionnaire() {
       } as SnackbarProps);
     }
   };
+  const postUserStageAPI = async () => {
+    const userId = localStorage.getItem('userId');
+    const stageData = {
+      userId: userId,
+      registrationStage: 5
+    };
+    try {
+      const response = await postUserStage(stageData);
+      const responseData = response.data as ResponseData;
+      openSnackbar({
+        open: true,
+        message: responseData.message,
+        variant: 'alert',
+        alert: {
+          color: 'success'
+        }
+      } as SnackbarProps);
+    } catch (error) {
+      const errorData = error as ErrorData;
+      openSnackbar({
+        open: true,
+        message: errorData.response.data.message,
+        variant: 'alert',
+        alert: {
+          color: 'error'
+        }
+      } as SnackbarProps);
+    }
+  };
   useEffect(() => {
     getQuestionDetailsAPI();
     getUserDetailsAPI();
+    postUserStageAPI();
   }, []);
   // Filter questions based on userGender
   // const filteredQuestions = questionsData
