@@ -10,6 +10,9 @@ import { editProfileDetails, profileDetails } from 'apiServices/user';
 import { getGeneralData, getUserDetails } from 'apiServices/data';
 import { BallTriangle, ThreeDots } from 'react-loader-spinner';
 import { useLocation } from 'react-router-dom';
+
+import LoadingOverlay from 'components/LoaderOverlay';
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -307,49 +310,13 @@ const PreferencesEdit: React.FC = () => {
   console.log('DrinkingCheckboxParent', nonNegotiableDrinking);
   return (
     <>
-      {(isLoadingGetDetails || isLoading) && ( // Show Loader When API is in Progress
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'left',
-            gap: '4px',
-            height: '100vh',
-            position: 'absolute',
-            width: '100%',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 9999
-          }}
-        >
-          {/* <CircularProgress size={60} sx={{ color: '#f00757' }} /> */}
-          <BallTriangle
-            height={100}
-            width={100}
-            radius={5}
-            color="#f00757"
-            ariaLabel="ball-triangle-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-            visible={true}
-          />
-          <Stack spacing={2} flexDirection={'row'} alignItems={'center'}>
-            <Typography variant="h3" color={'#f00757'}>
-              {isLoading ? 'Updating Profile Details' : ' Fetching User Details'}
-            </Typography>
-            <ThreeDots
-              visible={true}
-              height="20"
-              width="20"
-              color="#f00757"
-              radius="9"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{ marginBottom: '5px' }}
-              wrapperClass=""
-            />
-          </Stack>
-        </Box>
-      )}
+      <LoadingOverlay
+        loading={isLoadingGetDetails || isLoading}
+        message={isLoadingGetDetails ? 'Updating Profile Details ...' : isLoading ? 'Fetching User Details' : ''}
+        IconComponent={
+          <BallTriangle height={100} width={100} radius={5} color="#f00757" ariaLabel="ball-triangle-loading" visible={true} />
+        }
+      />
       <Paper
         elevation={3}
         sx={{
