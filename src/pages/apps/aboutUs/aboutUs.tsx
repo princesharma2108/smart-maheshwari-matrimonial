@@ -42,7 +42,7 @@ export default function AboutUs() {
               rel="noopener noreferrer"
               sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
             >
-              miiscolp.com
+              miiscollp.com
             </Link>
           </Typography>
         </Grid>
@@ -51,12 +51,12 @@ export default function AboutUs() {
           <Typography variant="body2">
             <Link
               component={RouterLink}
-              to="https://smartmaheshwari.com"
+              to="https://smartmatrimony.ai"
               target="_blank"
               rel="noopener noreferrer"
               sx={{ color: '#f00757', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
             >
-              smartmaheshwari.com
+              smartmatrimony.ai
             </Link>
           </Typography>
         </Grid>
