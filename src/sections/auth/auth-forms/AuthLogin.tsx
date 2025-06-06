@@ -192,39 +192,16 @@ export default function AuthLogin({ forgot, onLoginLoadingChange, onOTPLoadingCh
       const response = await getUserStage(userId);
       const responseData = response.data as ResponseStageData;
       if (responseData.status === 'success') {
-        switch (responseData.registrationStage) {
-          case 1:
-            sessionStorage.setItem('allowedRoute', '/upload-biodata');
-            navigate('/upload-biodata', { replace: true });
-            break;
-          case 2:
-            sessionStorage.setItem('allowedRoute', '/personal-details');
-            navigate('/personal-details', { replace: true });
-            break;
-          case 3:
-            sessionStorage.setItem('allowedRoute', '/preferences');
-            navigate('/preferences', { replace: true });
-            break;
-          case 4:
-            sessionStorage.setItem('allowedRoute', '/upload-photos');
-            navigate('/upload-photos', { replace: true });
-            break;
-          case 5:
-            sessionStorage.setItem('allowedRoute', '/questionare');
-            navigate('/questionare', { replace: true });
-            break;
-          case 6:
-            /*For Complete APP*/
-            sessionStorage.setItem('allowedRoute', '/dashboard');
-            navigate('/dashboard', { replace: true });
-            /*For Coming Soon*/
-            // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
-            // navigate('/maintenance/coming-soon2', { replace: true });
-            break;
-          default:
-            sessionStorage.setItem('allowedRoute', '/upload-biodata');
-            navigate('/upload-biodata');
-            break;
+        if (responseData.registrationStage == 6) {
+          /*For Complete APP*/
+          sessionStorage.setItem('allowedRoute', '/dashboard');
+          navigate('/dashboard', { replace: true });
+          /*For Coming Soon*/
+          // sessionStorage.setItem('allowedRoute', '/maintenance/coming-soon2');
+          // navigate('/maintenance/coming-soon2', { replace: true });
+        } else {
+          sessionStorage.setItem('allowedRoute', '/upload-biodata');
+          navigate('/upload-biodata');
         }
       } else {
         sessionStorage.setItem('allowedRoute', '/upload-biodata');

@@ -129,6 +129,7 @@ export default function AdditionalPreferences({
             {[
               {
                 label: 'Qualification',
+                key: 'qualification',
                 value: qualification,
                 setValue: setQualification,
                 nonNegotiable: nonNegotiableQualification,
@@ -137,6 +138,7 @@ export default function AdditionalPreferences({
               },
               {
                 label: 'Location',
+                key: 'location',
                 value: location,
                 setValue: setLocation,
                 nonNegotiable: nonNegotiableLocation,
@@ -145,6 +147,7 @@ export default function AdditionalPreferences({
               },
               {
                 label: 'Profession',
+                key: 'profession',
                 value: profession,
                 setValue: setProfession,
                 nonNegotiable: nonNegotiableProfession,
@@ -153,6 +156,7 @@ export default function AdditionalPreferences({
               },
               {
                 label: 'Working With',
+                key: 'workingWith',
                 value: workingWith,
                 setValue: setWorkingWith,
                 nonNegotiable: nonNegotiableWorkingWith,
@@ -167,7 +171,7 @@ export default function AdditionalPreferences({
               //   setNonNegotiable: setNonNegotiableHobbies,
               //   data: hobbiesData
               // }
-            ].map(({ label, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
+            ].map(({ label, key, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -178,7 +182,7 @@ export default function AdditionalPreferences({
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
-                          onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
+                          onChange={(e) => handleCheckboxChange(setNonNegotiable, key, e.target.checked)}
                           className="inputFieldCheckbox"
                           disabled={!value || value === 'No Preference'}
                         />
@@ -218,7 +222,7 @@ export default function AdditionalPreferences({
                     control={
                       <Checkbox
                         checked={!!nonNegotiableHobbies}
-                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
+                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'hobbies' : '')}
                         className="inputFieldCheckbox"
                         disabled={!Array.isArray(hobbies) || hobbies.length === 0}
                       />

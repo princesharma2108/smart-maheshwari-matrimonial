@@ -103,7 +103,8 @@ export default function PersonalPreferencesEdit({
     setIsStepValid(isValid); // Update parent state
     return isValid;
   };
-
+  console.log('nonNegotiable1', nonNegotiableAge);
+  console.log('nonNegotiable2', nonNegotiableMaritalStatus);
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [age, familyType, familyBackground, maritalStatus]);
@@ -168,6 +169,7 @@ export default function PersonalPreferencesEdit({
               // },
               {
                 label: 'Family Type',
+                key: 'familyType',
                 value: familyType,
                 setter: setFamilyType,
                 nonNegotiable: nonNegotiableFamilyType,
@@ -176,6 +178,7 @@ export default function PersonalPreferencesEdit({
               },
               {
                 label: 'Family Background',
+                key: 'familyBackground',
                 value: familyBackground,
                 setter: setFamilyBackground,
                 nonNegotiable: nonNegotiableFamilyBackground,
@@ -184,13 +187,14 @@ export default function PersonalPreferencesEdit({
               },
               {
                 label: 'Marital Status',
+                key: 'maritalStatus',
                 value: maritalStatus,
                 setter: setMaritalStatus,
                 nonNegotiable: nonNegotiableMaritalStatus,
                 setNonNegotiable: setNonNegotiableMaritalStatus,
                 options: maritalOptionsData
               }
-            ].map(({ label, value, setter, nonNegotiable, setNonNegotiable, options }) => (
+            ].map(({ label, key, value, setter, nonNegotiable, setNonNegotiable, options }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -201,7 +205,7 @@ export default function PersonalPreferencesEdit({
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
-                          onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
+                          onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
                           className="inputFieldCheckbox"
                           disabled={!value || value === 'No Preference'}
                         />

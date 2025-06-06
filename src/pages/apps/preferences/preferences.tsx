@@ -141,6 +141,18 @@ const Preferences: React.FC = () => {
       } as SnackbarProps);
     }
   };
+  console.log('nonNegotiableDrinking', nonNegotiableDrinking);
+  console.log('nonNegotiableSmoking', nonNegotiableSmoking);
+  console.log('nonNegotiableDietary', nonNegotiableDietary);
+  console.log('nonNegotiableAge', nonNegotiableAge);
+  console.log('nonNegotiableFamilyType', nonNegotiableFamilyType);
+  console.log('nonNegotiableFamilyBackground', nonNegotiableFamilyBackground);
+  console.log('nonNegotiableMaritalStatus', nonNegotiableMaritalStatus);
+  console.log('nonNegotiableQualification', nonNegotiableQualification);
+  console.log('nonNegotiableProfession', nonNegotiableProfession);
+  console.log('nonNegotiableWorkingWith', nonNegotiableWorkingWith);
+  console.log('nonNegotiableLocation', nonNegotiableLocation);
+  console.log('nonNegotiableHobbies', nonNegotiableHobbies);
   const handleSaveProfileDetailsAPI = async () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const userId = localStorage.getItem('userId');
@@ -263,41 +275,41 @@ const Preferences: React.FC = () => {
       setDietaryHabits(preferenceData.dietaryHabits || '');
       setWorkingWith(preferenceData.workingWith || '');
       // Update non-negotiable state variables based on stored nonNegotiables
-      if (preferenceData.nonNegotiables.includes('Drinking')) {
-        setNonNegotiableDrinking('Drinking');
+      if (preferenceData.nonNegotiables.includes('drinking')) {
+        setNonNegotiableDrinking('drinking');
       }
-      if (preferenceData.nonNegotiables.includes('Smoking')) {
-        setNonNegotiableSmoking('Smoking');
+      if (preferenceData.nonNegotiables.includes('smoking')) {
+        setNonNegotiableSmoking('smoking');
       }
-      if (preferenceData.nonNegotiables.includes('DietaryHabits')) {
-        setNonNegotiableDietary('DietaryHabits');
+      if (preferenceData.nonNegotiables.includes('dietaryHabits')) {
+        setNonNegotiableDietary('dietaryHabits');
       }
-      if (preferenceData.nonNegotiables.includes('Age')) {
-        setNonNegotiableAge('Age');
+      if (preferenceData.nonNegotiables.includes('age')) {
+        setNonNegotiableAge('age');
       }
-      if (preferenceData.nonNegotiables.includes('FamilyType')) {
-        setNonNegotiableFamilyType('FamilyType');
+      if (preferenceData.nonNegotiables.includes('familyType')) {
+        setNonNegotiableFamilyType('familyType');
       }
-      if (preferenceData.nonNegotiables.includes('FamilyBackground')) {
-        setNonNegotiableFamilyBackground('FamilyBackground');
+      if (preferenceData.nonNegotiables.includes('familyBackground')) {
+        setNonNegotiableFamilyBackground('familyBackground');
       }
-      if (preferenceData.nonNegotiables.includes('MaritalStatus')) {
-        setNonNegotiableMaritalStatus('MaritalStatus');
+      if (preferenceData.nonNegotiables.includes('maritalStatus')) {
+        setNonNegotiableMaritalStatus('maritalStatus');
       }
-      if (preferenceData.nonNegotiables.includes('Qualification')) {
-        setNonNegotiableQualification('Qualification');
+      if (preferenceData.nonNegotiables.includes('qualification')) {
+        setNonNegotiableQualification('qualification');
       }
-      if (preferenceData.nonNegotiables.includes('Profession')) {
-        setNonNegotiableProfession('Profession');
+      if (preferenceData.nonNegotiables.includes('profession')) {
+        setNonNegotiableProfession('profession');
       }
-      if (preferenceData.nonNegotiables.includes('WorkingWith')) {
-        setNonNegotiableWorkingWith('WorkingWith');
+      if (preferenceData.nonNegotiables.includes('workingWith')) {
+        setNonNegotiableWorkingWith('workingWith');
       }
-      if (preferenceData.nonNegotiables.includes('Location')) {
-        setNonNegotiableLocation('Location');
+      if (preferenceData.nonNegotiables.includes('location')) {
+        setNonNegotiableLocation('location');
       }
-      if (preferenceData.nonNegotiables.includes('Hobbies')) {
-        setNonNegotiableHobbies('Hobbies');
+      if (preferenceData.nonNegotiables.includes('hobbies')) {
+        setNonNegotiableHobbies('hobbies');
       }
     }
   }, []);

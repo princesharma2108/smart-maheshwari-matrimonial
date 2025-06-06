@@ -14,6 +14,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+import { ka } from 'date-fns/locale';
 
 interface AdditionalPreferencesEditProps {
   qualification: string;
@@ -85,8 +86,8 @@ export default function AdditionalPreferencesEdit({
     setter(event.target.value);
   };
 
-  const handleCheckboxChange = (setChecked: (value: string) => void, label: string, checked: boolean) => {
-    setChecked(checked ? label.replace(/\s/g, '') : '');
+  const handleCheckboxChange = (setChecked: (value: string) => void, value: string, checked: boolean) => {
+    setChecked(checked ? value.replace(/\s/g, '') : '');
   };
 
   const getOptionsWithNoPreference = (data: string[]) => [...data.sort(), 'No Preference'];
@@ -129,6 +130,7 @@ export default function AdditionalPreferencesEdit({
             {[
               {
                 label: 'Qualification',
+                key: 'qualification',
                 value: qualification,
                 setValue: setQualification,
                 nonNegotiable: nonNegotiableQualification,
@@ -137,6 +139,7 @@ export default function AdditionalPreferencesEdit({
               },
               {
                 label: 'Location',
+                kay: 'location',
                 value: location,
                 setValue: setLocation,
                 nonNegotiable: nonNegotiableLocation,
@@ -145,6 +148,7 @@ export default function AdditionalPreferencesEdit({
               },
               {
                 label: 'Profession',
+                key: 'profession',
                 value: profession,
                 setValue: setProfession,
                 nonNegotiable: nonNegotiableProfession,
@@ -153,6 +157,7 @@ export default function AdditionalPreferencesEdit({
               },
               {
                 label: 'Working With',
+                key: 'workingWith',
                 value: workingWith,
                 setValue: setWorkingWith,
                 nonNegotiable: nonNegotiableWorkingWith,
@@ -167,7 +172,7 @@ export default function AdditionalPreferencesEdit({
               //   setNonNegotiable: setNonNegotiableHobbies,
               //   data: hobbiesData
               // }
-            ].map(({ label, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
+            ].map(({ label, key, value, setValue, data, nonNegotiable, setNonNegotiable }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -178,7 +183,14 @@ export default function AdditionalPreferencesEdit({
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
-                          onChange={(e) => handleCheckboxChange(setNonNegotiable, label, e.target.checked)}
+                          onChange={(e) =>
+                            handleCheckboxChange(
+                              setNonNegotiable,
+                              //@ts-ignore
+                              key,
+                              e.target.checked
+                            )
+                          }
                           className="inputFieldCheckbox"
                           disabled={!value || value === 'No Preference'}
                         />
@@ -218,7 +230,7 @@ export default function AdditionalPreferencesEdit({
                     control={
                       <Checkbox
                         checked={!!nonNegotiableHobbies}
-                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'Hobbies' : '')}
+                        onChange={(e) => setNonNegotiableHobbies(e.target.checked ? 'hobbies' : '')}
                         className="inputFieldCheckbox"
                         disabled={!Array.isArray(hobbies) || hobbies.length === 0}
                       />

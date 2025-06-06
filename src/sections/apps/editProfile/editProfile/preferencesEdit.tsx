@@ -248,7 +248,7 @@ const PreferencesEdit: React.FC = () => {
       setSmoking(preferenceDetailsData.smoking || '');
       setDietaryHabits(preferenceDetailsData.dietaryHabits || '');
       setWorkingWith(preferenceDetailsData.workingWith || '');
-      console.log('NonNegotaibales:', preferenceDetailsData.nonNegotiables);
+      // console.log('NonNegotaibales:', preferenceDetailsData.nonNegotiables);
       if (preferenceDetailsData.nonNegotiables) {
         // Update non-negotiable state variables based on stored nonNegotiables
         if (preferenceDetailsData.nonNegotiables.includes('drinking')) {
@@ -260,6 +260,7 @@ const PreferencesEdit: React.FC = () => {
         if (preferenceDetailsData.nonNegotiables.includes('dietaryHabits')) {
           setNonNegotiableDietary('dietaryHabits');
         }
+        // console.log('NonNegotaibales:', preferenceDetailsData.nonNegotiables);
         if (preferenceDetailsData.nonNegotiables.includes('age')) {
           setNonNegotiableAge('age');
         }
@@ -307,7 +308,8 @@ const PreferencesEdit: React.FC = () => {
     getGeneralDataAPI();
     getUserDetailsAPI();
   }, []);
-  console.log('DrinkingCheckboxParent', nonNegotiableDrinking);
+  console.log('nonNegotiable3', nonNegotiableAge);
+  console.log('nonNegotiable4', nonNegotiableMaritalStatus);
   return (
     <>
       <LoadingOverlay

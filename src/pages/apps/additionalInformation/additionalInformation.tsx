@@ -113,11 +113,14 @@ const AdditionalInformation: React.FC = () => {
     const preferenceStoredData = storedPreferenceData ? JSON.parse(storedPreferenceData) : null;
     const matrimonialData = {
       matrimonialId: matrimonialId,
+      //Tab 1
       firstName: matrimonialStoredData.firstName,
       lastName: 'lastName', // If you have lastName, replace this with the actual variable
       birthTime: matrimonialStoredData.birthTime || '', // Ensuring a fallback in case of null
       dateOfBirth: matrimonialStoredData.dateOfBirth || '', // Ensuring a fallback in case of null
       birthPlace: matrimonialStoredData.birthPlace,
+      locationType: matrimonialStoredData.locationType,
+      //Tab 2
       gender: matrimonialStoredData.gender,
       disabilityStatus: matrimonialStoredData.disabilityStatus,
       heightCM: matrimonialStoredData.heightCM,
@@ -125,6 +128,12 @@ const AdditionalInformation: React.FC = () => {
       bloodGroup: matrimonialStoredData.bloodGroup,
       complexion: matrimonialStoredData.complexion,
       maritalStatus: matrimonialStoredData.maritalStatus,
+      hobbies: matrimonialStoredData.hobbies, // Converting hobbies string to an array
+      //Tab 3
+      dietary: matrimonialStoredData.dietary,
+      drinking: matrimonialStoredData.drinking,
+      smoking: matrimonialStoredData.smoking,
+      //Tab 4
       fatherName: matrimonialStoredData.fatherName,
       motherName: matrimonialStoredData.motherName,
       nativePlace: matrimonialStoredData.nativePlace,
@@ -132,6 +141,7 @@ const AdditionalInformation: React.FC = () => {
       familyIncomeINR: matrimonialStoredData.familyIncomeINR,
       familyType: matrimonialStoredData.familyType,
       familyBackground: matrimonialStoredData.familyBackground,
+      //Tab 5
       qualification: matrimonialStoredData.qualification,
       additionalQualification: matrimonialStoredData.additionalQualification,
       occupation: matrimonialStoredData.occupation,
@@ -139,25 +149,23 @@ const AdditionalInformation: React.FC = () => {
       occupationLocation: matrimonialStoredData.occupationLocation, // Assuming occupation location is a state
       minAnnualIncome: matrimonialStoredData.minAnnualIncome, // If you have separate min/max income, modify accordingly
       maxAnnualIncome: matrimonialStoredData.maxAnnualIncome,
+      languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
+      workingWith: matrimonialStoredData.workingWith,
+      //Tab 6
       gotra: matrimonialStoredData.gotra,
-      hobbies: matrimonialStoredData.hobbies, // Converting hobbies string to an array
+      isGunnMatchingImportant: matrimonialStoredData.isGunnMatchingImportant,
+      manglik: matrimonialStoredData.manglik,
+      isManglik: matrimonialStoredData.isManglik,
+      //Tab 7
       address: matrimonialStoredData.address,
       phone: matrimonialStoredData.phone,
       email: matrimonialStoredData.email,
       alternateContact: matrimonialStoredData.alternateContact,
-      languagesKnown: matrimonialStoredData.languagesKnown, // Converting string to array
-      aboutMe: aboutMeDescriptions.length === 0 ? customAboutMe : selectedAboutMe,
       countryCode: 'IN', // If this is dynamic, you may need a variable for it
       city: matrimonialStoredData.city,
       state: matrimonialStoredData.state,
       country: matrimonialStoredData.country,
-      isGunnMatchingImportant: matrimonialStoredData.isGunnMatchingImportant,
-      isManglik: matrimonialStoredData.isManglik, // Assuming manglik is a string and needs conversion
-      dietary: matrimonialStoredData.dietary,
-      drinking: matrimonialStoredData.drinking,
-      smoking: matrimonialStoredData.smoking,
-      locationType: matrimonialStoredData.locationType, // If different from birthPlace, change it accordingly
-      manglik: matrimonialStoredData.manglik
+      aboutMe: aboutMeDescriptions.length === 0 ? customAboutMe : selectedAboutMe
     };
     const preferenceData = {
       userId: userId,

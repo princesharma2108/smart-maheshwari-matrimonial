@@ -127,7 +127,7 @@ export default function PersonalPreferences({
                     control={
                       <Checkbox
                         checked={!!nonNegotiableAge}
-                        onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'Age', nonNegotiableAge)}
+                        onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'age', nonNegotiableAge)}
                         className="inputFieldCheckbox"
                         disabled={!age[0] && !age[1]}
                       />
@@ -168,6 +168,7 @@ export default function PersonalPreferences({
               // },
               {
                 label: 'Family Type',
+                key: 'familyType',
                 value: familyType,
                 setter: setFamilyType,
                 nonNegotiable: nonNegotiableFamilyType,
@@ -176,6 +177,7 @@ export default function PersonalPreferences({
               },
               {
                 label: 'Family Background',
+                key: 'familyBackground',
                 value: familyBackground,
                 setter: setFamilyBackground,
                 nonNegotiable: nonNegotiableFamilyBackground,
@@ -184,13 +186,14 @@ export default function PersonalPreferences({
               },
               {
                 label: 'Marital Status',
+                key: 'maritalStatus',
                 value: maritalStatus,
                 setter: setMaritalStatus,
                 nonNegotiable: nonNegotiableMaritalStatus,
                 setNonNegotiable: setNonNegotiableMaritalStatus,
                 options: maritalOptionsData
               }
-            ].map(({ label, value, setter, nonNegotiable, setNonNegotiable, options }) => (
+            ].map(({ label, key, value, setter, nonNegotiable, setNonNegotiable, options }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -201,7 +204,7 @@ export default function PersonalPreferences({
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
-                          onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
+                          onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
                           className="inputFieldCheckbox"
                           disabled={!value || value === 'No Preference'}
                         />

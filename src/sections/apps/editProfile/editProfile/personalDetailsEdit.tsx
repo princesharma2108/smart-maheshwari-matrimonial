@@ -147,11 +147,14 @@ export default function PersonalDetailsEdit() {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const matrimonialData = {
       matrimonialId: matrimonialId,
+      //Tab 1
       firstName: fullName,
       lastName: 'lastName', // If you have lastName, replace this with the actual variable
       birthTime: timeOfBirth || '', // Ensuring a fallback in case of null
       dateOfBirth: dateOfBirth || '', // Ensuring a fallback in case of null
       birthPlace: placeOfBirth,
+      locationType: placeOfBirth, // If different from birthPlace, change it accordingly
+      //Tab 2
       gender: gender,
       disabilityStatus: disability,
       heightCM: height,
@@ -159,6 +162,12 @@ export default function PersonalDetailsEdit() {
       bloodGroup: bloodGroup,
       complexion: complexion,
       maritalStatus: maritalStatus,
+      hobbies: hobbies, // Converting hobbies string to an array
+      //Tab 3
+      dietary: dietaryHabits,
+      drinking: drinking,
+      smoking: smoking,
+      //Tab 4
       fatherName: fatherName,
       motherName: motherName,
       nativePlace: hometown,
@@ -166,6 +175,8 @@ export default function PersonalDetailsEdit() {
       familyIncomeINR: familyIncome,
       familyType: familyType,
       familyBackground: familyBackground,
+      workingWith: workingWith,
+      //Tab 5
       qualification: highestQualification,
       additionalQualification: additionalQualification,
       occupation: occupation,
@@ -173,25 +184,22 @@ export default function PersonalDetailsEdit() {
       occupationLocation: state, // Assuming occupation location is a state
       minAnnualIncome: minAnnualIncome, // If you have separate min/max income, modify accordingly
       maxAnnualIncome: maxAnnualIncome,
+      languagesKnown: languagesKnown, // Converting string to array
+      //Tab 6
       gotra: gotra,
-      hobbies: hobbies, // Converting hobbies string to an array
+      isGunnMatchingImportant: gunnMatchingImportant,
+      isManglik: includeUnknownManglik,
+      manglik: manglik,
+      //Tab 7
       address: residentialAddress,
       phone: phoneNumber,
       email: emailAddress,
       alternateContact: alternateContact,
-      languagesKnown: languagesKnown, // Converting string to array
-      aboutMe: '',
       countryCode: 'IN', // If this is dynamic, you may need a variable for it
       city: city,
       state: state,
       country: country,
-      isGunnMatchingImportant: gunnMatchingImportant,
-      isManglik: includeUnknownManglik, // Assuming manglik is a string and needs conversion
-      dietary: dietaryHabits,
-      drinking: drinking,
-      smoking: smoking,
-      locationType: placeOfBirth, // If different from birthPlace, change it accordingly
-      manglik: manglik
+      aboutMe: ''
     };
     // **Store matrimonial data in localStorage**
     localStorage.setItem('matrimonialDetails', JSON.stringify(matrimonialData));
@@ -289,11 +297,12 @@ export default function PersonalDetailsEdit() {
       const response = await getUserDetails(userId); // Pass the required userId argument
       const responseData = response.data as ResponseUserData;
       const profileDetailsData = responseData.data.profile;
+      //Tab 1
       setFullName(profileDetailsData.firstName || '');
       setTimeOfBirth(profileDetailsData.birthTime || '');
-      //setDateOfBirth(profileDetailsData.dateOfBirth || '');
       setDateOfBirth(dayjs(profileDetailsData.dateOfBirth, 'DD-MM-YYYY'));
       setPlaceOfBirth(profileDetailsData.birthPlace || '');
+      //Tab 2
       setGender(profileDetailsData.gender || '');
       setDisability(profileDetailsData.disability || '');
       setHeight(profileDetailsData.heightCm || '');
@@ -301,6 +310,12 @@ export default function PersonalDetailsEdit() {
       setBloodGroup(profileDetailsData.bloodGroup || '');
       setComplexion(profileDetailsData.complexion || '');
       setMaritalStatus(profileDetailsData.maritalStatus || '');
+      setHobbies(profileDetailsData.hobbies || []);
+      //Tab 3
+      setDietaryHabits(profileDetailsData.dietary || '');
+      setDrinking(profileDetailsData.drinking || '');
+      setSmoking(profileDetailsData.smoking || '');
+      //Tab 4
       setFatherName(profileDetailsData.fatherName || '');
       setMotherName(profileDetailsData.motherName || '');
       setHometown(profileDetailsData.nativePlace || '');
@@ -309,29 +324,28 @@ export default function PersonalDetailsEdit() {
       setFamilyIncome(convertedIncome || '');
       setFamilyBackground(profileDetailsData.familyBackground || '');
       setFamilyType(profileDetailsData.familyType || '');
+      //Tab 5
       setHighestQualification(profileDetailsData.qualification || '');
       setAdditionalQualification(profileDetailsData.additionalQualification || '');
       setOccupation(profileDetailsData.occupation || '');
       setCompanyName(profileDetailsData.occupationCompany || '');
-      setState(profileDetailsData.occupationLocation || '');
+      setWorkingWith(profileDetailsData.workingWith || '');
       setMinAnnualIncome(profileDetailsData.minAnnualIncome || '');
       setMaxAnnualIncome(profileDetailsData.maxAnnualIncome || '');
+      setLanguagesKnown(profileDetailsData.languagesKnown || []);
+      //Tab 6
       setGotra(profileDetailsData.gotra || '');
-      setHobbies(profileDetailsData.hobbies || []);
+      setGunnMatchingImportant(profileDetailsData.isGunnMatchingImportant);
+      setIncludeUnknownManglik(profileDetailsData.isManglik);
+      setManglik(profileDetailsData.manglik || '');
+      //Tab 7
       setResidentialAddress(profileDetailsData.address || '');
       setPhoneNumber(profileDetailsData.phone || '');
       setEmailAddress(profileDetailsData.email || '');
       setAlternateContact(profileDetailsData.alternatePhone || '');
-      setLanguagesKnown(profileDetailsData.languagesKnown || []);
       setCity(profileDetailsData.city || '');
       setState(profileDetailsData.state || '');
       setCountry(profileDetailsData.country || '');
-      setGunnMatchingImportant(profileDetailsData.isGunnMatchingImportant || false);
-      setIncludeUnknownManglik(profileDetailsData.isManglik || false);
-      setManglik(profileDetailsData.manglik || '');
-      setDietaryHabits(profileDetailsData.dietary || '');
-      setDrinking(profileDetailsData.drinking || '');
-      setSmoking(profileDetailsData.smoking || '');
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

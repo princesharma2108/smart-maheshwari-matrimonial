@@ -48,8 +48,14 @@ export default function TabStep6({
   // Handlers
   const handleGotraChange = (event: SelectChangeEvent) => setGotra(event.target.value);
   const handleManglikChange = (event: SelectChangeEvent) => setManglik(event.target.value);
-  const handleGunnMatchingChange = (event: ChangeEvent<HTMLInputElement>) => setGunnMatchingImportant(event.target.checked);
-  const handleIncludeUnknownManglikChange = (event: ChangeEvent<HTMLInputElement>) => setIncludeUnknownManglik(event.target.checked);
+  const handleGunnMatchingChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log('CheckT3', event.target.checked);
+    setGunnMatchingImportant(event.target.checked);
+  };
+  const handleIncludeUnknownManglikChange = (event: ChangeEvent<HTMLInputElement>) => {
+    console.log('CheckT4', event.target.checked);
+    setIncludeUnknownManglik(event.target.checked);
+  };
   const validateStep = () => {
     let newErrors = {
       gotra: '',
@@ -67,6 +73,8 @@ export default function TabStep6({
   useEffect(() => {
     validateStep(); // Validate on component mount/update
   }, [gotra, manglik]);
+  console.log('CheckT1', gunnMatchingImportant);
+  console.log('CheckT2', includeUnknownManglik);
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>

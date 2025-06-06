@@ -183,10 +183,6 @@ export default function TabStep4({
                     />
                   </Stack>
                 </Grid>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="siblings">Siblings</InputLabel>
@@ -203,6 +199,10 @@ export default function TabStep4({
                     </Select>
                   </Stack>
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
                     <InputLabel htmlFor="family-income">

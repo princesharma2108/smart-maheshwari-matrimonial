@@ -145,3 +145,14 @@ export const subscribeForSite = async <T>(data: any, config?: AxiosRequestConfig
     throw error;
   }
 };
+
+//Post Priority of Categories
+export const priorityCategories = async <T>(data: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response = await apiClient.post<T>(`/add/priority-weightage`, data, config);
+    return response;
+  } catch (error) {
+    // Handle error (e.g., log it, show notification, etc.)
+    throw error;
+  }
+};

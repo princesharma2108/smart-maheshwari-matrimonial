@@ -16,7 +16,6 @@ import AnimateButton from 'components/@extended/AnimateButton';
 import loginBG from 'assets/images/login/loginBG.jpeg';
 import loginBG2 from 'assets/images/login/loginBG2.jpeg';
 import loginBG3 from 'assets/images/login/loginBG3.jpeg';
-import latestMatchBG from 'assets/images/latestMatches/latestMatchBG.png';
 import Button from '@mui/material/Button';
 import './latestMatches.scss';
 import { Box } from '@mui/material';
@@ -34,64 +33,6 @@ interface ResponseData {
 interface ErrorData {
   response: any;
 }
-const profiles = [
-  {
-    name: 'Anju Maheshwari',
-    location: 'Lucknow',
-    age: 28,
-    height: '5\'6"',
-    education: "Master's Degree",
-    profession: 'Self-Employed',
-    income: '10-12 LPA',
-    isManglik: 'Manglik',
-    image: latestMatchBG,
-    requestMatch: true,
-    about:
-      "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating unique and beautiful textile patterns. In my free time, I enjoy traveling to explore new cultures, reading books to expand my knowledge, and engaging in social work to give back to the community. I value creativity, compassion, and continuous learning. I am looking for a partner who shares similar values, appreciates art, and is driven in their own profession."
-  },
-  {
-    name: 'Anjali Maheshwari',
-    location: 'Indore',
-    age: 26,
-    height: '5\'5"',
-    education: 'Bachelor Degree',
-    profession: 'Employed',
-    income: '5-10 LPA',
-    isManglik: 'Manglik',
-    image: latestMatchBG,
-    requestMatch: false,
-    about:
-      "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating unique and beautiful textile patterns. In my free time, I enjoy traveling to explore new cultures, reading books to expand my knowledge, and engaging in social work to give back to the community. I value creativity, compassion, and continuous learning. I am looking for a partner who shares similar values, appreciates art, and is driven in their own profession."
-  },
-  {
-    name: 'Rani Maheshwari',
-    location: 'Delhi',
-    age: 25,
-    height: '5\'4"',
-    education: 'MCA',
-    profession: 'Software Developer',
-    income: '10-15 LPA',
-    isManglik: 'Manglik',
-    image: latestMatchBG,
-    requestMatch: true,
-    about:
-      "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating unique and beautiful textile patterns. In my free time, I enjoy traveling to explore new cultures, reading books to expand my knowledge, and engaging in social work to give back to the community. I value creativity, compassion, and continuous learning. I am looking for a partner who shares similar values, appreciates art, and is driven in their own profession."
-  },
-  {
-    name: 'Divya Maheshwari',
-    location: 'Jaipur',
-    age: 25,
-    height: '5\'3"',
-    education: 'BCA',
-    profession: 'Software Developer',
-    income: '14-18 LPA',
-    isManglik: 'Manglik',
-    image: latestMatchBG,
-    requestMatch: false,
-    about:
-      "I am Anjali Maheshwari, a textile designer based in Indore, Uttar Pradesh. With a Bachelor's of Design degree and experience in the industry, I have a passion for creating unique and beautiful textile patterns. In my free time, I enjoy traveling to explore new cultures, reading books to expand my knowledge, and engaging in social work to give back to the community. I value creativity, compassion, and continuous learning. I am looking for a partner who shares similar values, appreciates art, and is driven in their own profession."
-  }
-];
 
 const matchProfiles = {
   count: 2,
@@ -151,7 +92,7 @@ const MatchProfile = ({ profile }: { profile: (typeof matchProfiles.data)[0] }) 
     {/* Left Side: Profile Picture */}
     <Grid item xs={6} sx={{ height: '100%', display: 'flex', borderRadius: '10px 0 0 10px' }}>
       <img
-        src={profile?.profilePic?.original || latestMatchBG} // Fallback image if null
+        src={profile?.profilePic?.original} // Fallback image if null
         alt="Match"
         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '10px 0 0 10px' }}
       />

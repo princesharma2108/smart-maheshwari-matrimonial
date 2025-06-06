@@ -151,11 +151,14 @@ const PersonalDetails: React.FC = () => {
     const matrimonialId = localStorage.getItem('matrimonialId');
     const matrimonialData = {
       matrimonialId: matrimonialId,
+      //Tab 1
       firstName: fullName,
       lastName: 'lastName', // If you have lastName, replace this with the actual variable
       birthTime: timeOfBirth || '', // Ensuring a fallback in case of null
       dateOfBirth: dateOfBirth || '', // Ensuring a fallback in case of null
       birthPlace: placeOfBirth,
+      locationType: placeOfBirth, // If different from birthPlace, change it accordingly
+      //Tab 2
       gender: gender,
       disabilityStatus: disability,
       heightCM: height,
@@ -163,6 +166,12 @@ const PersonalDetails: React.FC = () => {
       bloodGroup: bloodGroup,
       complexion: complexion,
       maritalStatus: maritalStatus,
+      hobbies: hobbies, // Converting hobbies string to an array
+      //Tab 3
+      dietary: dietaryHabits,
+      drinking: drinking,
+      smoking: smoking,
+      //Tab 4
       fatherName: fatherName,
       motherName: motherName,
       nativePlace: hometown,
@@ -170,6 +179,7 @@ const PersonalDetails: React.FC = () => {
       familyIncomeINR: familyIncome,
       familyType: familyType,
       familyBackground: familyBackground,
+      //Tab 5
       qualification: highestQualification,
       additionalQualification: additionalQualification,
       occupation: occupation,
@@ -177,8 +187,13 @@ const PersonalDetails: React.FC = () => {
       occupationLocation: state, // Assuming occupation location is a state
       minAnnualIncome: minAnnualIncome, // If you have separate min/max income, modify accordingly
       maxAnnualIncome: maxAnnualIncome,
+      workingWith: workingWith,
+      //Tab 6
       gotra: gotra,
-      hobbies: hobbies, // Converting hobbies string to an array
+      isGunnMatchingImportant: gunnMatchingImportant,
+      manglik: manglik,
+      isManglik: includeUnknownManglik,
+      //Tab 7
       address: residentialAddress,
       phone: phoneNumber,
       email: emailAddress,
@@ -188,14 +203,7 @@ const PersonalDetails: React.FC = () => {
       countryCode: 'IN', // If this is dynamic, you may need a variable for it
       city: city,
       state: state,
-      country: country,
-      isGunnMatchingImportant: gunnMatchingImportant,
-      isManglik: includeUnknownManglik, // Assuming manglik is a string and needs conversion
-      dietary: dietaryHabits,
-      drinking: drinking,
-      smoking: smoking,
-      locationType: placeOfBirth, // If different from birthPlace, change it accordingly
-      manglik: manglik
+      country: country
     };
     // **Store matrimonial data in localStorage**
     localStorage.setItem('matrimonialDetails', JSON.stringify(matrimonialData));
@@ -378,17 +386,25 @@ const PersonalDetails: React.FC = () => {
     if (storedData) {
       const matrimonialData = JSON.parse(storedData);
       if ((backPreferences || !skippedBiodata) && matrimonialData) {
+        //Tab 1
         setFullName(matrimonialData.firstName || '');
         setTimeOfBirth(matrimonialData.birthTime || '');
         setDateOfBirth(matrimonialData.dateOfBirth || '');
         setPlaceOfBirth(matrimonialData.birthPlace || '');
+        //Tab 2
         setGender(matrimonialData.gender || '');
         setDisability(matrimonialData.disabilityStatus || '');
         setHeight(matrimonialData.heightCM || '');
         setWeight(matrimonialData.weightKG || '');
+        setHobbies(matrimonialData.hobbies || []);
         setBloodGroup(matrimonialData.bloodGroup || '');
         setComplexion(matrimonialData.complexion || '');
         setMaritalStatus(matrimonialData.maritalStatus || '');
+        //Tab 3
+        setDietaryHabits(matrimonialData.dietary || '');
+        setDrinking(matrimonialData.drinking || '');
+        setSmoking(matrimonialData.smoking || '');
+        //Tab 4
         setFatherName(matrimonialData.fatherName || '');
         setMotherName(matrimonialData.motherName || '');
         setHometown(matrimonialData.nativePlace || '');
@@ -396,27 +412,28 @@ const PersonalDetails: React.FC = () => {
         setFamilyIncome(matrimonialData.familyIncomeINR || '');
         setFamilyType(matrimonialData.familyType || '');
         setFamilyBackground(matrimonialData.familyBackground || '');
+        //Tab 5
         setHighestQualification(matrimonialData.qualification || '');
         setAdditionalQualification(matrimonialData.additionalQualification || '');
         setOccupation(matrimonialData.occupation || '');
         setCompanyName(matrimonialData.occupationCompany || '');
-        setState(matrimonialData.occupationLocation || '');
+        setWorkingWith(matrimonialData.workingWith || '');
         setMinAnnualIncome(matrimonialData.minAnnualIncome || '');
         setMaxAnnualIncome(matrimonialData.maxAnnualIncome || '');
+        setLanguagesKnown(matrimonialData.languagesKnown || []);
+        //Tab 6
         setGotra(matrimonialData.gotra || '');
-        setHobbies(matrimonialData.hobbies || []);
+        setManglik(matrimonialData.manglik || '');
+        setGunnMatchingImportant(matrimonialData.isGunnMatchingImportant);
+        setIncludeUnknownManglik(matrimonialData.isManglik);
+        //Tab 7
         setResidentialAddress(matrimonialData.address || '');
         setPhoneNumber(matrimonialData.phone || '');
         setEmailAddress(matrimonialData.email || '');
         setAlternateContact(matrimonialData.alternateContact || '');
-        setLanguagesKnown(matrimonialData.languagesKnown || []);
-        setCity(matrimonialData.city || '');
         setCountry(matrimonialData.country || '');
-        setGunnMatchingImportant(matrimonialData.isGunnMatchingImportant || false);
-        setManglik(matrimonialData.manglik || '');
-        setDietaryHabits(matrimonialData.dietary || '');
-        setDrinking(matrimonialData.drinking || '');
-        setSmoking(matrimonialData.smoking || '');
+        setState(matrimonialData.occupationLocation || '');
+        setCity(matrimonialData.city || '');
       }
     }
   }, [backPreferences, skippedBiodata]);

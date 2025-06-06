@@ -4,6 +4,7 @@ import { Grid, Stack, Button, MenuItem, InputLabel, Select, SelectChangeEvent, C
 import MainCard from 'components/MainCard';
 import { useNavigate } from 'react-router-dom';
 import 'assets/styles/styles.scss';
+import { ka } from 'date-fns/locale';
 
 interface LifestylePreferencesProps {
   drinking: string;
@@ -88,6 +89,7 @@ export default function LifestylePreferences({
             {[
               {
                 label: 'Drinking',
+                key: 'drinking',
                 value: drinking,
                 setter: setDrinking,
                 nonNegotiable: nonNegotiableDrinking,
@@ -96,6 +98,7 @@ export default function LifestylePreferences({
               },
               {
                 label: 'Smoking',
+                key: 'smoking',
                 value: smoking,
                 setter: setSmoking,
                 nonNegotiable: nonNegotiableSmoking,
@@ -104,13 +107,14 @@ export default function LifestylePreferences({
               },
               {
                 label: 'Dietary Habits',
+                key: 'dietaryHabits',
                 value: dietaryHabits,
                 setter: setDietaryHabits,
                 nonNegotiable: nonNegotiableDietary,
                 setNonNegotiable: setNonNegotiableDietary,
                 options: dietaryOptions
               }
-            ].map(({ label, value, setter, nonNegotiable, setNonNegotiable, options }) => (
+            ].map(({ label, key, value, setter, nonNegotiable, setNonNegotiable, options }) => (
               <Grid item xs={12} key={label}>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -122,7 +126,7 @@ export default function LifestylePreferences({
                       control={
                         <Checkbox
                           checked={!!nonNegotiable}
-                          onChange={() => handleCheckboxToggle(setNonNegotiable, label, nonNegotiable)}
+                          onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
                           className="inputFieldCheckbox"
                           disabled={!value || value === 'No Preference'}
                         />
