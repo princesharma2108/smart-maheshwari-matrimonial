@@ -2,13 +2,14 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { apiUrl } from './apiUrl';
 
 const accessToken = localStorage.getItem('serviceToken');
-
+const userId = localStorage.getItem('userId');
 // Create an Axios instance with default settings
 const apiClient: AxiosInstance = axios.create({
   baseURL: apiUrl, // Replace with your API base URL
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${accessToken}`
+    Authorization: `Bearer ${accessToken}`,
+    'X-User-Id': userId
     // Add other headers here if needed
   }
 });

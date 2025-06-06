@@ -462,9 +462,9 @@ export default function LatestMatches() {
     const priorityData = {
       matrimonialId: matrimonialId,
       priorities: {
-        first: formattedCategories[0],
-        second: formattedCategories[1],
-        third: formattedCategories[2]
+        first: selectedCategories[0],
+        second: selectedCategories[1],
+        third: selectedCategories[2]
       }
     };
     try {
