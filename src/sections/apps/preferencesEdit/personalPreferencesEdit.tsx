@@ -75,6 +75,7 @@ export default function PersonalPreferencesEdit({
   const handleSelectChange = (setter: (value: string) => void) => (event: SelectChangeEvent) => setter(event.target.value);
 
   const handleCheckboxToggle = (setter: (value: string) => void, value: string, currentValue: string) => {
+    console.log('Checkvalue', value);
     setter(currentValue ? '' : value.replace(/\s/g, '')); // Toggles between '' and value
   };
   const handleRangeChange = (_: Event, newValue: number | number[]) => {
@@ -109,7 +110,7 @@ export default function PersonalPreferencesEdit({
     validateStep(); // Validate on component mount/update
   }, [age, familyType, familyBackground, maritalStatus]);
   useEffect(() => {
-    if (!age[0] && !age[1]) setNonNegotiableAge('');
+    if (age[0] == null && age[1] == null) setNonNegotiableAge('');
     if (familyType === 'No Preference') setNonNegotiableFamilyType('');
     if (familyBackground === 'No Preference') setNonNegotiableFamilyBackground('');
     if (maritalStatus === 'No Preference') setNonNegotiableMaritalStatus('');
@@ -125,11 +126,11 @@ export default function PersonalPreferencesEdit({
                   <InputLabel>
                     Age Range <span style={{ color: 'red' }}>*</span>
                   </InputLabel>
-
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={!!nonNegotiableAge}
+                        // checked={!!nonNegotiableAge}
+                        checked={nonNegotiableAge === 'age'}
                         onChange={() => handleCheckboxToggle(setNonNegotiableAge, 'age', nonNegotiableAge)}
                         className="inputFieldCheckbox"
                         disabled={!age[0] && !age[1]}
@@ -159,14 +160,6 @@ export default function PersonalPreferencesEdit({
               </Stack>
             </Grid>
             {[
-              // {
-              //   label: 'Age',
-              //   value: age,
-              //   setter: setAge,
-              //   nonNegotiable: nonNegotiableAge,
-              //   setNonNegotiable: setNonNegotiableAge,
-              //   options: qualificationData
-              // },
               {
                 label: 'Family Type',
                 key: 'familyType',
@@ -201,17 +194,19 @@ export default function PersonalPreferencesEdit({
                     <InputLabel>
                       {label} <span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={!!nonNegotiable}
-                          onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
-                          className="inputFieldCheckbox"
-                          disabled={!value || value === 'No Preference'}
-                        />
-                      }
-                      label="Non-negotiable"
-                    />
+                    {label != 'Marital Status' && (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={!!nonNegotiable}
+                            onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
+                            className="inputFieldCheckbox"
+                            disabled={!value || value === 'No Preference'}
+                          />
+                        }
+                        label="Non-negotiable"
+                      />
+                    )}
                   </Stack>
                   <Select
                     fullWidth

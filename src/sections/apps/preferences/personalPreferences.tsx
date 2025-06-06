@@ -200,17 +200,19 @@ export default function PersonalPreferences({
                     <InputLabel>
                       {label} <span style={{ color: 'red' }}>*</span>
                     </InputLabel>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={!!nonNegotiable}
-                          onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
-                          className="inputFieldCheckbox"
-                          disabled={!value || value === 'No Preference'}
-                        />
-                      }
-                      label="Non-negotiable"
-                    />
+                    {label != 'Marital Status' && (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={!!nonNegotiable}
+                            onChange={() => handleCheckboxToggle(setNonNegotiable, key, nonNegotiable)}
+                            className="inputFieldCheckbox"
+                            disabled={!value || value === 'No Preference'}
+                          />
+                        }
+                        label="Non-negotiable"
+                      />
+                    )}
                   </Stack>
                   <Select
                     fullWidth
