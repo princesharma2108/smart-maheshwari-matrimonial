@@ -286,12 +286,10 @@ const PersonalDetails: React.FC = () => {
       const response = await extractPDFData(formdata);
       const responseData = response.data as ResponsePDFData;
       const pdfData = responseData.data;
-      //Tab 1
       setFullName(pdfData.name || '');
       setTimeOfBirth(pdfData.timeOfBirth || '');
       setDateOfBirth(pdfData.dateOfBirth ? dayjs(pdfData.dateOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD') : null);
       setPlaceOfBirth(pdfData.placeOfBirth || '');
-      //Tab 2
       setGender(pdfData.gender || '');
       setDisability(pdfData.disability || '');
       setHeight(pdfData.heightCM || '');
@@ -300,11 +298,9 @@ const PersonalDetails: React.FC = () => {
       setHobbies(pdfData.hobbies || []);
       setComplexion(pdfData.complexion || '');
       setMaritalStatus(pdfData.maritalStatus || '');
-      //Tab 3      
       setDietaryHabits(pdfData.dietary || '');
       setDrinking(pdfData.drinking || '');
       setSmoking(pdfData.smoking || '');
-      //Tab 4
       setFatherName(pdfData.fatherName || '');
       setMotherName(pdfData.motherName || '');
       setHometown(pdfData.nativePlace || '');

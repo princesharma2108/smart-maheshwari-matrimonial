@@ -50,7 +50,8 @@ const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
 
 const AdditionalInformation: React.FC = () => {
   const [customAboutMe, setCustomAboutMe] = useState('');
-
+  // Limit to 200 words
+  const wordsLimit = 200;
   const [selectedAboutMe, setSelectedAboutMe] = useState('');
   const [aboutMeDescriptions, setAboutMeDescriptions] = useState<string[]>([]);
   const [isEditing, setIsEditing] = useState<number | null>(null);
@@ -345,9 +346,6 @@ const AdditionalInformation: React.FC = () => {
 
                                       // Split words and filter out empty strings
                                       const words = inputText.trim().split(/\s+/).filter(Boolean);
-                                      // Limit to 200 words
-                                      const wordsLimit = 200;
-
                                       if (words.length > wordsLimit) {
                                         const truncatedText = words.slice(0, wordsLimit).join(" ");
                                         setEditedText(truncatedText);
@@ -367,15 +365,15 @@ const AdditionalInformation: React.FC = () => {
                                   <Typography
                                     variant="caption"
                                     color={
-                                      editedText.trim().split(/\s+/).filter(Boolean).length > 200
+                                      editedText.trim().split(/\s+/).filter(Boolean).length > wordsLimit
                                         ? 'error'
                                         : 'textSecondary'
                                     }
                                   >
                                     {`${Math.min(
                                       editedText.trim().split(/\s+/).filter(Boolean).length,
-                                      200
-                                    )}/200 words`}
+                                      wordsLimit
+                                    )}/${wordsLimit} words`}
                                   </Typography>
                                 </>
                               ) : (
