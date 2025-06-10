@@ -286,23 +286,33 @@ const PersonalDetails: React.FC = () => {
       const response = await extractPDFData(formdata);
       const responseData = response.data as ResponsePDFData;
       const pdfData = responseData.data;
+      //Tab 1
       setFullName(pdfData.name || '');
       setTimeOfBirth(pdfData.timeOfBirth || '');
       setDateOfBirth(pdfData.dateOfBirth ? dayjs(pdfData.dateOfBirth, 'DD/MM/YYYY').format('YYYY-MM-DD') : null);
       setPlaceOfBirth(pdfData.placeOfBirth || '');
+      //Tab 2
       setGender(pdfData.gender || '');
       setDisability(pdfData.disability || '');
       setHeight(pdfData.heightCM || '');
       setWeight(pdfData.weightKG.replace(/kg/i, '').trim() || '');
       setBloodGroup(pdfData.bloodGroup || '');
+      setHobbies(pdfData.hobbies || []);
       setComplexion(pdfData.complexion || '');
       setMaritalStatus(pdfData.maritalStatus || '');
+      //Tab 3      
+      setDietaryHabits(pdfData.dietary || '');
+      setDrinking(pdfData.drinking || '');
+      setSmoking(pdfData.smoking || '');
+      //Tab 4
       setFatherName(pdfData.fatherName || '');
       setMotherName(pdfData.motherName || '');
       setHometown(pdfData.nativePlace || '');
       setSiblings(pdfData.siblingCount || '');
       setFamilyIncome(pdfData.maxAnnualIncomeFamily || '');
       setFamilyType(pdfData.familyType || '');
+      setFamilyBackground(pdfData.familyBackground || '')
+      //Tab 5
       setHighestQualification(pdfData.highestDegree || '');
       setAdditionalQualification(pdfData.additionalQualification || '');
       setOccupation(pdfData.occupation || '');
@@ -310,21 +320,19 @@ const PersonalDetails: React.FC = () => {
       setWorkingWith(pdfData.workingWith || '');
       setMinAnnualIncome(pdfData.minAnnualIncomeIndividual || '');
       setMaxAnnualIncome(pdfData.maxAnnualIncomeIndividual || '');
+      setLanguagesKnown(pdfData.languagesKnown || []);
+      //Tab 6
       setGotra(pdfData.gotra || '');
-      setHobbies(pdfData.hobbies || []);
+      setManglik(pdfData.manglik || '');
+      // setGunnMatchingImportant(pdfData.isGunnMatching || false);
+      //Tab 7
       setResidentialAddress(pdfData.address || '');
       setPhoneNumber(pdfData.phoneNumber || '');
       setEmailAddress(pdfData.email || '');
       setAlternateContact(pdfData.alternateMobileNumber || '');
-      setLanguagesKnown(pdfData.languagesKnown || []);
       setCity(pdfData.city || '');
       setState(pdfData.state || '');
       setCountry(pdfData.country || '');
-      setGunnMatchingImportant(pdfData.isGunnMatching || false);
-      setManglik(pdfData.manglik || '');
-      setDietaryHabits(pdfData.dietary || '');
-      setDrinking(pdfData.drinking || '');
-      setSmoking(pdfData.smoking || '');
     } catch (error) {
       console.error('Error fetching customers:', error);
       const errorData = error as ErrorData;

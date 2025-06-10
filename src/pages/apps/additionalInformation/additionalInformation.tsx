@@ -337,24 +337,54 @@ const AdditionalInformation: React.FC = () => {
 
                             <Grid item xs>
                               {isEditing === index ? (
-                                <TextField
-                                  value={editedText}
-                                  onChange={(e) => setEditedText(e.target.value)}
-                                  size="medium"
-                                  variant="outlined"
-                                  multiline
-                                  minRows={1}
-                                  maxRows={5}
-                                  fullWidth
-                                  className="inputField"
-                                />
+                                <>
+                                  <TextField
+                                    value={editedText}
+                                    onChange={(e) => {
+                                      const inputText = e.target.value;
+
+                                      // Split words and filter out empty strings
+                                      const words = inputText.trim().split(/\s+/).filter(Boolean);
+                                      // Limit to 200 words
+                                      const wordsLimit = 200;
+
+                                      if (words.length > wordsLimit) {
+                                        const truncatedText = words.slice(0, wordsLimit).join(" ");
+                                        setEditedText(truncatedText);
+                                      } else {
+                                        setEditedText(inputText); // Allow normal typing
+                                      }
+
+                                    }}
+                                    size="medium"
+                                    variant="outlined"
+                                    multiline
+                                    minRows={1}
+                                    maxRows={5}
+                                    fullWidth
+                                    className="inputField"
+                                  />
+                                  <Typography
+                                    variant="caption"
+                                    color={
+                                      editedText.trim().split(/\s+/).filter(Boolean).length > 200
+                                        ? 'error'
+                                        : 'textSecondary'
+                                    }
+                                  >
+                                    {`${Math.min(
+                                      editedText.trim().split(/\s+/).filter(Boolean).length,
+                                      200
+                                    )}/200 words`}
+                                  </Typography>
+                                </>
                               ) : (
                                 <Typography
                                   variant="body2"
                                   sx={{
                                     pt: 1,
                                     cursor: 'pointer',
-                                    width: '100%'
+                                    width: '100%',
                                   }}
                                   onClick={() => setSelectedAboutMe(text)}
                                 >
@@ -362,6 +392,8 @@ const AdditionalInformation: React.FC = () => {
                                 </Typography>
                               )}
                             </Grid>
+
+
 
                             <Grid item>
                               {isEditing === index ? (
